@@ -1,3 +1,8 @@
+
+pluginManagement {
+    includeBuild("experimental/sample/ev/tooling")
+}
+
 plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
 }
@@ -8,4 +13,7 @@ include ':multicast'
 include ':rx2'
 include ':paging'
 include ':core'
-include ':experimental:market:core'
+include ':experimental:market'
+include ':experimental:market:repository'
+include ':experimental:market:warehouse'
+include ':experimental:sample:ev:android:app'

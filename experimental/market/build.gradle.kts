@@ -26,7 +26,7 @@ kotlin {
         nodejs()
     }
     cocoapods {
-        summary = "Market/core"
+        summary = "Market"
         homepage = "https://github.com/MobileNativeFoundation/Store"
         ios.deploymentTarget = "13"
         version = libs.versions.store.get()
@@ -54,7 +54,7 @@ kotlin {
 }
 
 android {
-    namespace = "org.mobilenativefoundation.market.core"
+    namespace = "org.mobilenativefoundation.market"
 
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     compileSdk = 33
