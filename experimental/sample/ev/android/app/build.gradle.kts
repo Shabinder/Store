@@ -38,6 +38,7 @@ dependencies {
     ksp(libs.kotlinInject.compiler)
 
     implementation(project(":experimental:sample:ev:xplat:foundation:di:impl"))
+    implementation(project(":experimental:sample:ev:xplat:foundation:networking:impl"))
 }
 
 ksp {

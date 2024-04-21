@@ -1,0 +1,25 @@
+query GetNearbyStations($location: PointInput!, $distance: Int!, $amenities: [String!]!) {
+    stationAround(query: {
+        location: $location
+        amenities: $amenities
+        distance: $distance
+    }) {
+        id
+        name
+    }
+}
+
+query GetStation($id: ID!) {
+    station(id: $id) {
+        id
+        country_code
+        party_id
+        publish
+        name
+        address
+        city
+        postal_code
+        state
+        country
+    }
+}

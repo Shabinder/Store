@@ -9,9 +9,11 @@ import org.mobilenativefoundation.sample.ev.xplat.foundation.di.api.ScreenFactor
 import org.mobilenativefoundation.sample.ev.xplat.foundation.di.impl.EvPresenterFactory
 import org.mobilenativefoundation.sample.ev.xplat.foundation.di.impl.EvUiFactory
 import org.mobilenativefoundation.sample.ev.xplat.foundation.di.impl.RealScreenFactory
+import org.mobilenativefoundation.sample.ev.xplat.foundation.networking.api.NetworkingComponent
 
 @Component
 abstract class RealCoreComponent(
+    @Component val networkingComponent: NetworkingComponent
 ) : CoreComponent {
 
     @Provides

@@ -10,11 +10,18 @@ import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.sample.ev.android.app.di.RealCoreComponent
 import org.mobilenativefoundation.sample.ev.android.app.di.create
 import org.mobilenativefoundation.sample.ev.xplat.foundation.di.api.CoreComponent
+import org.mobilenativefoundation.sample.ev.xplat.foundation.networking.api.NetworkingComponent
+import org.mobilenativefoundation.sample.ev.xplat.foundation.networking.impl.RealNetworkingComponent
+import org.mobilenativefoundation.sample.ev.xplat.foundation.networking.impl.create
 
 @Inject
 class MainActivity : ComponentActivity() {
+    private val networkingComponent: NetworkingComponent by lazy {
+        RealNetworkingComponent::class.create()
+    }
+
     private val coreComponent: CoreComponent by lazy {
-        RealCoreComponent.create()
+        RealCoreComponent.create(networkingComponent)
     }
 
     private val circuit: Circuit by lazy {

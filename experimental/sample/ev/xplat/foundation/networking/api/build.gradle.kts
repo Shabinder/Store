@@ -3,6 +3,7 @@ plugins {
     id("plugin.ev.kotlin.multiplatform")
     alias(libs.plugins.serialization)
     alias(libs.plugins.compose)
+    id("com.apollographql.apollo3") version "3.8.2"
 }
 
 kotlin {
@@ -12,12 +13,19 @@ kotlin {
                 api(compose.runtime)
                 api(compose.components.resources)
                 api(libs.circuit.foundation)
-                api(project(":experimental:sample:ev:xplat:foundation:networking:api"))
+                api(libs.apollo.runtime)
             }
         }
     }
 }
 
 android {
-    namespace = "org.mobilenativefoundation.sample.ev.xplat.foundation.di.api"
+    namespace = "org.mobilenativefoundation.sample.ev.xplat.foundation.networking.api"
+}
+
+apollo {
+    service("service") {
+        packageName.set("org.mobilenativefoundation.sample.ev.xplat.foundation.networking.api")
+        schemaFiles.from(file("src/commonMain/graphql/schema.graphqls"))
+    }
 }
