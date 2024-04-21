@@ -1,6 +1,9 @@
 plugins {
     id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
     id("com.diffplug.spotless") version "6.4.1"
+    alias(libs.plugins.serialization) apply false
+    alias(libs.plugins.compose) apply false
+    alias(libs.plugins.kotlin.plugin.parcelize) apply false
 }
 
 buildscript {
@@ -13,7 +16,6 @@ buildscript {
     dependencies {
         classpath(libs.android.gradle.plugin)
         classpath(libs.kotlin.gradle.plugin)
-        classpath(libs.kotlin.serialization.plugin)
         classpath(libs.dokka.gradle.plugin)
         classpath(libs.ktlint.gradle.plugin)
         classpath(libs.jacoco.gradle.plugin)
@@ -21,6 +23,7 @@ buildscript {
         classpath(libs.kover.plugin)
         classpath(libs.atomic.fu.gradle.plugin)
         classpath(libs.kmmBridge.gradle.plugin)
+        classpath(libs.paparazzi.gradlePlugin)
     }
 }
 
@@ -49,13 +52,13 @@ subprojects {
 tasks {
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions {
-            jvmTarget = "11"
+            jvmTarget = "17"
         }
     }
 
     withType<JavaCompile>().configureEach {
-        sourceCompatibility = JavaVersion.VERSION_11.name
-        targetCompatibility = JavaVersion.VERSION_11.name
+        sourceCompatibility = JavaVersion.VERSION_17.name
+        targetCompatibility = JavaVersion.VERSION_17.name
     }
 }
 

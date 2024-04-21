@@ -35,9 +35,9 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     api(libs.circuit.foundation)
 
-
-
     ksp(libs.kotlinInject.compiler)
+
+    implementation(project(":experimental:sample:ev:xplat:foundation:di:impl"))
 }
 
 ksp {
