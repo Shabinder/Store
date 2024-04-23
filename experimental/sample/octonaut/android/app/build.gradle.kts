@@ -40,6 +40,11 @@ dependencies {
     implementation(project(":experimental:sample:octonaut:xplat:foundation:di:api"))
     implementation(project(":experimental:sample:octonaut:xplat:foundation:networking:impl"))
     implementation(project(":experimental:sample:octonaut:xplat:common:market"))
+    implementation(project(":experimental:sample:octonaut:xplat:domain:user:impl"))
+    implementation(project(":experimental:sample:octonaut:xplat:feat:homeTab:impl"))
+    implementation(project(":experimental:sample:octonaut:xplat:feat:notificationsTab:impl"))
+    implementation(project(":experimental:sample:octonaut:xplat:feat:exploreTab:impl"))
+    implementation(project(":experimental:sample:octonaut:xplat:feat:profileTab:impl"))
 }
 
 ksp {

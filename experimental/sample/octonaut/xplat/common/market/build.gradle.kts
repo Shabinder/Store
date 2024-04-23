@@ -12,8 +12,11 @@ kotlin {
                 api(compose.runtime)
                 api(compose.components.resources)
                 api(libs.circuit.foundation)
+                api(libs.kotlinInject.runtime)
                 api(project(":experimental:sample:octonaut:xplat:foundation:networking:api"))
                 api(project(":experimental:market"))
+                api(project(":experimental:market:warehouse"))
+                api(project(":experimental:sample:octonaut:xplat:domain:user:api"))
             }
         }
     }

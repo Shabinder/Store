@@ -8,11 +8,7 @@ import org.mobilenativefoundation.sample.octonaut.xplat.common.market.OctonautMa
 
 @Inject
 class RealMutableOctonautMarket : MutableOctonautMarket {
-    private val _state = MutableStateFlow<OctonautMarketState>(
-        OctonautMarketState(
-            repositories = emptyList()
-        )
-    )
+    private val _state = MutableStateFlow<OctonautMarketState>(OctonautMarketState())
 
     override val state: StateFlow<OctonautMarketState> = _state.asStateFlow()
 

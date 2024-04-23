@@ -1,28 +1,46 @@
 package org.mobilenativefoundation.market.warehouse
 
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.*
+import org.mobilenativefoundation.market.Market
 
-interface Warehouse<S : Warehouse.State, A : Warehouse.Action, AA: Warehouse.Action.Async> {
+
+interface Warehouse<S : Warehouse.State, A : Warehouse.Action> {
+
     val state: StateFlow<S>
     fun dispatch(action: A)
-    fun dispatch(worker: Worker<S, A>)
-    fun dispatch(action: AA)
     fun <D : Any> subscribe(selector: Selector<S, D>): Flow<D>
 
     interface Action {
-        interface Async: Action
+        interface Async : Action
     }
+
     interface State
-    fun interface Worker<S : State, A : Action> {
-        fun work(getState: () -> S, dispatch: (action: A) -> Unit)
-    }
 
     fun interface Selector<S : State, D : Any> {
         fun select(state: S): D
     }
+}
 
-    fun interface Middleware<A: Action> {
-        fun apply(action: A, next: (action: A) -> Unit)
+class RealWarehouse<S : Warehouse.State, A : Warehouse.Action, MS : Market.State, M : Market<MS>>(
+    coroutineDispatcher: CoroutineDispatcher,
+    private val market: M,
+    private val extractor: (MS) -> S,
+    private val actionHandler: (A, MS) -> Unit
+) : Warehouse<S, A> {
+
+    private val coroutineScope = CoroutineScope(coroutineDispatcher)
+
+    override val state: StateFlow<S> = market.state.map {
+        extractor(it)
+    }.stateIn(coroutineScope, SharingStarted.Eagerly, extractor(market.state.value))
+
+
+    override fun <D : Any> subscribe(selector: Warehouse.Selector<S, D>): Flow<D> =
+        state.map { selector.select(it) }
+
+    override fun dispatch(action: A) {
+        actionHandler(action, market.state.value)
     }
 }

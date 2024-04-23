@@ -1,6 +1,8 @@
 package org.mobilenativefoundation.sample.octonaut.android.app.circuit
 
-interface ScreenFactory {
+import org.mobilenativefoundation.sample.octonaut.xplat.feat.homeTab.api.HomeTab
 
+interface ScreenFactory {
+    fun homeTab(): HomeTab
 }
 

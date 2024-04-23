@@ -1,25 +1,16 @@
-query GetNearbyChargingStations($location: PointInput!, $distance: Int!, $amenities: [String!]!) {
-    stationAround(query: {
-        location: $location
-        amenities: $amenities
-        distance: $distance
-    }) {
+query GetUser($login: String!) {
+    user(login: $login) {
         id
         name
+        email
+        repositories(first: 20) {
+            nodes {
+                id
+                name
+            }
+        }
     }
 }
 
-query GetChargingStation($id: ID!) {
-    station(id: $id) {
-        id
-        country_code
-        party_id
-        publish
-        name
-        address
-        city
-        postal_code
-        state
-        country
-    }
-}
+
+

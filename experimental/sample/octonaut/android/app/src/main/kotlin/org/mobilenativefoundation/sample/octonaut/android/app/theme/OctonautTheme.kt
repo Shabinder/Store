@@ -24,7 +24,7 @@ fun OctonautTheme(
         onSecondary = Color.White,
         background = Color(0xFF010101),
         onBackground = Color.White,
-        surface = Color(0xFF1E1E1E),
+        surface = Color(0xFF25262B),
         onSurface = Color.White,
         error = Color(0xFFCF6679),
         onError = Color.White
