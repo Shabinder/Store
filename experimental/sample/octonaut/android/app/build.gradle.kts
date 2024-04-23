@@ -36,6 +36,9 @@ dependencies {
     api(libs.circuit.foundation)
 
     ksp(libs.kotlinInject.compiler)
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network)
+    implementation(libs.ktor.client.android)
 
     implementation(project(":experimental:sample:octonaut:xplat:foundation:di:api"))
     implementation(project(":experimental:sample:octonaut:xplat:foundation:networking:impl"))

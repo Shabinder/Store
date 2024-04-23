@@ -19,8 +19,21 @@ class RealOctonautMarketDispatcher(
                             id = it.id,
                             email = it.email,
                             name = it.name ?: "",
-                            login = it.name ?: "",
-                            repositoryIds = it.repositories.nodes?.mapNotNull { it?.id } ?: emptyList()
+                            login = it.login,
+                            avatarUrl = it.avatarUrl.toString(),
+                            repositories = it.repositories.nodes?.mapNotNull { repo -> repo?.id } ?: emptyList(),
+                            starredRepositories = it.starredRepositories.nodes?.mapNotNull { repo -> repo?.id }
+                                ?: emptyList(),
+                            organizations = it.organizations.nodes?.mapNotNull { org -> org?.id } ?: emptyList(),
+                            pinnedItems = it.pinnedItems.let { pinnedItems -> List(pinnedItems.totalCount) { "" } },
+                            socialAccounts = it.socialAccounts.nodes?.mapNotNull { socialAccount ->
+                                socialAccount?.let {
+                                    User.SocialAccount(
+                                        socialAccount.displayName,
+                                        socialAccount.provider.name
+                                    )
+                                }
+                            } ?: emptyList()
                         )
                     }
                 )

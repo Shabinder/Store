@@ -1,14 +1,42 @@
 query GetUser($login: String!) {
     user(login: $login) {
         id
+        login
         name
         email
+        avatarUrl
+        socialAccounts(first: 10) {
+            nodes {
+                displayName
+                provider
+            }
+        }
         repositories(first: 20) {
             nodes {
                 id
                 name
             }
         }
+
+        starredRepositories(first: 20) {
+            nodes {
+                id
+                name
+            }
+        }
+
+        organizations(first: 10){
+            nodes {
+                id
+                name
+            }
+        }
+
+        pinnedItems(first: 10){
+            totalCount
+        }
+
+
     }
 }
 

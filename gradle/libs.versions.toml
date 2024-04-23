@@ -26,6 +26,7 @@ market = "0.0.1-alpha01"
 truth = "1.1.3"
 compose-compiler = "1.5.11"
 androidx-activity = "1.8.2"
+coil = "3.0.0-alpha06"
 
 agp = "8.2.0"
 buildkonfig = "0.15.1"
@@ -55,7 +56,7 @@ jacoco-gradle-plugin = { group = "org.jacoco", name = "org.jacoco.core", version
 maven-publish-plugin = { group = "com.vanniktech", name = "gradle-maven-publish-plugin", version.ref = "mavenPublishPlugin" }
 kover-plugin = { group = "org.jetbrains.kotlinx", name = "kover", version.ref = "kover" }
 atomic-fu-gradle-plugin = { group = "org.jetbrains.kotlinx", name = "atomicfu-gradle-plugin", version.ref = "atomicFu" }
-kmmBridge-gradle-plugin =  { group = "co.touchlab.faktory.kmmbridge", name = "co.touchlab.faktory.kmmbridge.gradle.plugin", version.ref = "kmmBridge" }
+kmmBridge-gradle-plugin = { group = "co.touchlab.faktory.kmmbridge", name = "co.touchlab.faktory.kmmbridge.gradle.plugin", version.ref = "kmmBridge" }
 
 kotlinx-atomic-fu = { group = "org.jetbrains.kotlinx", name = "atomicfu", version.ref = "atomicFu" }
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "baseKotlin" }
@@ -87,6 +88,11 @@ androidx-compose-activity = { module = "androidx.activity:activity-compose", ver
 androidx-core = { module = "androidx.core:core-ktx", version = "1.12.0" }
 apollo-runtime = { module = "com.apollographql.apollo3:apollo-runtime", version.ref = "apolloVerson" }
 apollo-normalized-cache = { module = "com.apollographql.apollo3:apollo-normalized-cache", version.ref = "apolloVerson" }
+coil = { module = "io.coil-kt.coil3:coil", version.ref = "coil" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
+coil-network = {module = "io.coil-kt.coil3:coil-network-ktor", version.ref = "coil"}
+ktor = {module = "io.ktor:ktor-client-core", version.ref = "ktor"}
+ktor-client-android = {module = "io.ktor:ktor-client-android", version.ref = "ktor"}
 
 # Gradle Plugins
 android-desugarJdkLibs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar" }

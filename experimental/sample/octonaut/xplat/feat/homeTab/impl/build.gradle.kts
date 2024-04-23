@@ -24,6 +24,9 @@ kotlin {
                 api(project(":experimental:sample:octonaut:xplat:common:market"))
                 api(project(":experimental:sample:octonaut:xplat:feat:homeTab:api"))
                 api(project(":experimental:sample:octonaut:xplat:foundation:di:api"))
+                implementation(libs.coil.compose)
+                implementation(libs.coil.network)
+                implementation(libs.ktor)
             }
         }
 

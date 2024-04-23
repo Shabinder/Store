@@ -19,6 +19,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import coil3.ComponentRegistry
+import coil3.ImageLoader
+import coil3.annotation.ExperimentalCoilApi
+import coil3.compose.setSingletonImageLoaderFactory
+import coil3.network.ktor.KtorNetworkFetcherFactory
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.CircuitCompositionLocals
 import com.slack.circuit.foundation.CircuitContent
@@ -30,6 +35,7 @@ import org.mobilenativefoundation.sample.octonaut.android.app.theme.OctonautThem
 import org.mobilenativefoundation.sample.octonaut.xplat.foundation.networking.api.GetUserQuery
 
 
+@OptIn(ExperimentalCoilApi::class)
 @Inject
 class MainActivity : ComponentActivity() {
 
