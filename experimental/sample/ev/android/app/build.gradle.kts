@@ -37,8 +37,11 @@ dependencies {
 
     ksp(libs.kotlinInject.compiler)
 
-    implementation(project(":experimental:sample:ev:xplat:foundation:di:impl"))
+    implementation(project(":experimental:sample:ev:xplat:foundation:di:api"))
     implementation(project(":experimental:sample:ev:xplat:foundation:networking:impl"))
+    implementation(project(":experimental:sample:ev:xplat:domain:chargingStations:impl"))
+    implementation(project(":experimental:sample:ev:xplat:feat:chargingStationsTab:impl"))
+    implementation(project(":experimental:sample:ev:xplat:common:market"))
 }
 
 ksp {

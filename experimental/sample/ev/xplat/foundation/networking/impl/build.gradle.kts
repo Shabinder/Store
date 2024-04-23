@@ -21,6 +21,7 @@ kotlin {
                 implementation(libs.kotlinInject.runtime)
 
                 api(project(":experimental:sample:ev:xplat:foundation:networking:api"))
+                api(project(":experimental:sample:ev:xplat:foundation:di:api"))
             }
         }
 

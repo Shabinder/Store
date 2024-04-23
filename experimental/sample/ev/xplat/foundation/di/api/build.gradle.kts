@@ -12,7 +12,7 @@ kotlin {
                 api(compose.runtime)
                 api(compose.components.resources)
                 api(libs.circuit.foundation)
-                api(project(":experimental:sample:ev:xplat:foundation:networking:api"))
+                implementation(libs.kotlinInject.runtime)
             }
         }
     }

@@ -14,6 +14,7 @@ kotlin {
                 api(compose.components.resources)
                 api(libs.circuit.foundation)
                 api(libs.apollo.runtime)
+                api(project(":experimental:sample:ev:xplat:foundation:di:api"))
             }
         }
     }

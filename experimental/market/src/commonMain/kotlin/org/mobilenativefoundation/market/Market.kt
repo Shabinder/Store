@@ -1,11 +1,20 @@
 package org.mobilenativefoundation.market
 
-interface Market {
+import kotlinx.coroutines.flow.StateFlow
+
+interface Market<S: Market.State> {
+
+    val state: StateFlow<S>
+
     interface State
     interface Action
     interface Middleware
 
     fun interface Reducer<S : State, A : Action> {
         fun reduce(state: S, action: A): S
+    }
+
+    interface Dispatcher<A : Action> {
+        fun dispatch(action: A)
     }
 }

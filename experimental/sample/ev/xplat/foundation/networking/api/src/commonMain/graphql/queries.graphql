@@ -1,4 +1,4 @@
-query GetNearbyStations($location: PointInput!, $distance: Int!, $amenities: [String!]!) {
+query GetNearbyChargingStations($location: PointInput!, $distance: Int!, $amenities: [String!]!) {
     stationAround(query: {
         location: $location
         amenities: $amenities
@@ -9,7 +9,7 @@ query GetNearbyStations($location: PointInput!, $distance: Int!, $amenities: [St
     }
 }
 
-query GetStation($id: ID!) {
+query GetChargingStation($id: ID!) {
     station(id: $id) {
         id
         country_code
