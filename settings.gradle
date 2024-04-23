@@ -1,5 +1,5 @@
 pluginManagement {
-    includeBuild("experimental/sample/ev/tooling")
+    includeBuild("experimental/sample/octonaut/tooling")
 }
 
 plugins {
@@ -17,12 +17,8 @@ include ':core'
 include ':experimental:market'
 include ':experimental:market:warehouse'
 
-include ':experimental:sample:ev:android:app'
-include ':experimental:sample:ev:xplat:foundation:di:api'
-include ':experimental:sample:ev:xplat:foundation:networking:api'
-include ':experimental:sample:ev:xplat:foundation:networking:impl'
-include ':experimental:sample:ev:xplat:domain:chargingStations:api'
-include ':experimental:sample:ev:xplat:domain:chargingStations:impl'
-include ':experimental:sample:ev:xplat:feat:chargingStationsTab:api'
-include ':experimental:sample:ev:xplat:feat:chargingStationsTab:impl'
-include ':experimental:sample:ev:xplat:common:market'
+include ':experimental:sample:octonaut:android:app'
+include ':experimental:sample:octonaut:xplat:foundation:di:api'
+include ':experimental:sample:octonaut:xplat:foundation:networking:api'
+include ':experimental:sample:octonaut:xplat:foundation:networking:impl'
+include ':experimental:sample:octonaut:xplat:common:market'
