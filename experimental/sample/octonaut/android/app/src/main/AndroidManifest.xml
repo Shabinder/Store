@@ -12,7 +12,7 @@
             android:icon="@mipmap/ic_launcher"
             android:label="Octonaut"
             android:supportsRtl="true"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
+            android:theme="@style/Theme.Octonaut"
             android:usesCleartextTraffic="true">
 
         <activity
