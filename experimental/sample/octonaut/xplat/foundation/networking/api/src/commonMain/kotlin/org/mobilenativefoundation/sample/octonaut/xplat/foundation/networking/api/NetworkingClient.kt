@@ -2,4 +2,6 @@ package org.mobilenativefoundation.sample.octonaut.xplat.foundation.networking.a
 
 interface NetworkingClient {
     suspend fun getUser(query: GetUserQuery): GetUserQuery.Data?
+
+    suspend fun listNotifications(queryParams: ListNotificationsQueryParams): ListNotificationsResponse
 }

@@ -5,6 +5,8 @@ import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
 import me.tatarka.inject.annotations.Inject
+import org.mobilenativefoundation.sample.octonaut.xplat.feat.exploreTab.api.ExploreTab
+import org.mobilenativefoundation.sample.octonaut.xplat.feat.exploreTab.impl.ExploreTabPresenter
 import org.mobilenativefoundation.sample.octonaut.xplat.feat.homeTab.api.HomeTab
 import org.mobilenativefoundation.sample.octonaut.xplat.feat.homeTab.impl.HomeTabPresenter
 import org.mobilenativefoundation.sample.octonaut.xplat.foundation.di.api.UserScope
@@ -12,11 +14,13 @@ import org.mobilenativefoundation.sample.octonaut.xplat.foundation.di.api.UserSc
 @Inject
 @UserScope
 class OctonautPresenterFactory(
-    private val homeTabPresenter: HomeTabPresenter
+    private val homeTabPresenter: HomeTabPresenter,
+    private val exploreTabPresenter: ExploreTabPresenter
 ) : Presenter.Factory {
     override fun create(screen: Screen, navigator: Navigator, context: CircuitContext): Presenter<*>? {
         return when (screen) {
             is HomeTab -> homeTabPresenter
+            is ExploreTab -> exploreTabPresenter
             else -> null
         }
     }

@@ -12,11 +12,18 @@ interface ExploreTab : Screen {
         data object Initial : State
         data class Loaded(
             val user: User,
-            val searchInput: String? = null
+            val searchInput: String? = null,
+            val eventSink: (Event) -> Unit,
+        ) : State
+        data class Loading(
+            val eventSink: (Event) -> Unit
         ) : State
     }
 
-    sealed interface Event : CircuitUiEvent
+    sealed interface Event : CircuitUiEvent {
+        data class UpdateSearchInput(val searchInput: String): Event
+        data class Search(val searchInput: String) : Event
+    }
 
     interface Ui : CircuitUi<State>
     interface Presenter : CircuitPresenter<State>

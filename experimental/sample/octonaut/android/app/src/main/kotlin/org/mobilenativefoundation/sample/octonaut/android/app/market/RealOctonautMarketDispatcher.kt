@@ -3,6 +3,7 @@ package org.mobilenativefoundation.sample.octonaut.android.app.market
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.sample.octonaut.xplat.common.market.OctonautMarketAction
 import org.mobilenativefoundation.sample.octonaut.xplat.common.market.OctonautMarketDispatcher
+import org.mobilenativefoundation.sample.octonaut.xplat.domain.notifications.api.Notification
 import org.mobilenativefoundation.sample.octonaut.xplat.domain.user.api.User
 
 @Inject
@@ -34,6 +35,21 @@ class RealOctonautMarketDispatcher(
                                     )
                                 }
                             } ?: emptyList()
+                        )
+                    }
+                )
+            }
+
+            is OctonautMarketAction.UpdateNotifications -> {
+                prevState.copy(
+                    notifications = action.notifications.notifications.map {
+                        Notification(
+                            it.id,
+                            it.unread,
+                            it.updatedAt,
+                            it.lastReadAt,
+                            it.url,
+                            it.subscriptionUrl
                         )
                     }
                 )

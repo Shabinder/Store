@@ -3,6 +3,7 @@ package org.mobilenativefoundation.sample.octonaut.android.app
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -11,19 +12,12 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.*
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import coil3.ComponentRegistry
-import coil3.ImageLoader
 import coil3.annotation.ExperimentalCoilApi
-import coil3.compose.setSingletonImageLoaderFactory
-import coil3.network.ktor.KtorNetworkFetcherFactory
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.CircuitCompositionLocals
 import com.slack.circuit.foundation.CircuitContent
@@ -33,6 +27,8 @@ import org.mobilenativefoundation.sample.octonaut.android.app.di.CoreComponent
 import org.mobilenativefoundation.sample.octonaut.android.app.di.create
 import org.mobilenativefoundation.sample.octonaut.android.app.theme.OctonautTheme
 import org.mobilenativefoundation.sample.octonaut.xplat.foundation.networking.api.GetUserQuery
+import org.mobilenativefoundation.sample.octonaut.xplat.foundation.networking.api.ListNotificationsQueryParams
+import kotlin.time.Duration.Companion.minutes
 
 
 @OptIn(ExperimentalCoilApi::class)
@@ -57,7 +53,8 @@ class MainActivity : ComponentActivity() {
 
             CircuitCompositionLocals(circuit) {
 
-                val homeTab = coreComponent.screenFactory.homeTab()
+                val homeTab = remember { coreComponent.screenFactory.homeTab() }
+                val exploreTab = remember { coreComponent.screenFactory.exploreTab() }
                 val activeScreen = remember { mutableStateOf<Screen>(homeTab) }
 
                 OctonautTheme {
@@ -68,7 +65,12 @@ class MainActivity : ComponentActivity() {
                         LaunchedEffect(Unit) {
                             try {
 
-                                coreComponent.userMarketContributor.contribute(GetUserQuery("matt-ramotar"))
+                                coreComponent.userSupplier.supply(GetUserQuery("matt-ramotar"))
+
+                                coreComponent.scheduledNotificationsSupplier.supply(
+                                    ListNotificationsQueryParams(),
+                                    5.minutes
+                                )
 
                             } catch (error: Throwable) {
                                 println("Error: ${error.stackTraceToString()}")
@@ -79,10 +81,33 @@ class MainActivity : ComponentActivity() {
                         Scaffold(
                             bottomBar = {
                                 BottomAppBar(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-                                    Icon(Icons.Default.Home, "")
-                                    Icon(Icons.Default.Notifications, "")
-                                    Icon(Icons.Default.Search, "")
-                                    Icon(Icons.Default.Person, "")
+                                    IconButton(
+                                        onClick = {
+                                            activeScreen.value = homeTab
+                                        }
+                                    ) {
+                                        Icon(Icons.Default.Home, "")
+                                    }
+
+                                    IconButton(
+                                        onClick = {}
+                                    ) {
+                                        Icon(Icons.Default.Notifications, "")
+                                    }
+
+                                    IconButton(
+                                        onClick = {
+                                            activeScreen.value = exploreTab
+                                        }
+                                    ) {
+                                        Icon(Icons.Default.Search, "")
+                                    }
+
+                                    IconButton(
+                                        onClick = {}
+                                    ) {
+                                        Icon(Icons.Default.Person, "")
+                                    }
                                 }
                             }
                         ) { innerPadding ->
@@ -90,6 +115,7 @@ class MainActivity : ComponentActivity() {
                             CircuitContent(
                                 screen = activeScreen.value,
                                 modifier = Modifier.padding(innerPadding)
+                                    .background(MaterialTheme.colorScheme.background)
                             )
                         }
                     }

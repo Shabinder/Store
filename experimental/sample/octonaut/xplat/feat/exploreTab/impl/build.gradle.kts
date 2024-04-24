@@ -19,9 +19,12 @@ kotlin {
                 implementation(compose.material3)
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.kotlinInject.runtime)
+                api(project(":experimental:market:warehouse"))
 
+                api(project(":experimental:market:warehouse"))
                 api(project(":experimental:sample:octonaut:xplat:feat:exploreTab:api"))
                 api(project(":experimental:sample:octonaut:xplat:foundation:di:api"))
+                api(project(":experimental:sample:octonaut:xplat:common:market"))
             }
         }
 

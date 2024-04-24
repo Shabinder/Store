@@ -43,7 +43,6 @@ compose-bom = "2024.02.02"
 lint = "1.2.0"
 apolloVerson = "3.8.2"
 
-
 [libraries]
 android-gradle-plugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "pagingCompose" }
@@ -91,9 +90,11 @@ apollo-normalized-cache = { module = "com.apollographql.apollo3:apollo-normalize
 coil = { module = "io.coil-kt.coil3:coil", version.ref = "coil" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 coil-network = {module = "io.coil-kt.coil3:coil-network-ktor", version.ref = "coil"}
-ktor = {module = "io.ktor:ktor-client-core", version.ref = "ktor"}
 ktor-client-android = {module = "io.ktor:ktor-client-android", version.ref = "ktor"}
-
+ktor-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-serialization = { module = "io.ktor:ktor-client-serialization", version.ref = "ktor" }
+ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 # Gradle Plugins
 android-desugarJdkLibs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar" }
 buildkonfig-gradlePlugin = { module = "com.codingfeline.buildkonfig:buildkonfig-gradle-plugin", version.ref = "buildkonfig" }

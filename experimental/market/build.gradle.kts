@@ -38,6 +38,7 @@ kotlin {
                 implementation(libs.kotlin.stdlib)
                 implementation(libs.kotlinx.coroutines.core)
                 api(project(":store"))
+                api(libs.kotlinx.datetime)
             }
         }
 

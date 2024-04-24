@@ -2,13 +2,13 @@ package org.mobilenativefoundation.sample.octonaut.xplat.feat.homeTab.impl
 
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.sample.octonaut.xplat.common.market.WarehouseBuilderFactory
-import org.mobilenativefoundation.sample.octonaut.xplat.domain.user.api.UserMarketContributor
+import org.mobilenativefoundation.sample.octonaut.xplat.domain.user.api.UserSupplier
 import org.mobilenativefoundation.sample.octonaut.xplat.foundation.networking.api.GetUserQuery
 
 
 @Inject
 class HomeTabWarehouseFactory(
-    private val userMarketContributor: UserMarketContributor,
+    private val userSupplier: UserSupplier,
     private val warehouseBuilderFactory: WarehouseBuilderFactory
 ) {
     fun create(): HomeTabWarehouse {
@@ -24,7 +24,7 @@ class HomeTabWarehouseFactory(
                     HomeTabWarehouseAction.Refresh -> {
                         // Refresh user
                         val currentUser = marketState.user!!
-                        userMarketContributor.contribute(GetUserQuery(currentUser.login))
+                        userSupplier.supply(GetUserQuery(currentUser.login))
 
                         // Refresh repositories
                         // TODO

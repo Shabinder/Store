@@ -14,6 +14,7 @@ kotlin {
                 api(compose.components.resources)
                 api(libs.circuit.foundation)
                 api(libs.apollo.runtime)
+                api(libs.kotlinx.serialization.core)
                 api(project(":experimental:sample:octonaut:xplat:foundation:di:api"))
             }
         }

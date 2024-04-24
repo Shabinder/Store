@@ -1,5 +1,5 @@
 package org.mobilenativefoundation.sample.octonaut.xplat.common.market
 
-import org.mobilenativefoundation.market.impl.RealMarketContributor
+import org.mobilenativefoundation.market.impl.RealMarketSupplier
 
-typealias OctonautMarketContributor<K, O> = RealMarketContributor<K, O, OctonautMarketAction, OctonautMarketDispatcher>
+typealias OctonautMarketContributor<K, O> = RealMarketSupplier<K, O, OctonautMarketAction, OctonautMarketDispatcher>

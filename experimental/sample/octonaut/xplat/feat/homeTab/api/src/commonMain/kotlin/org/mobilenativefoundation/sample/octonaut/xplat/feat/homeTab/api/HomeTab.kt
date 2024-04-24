@@ -11,11 +11,11 @@ interface HomeTab : Screen {
     sealed interface State : CircuitUiState {
         data object Initial : State
         data class Loading(
-            val event: (Event) -> Unit
+            val eventSink: (Event) -> Unit
         ): State
         data class Loaded(
             val user: User,
-            val event: (Event) -> Unit
+            val eventSink: (Event) -> Unit
         ) : State
     }
 

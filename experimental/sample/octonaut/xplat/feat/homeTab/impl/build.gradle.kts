@@ -26,7 +26,7 @@ kotlin {
                 api(project(":experimental:sample:octonaut:xplat:foundation:di:api"))
                 implementation(libs.coil.compose)
                 implementation(libs.coil.network)
-                implementation(libs.ktor)
+                implementation(libs.ktor.core)
             }
         }
 
