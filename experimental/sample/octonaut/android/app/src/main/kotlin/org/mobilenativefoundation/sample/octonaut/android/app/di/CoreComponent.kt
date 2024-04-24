@@ -25,10 +25,12 @@ import org.mobilenativefoundation.sample.octonaut.xplat.domain.notifications.imp
 import org.mobilenativefoundation.sample.octonaut.xplat.domain.user.api.UserStore
 import org.mobilenativefoundation.sample.octonaut.xplat.domain.user.api.UserSupplier
 import org.mobilenativefoundation.sample.octonaut.xplat.domain.user.impl.UserStoreFactory
+import org.mobilenativefoundation.sample.octonaut.xplat.feat.*
 import org.mobilenativefoundation.sample.octonaut.xplat.feat.exploreTab.api.ExploreTab
 import org.mobilenativefoundation.sample.octonaut.xplat.feat.exploreTab.impl.*
 import org.mobilenativefoundation.sample.octonaut.xplat.feat.homeTab.api.HomeTab
 import org.mobilenativefoundation.sample.octonaut.xplat.feat.homeTab.impl.*
+import org.mobilenativefoundation.sample.octonaut.xplat.feat.notificationsTab.api.NotificationsTab
 import org.mobilenativefoundation.sample.octonaut.xplat.foundation.di.api.UserScope
 import org.mobilenativefoundation.sample.octonaut.xplat.foundation.networking.api.GetUserQuery
 import org.mobilenativefoundation.sample.octonaut.xplat.foundation.networking.api.ListNotificationsResponse
@@ -219,6 +221,37 @@ abstract class CoreComponent : NetworkingComponent {
 
     @Provides
     fun provideHttpClient(): HttpClient = httpClient()
+
+
+    @Provides
+    @UserScope
+    fun provideNotificationsTabWarehouseFactory(
+        notificationsSupplier: NotificationsSupplier,
+        warehouseBuilderFactory: WarehouseBuilderFactory
+    ): NotificationsTabWarehouseFactory {
+        return NotificationsTabWarehouseFactory(notificationsSupplier, warehouseBuilderFactory)
+    }
+
+    @Provides
+    @UserScope
+    fun provideNotificationsTabWarehouse(
+        homeTabWarehouseFactory: NotificationsTabWarehouseFactory
+    ): NotificationsTabWarehouse {
+        return homeTabWarehouseFactory.create()
+    }
+
+    @Provides
+    fun provideNotificationsTabPresenter(
+        warehouse: NotificationsTabWarehouse
+    ): NotificationsTabPresenter {
+        return NotificationsTabPresenter(warehouse)
+    }
+
+    @Provides
+    fun provideNotificationsTabUi(): NotificationsTabUi = NotificationsTabUi()
+
+    @Provides
+    fun provideNotificationsTab(): NotificationsTab = RealNotificationsTab
 
 
     companion object

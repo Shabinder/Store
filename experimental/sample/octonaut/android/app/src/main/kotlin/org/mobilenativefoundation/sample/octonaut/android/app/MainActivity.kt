@@ -55,6 +55,7 @@ class MainActivity : ComponentActivity() {
 
                 val homeTab = remember { coreComponent.screenFactory.homeTab() }
                 val exploreTab = remember { coreComponent.screenFactory.exploreTab() }
+                val notificationsTab = remember { coreComponent.screenFactory.notificationsTab()}
                 val activeScreen = remember { mutableStateOf<Screen>(homeTab) }
 
                 OctonautTheme {
@@ -90,7 +91,9 @@ class MainActivity : ComponentActivity() {
                                     }
 
                                     IconButton(
-                                        onClick = {}
+                                        onClick = {
+                                            activeScreen.value = notificationsTab
+                                        }
                                     ) {
                                         Icon(Icons.Default.Notifications, "")
                                     }

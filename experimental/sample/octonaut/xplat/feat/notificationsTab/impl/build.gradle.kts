@@ -22,6 +22,13 @@ kotlin {
 
                 api(project(":experimental:sample:octonaut:xplat:feat:notificationsTab:api"))
                 api(project(":experimental:sample:octonaut:xplat:foundation:di:api"))
+                api(project(":experimental:sample:octonaut:xplat:domain:notifications:api"))
+
+                api(project(":experimental:market:warehouse"))
+                api(project(":experimental:sample:octonaut:xplat:common:market"))
+                implementation(libs.coil.compose)
+                implementation(libs.coil.network)
+                implementation(libs.ktor.core)
             }
         }
 

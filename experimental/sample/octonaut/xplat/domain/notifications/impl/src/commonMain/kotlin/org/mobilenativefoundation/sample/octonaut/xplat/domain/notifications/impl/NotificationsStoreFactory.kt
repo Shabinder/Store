@@ -8,6 +8,7 @@ import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.StoreBuilder
 
 // TODO: Scheduled reverse paging
+// TODO: Scheduled paging
 
 @Inject
 class NotificationsStoreFactory(
