@@ -26,7 +26,8 @@ class HomeTabPresenter(
 
             is HomeTab.Event.OpenDetailedView.Repository -> TODO()
             is HomeTab.Event.OpenDetailedView.User -> {
-                navigator.goTo(LaunchUserProfileScreen(event.login))
+                val userLogin = event.uri.removePrefix("https://github.com/")
+                navigator.goTo(LaunchUserProfileScreen(userLogin))
             }
         }
     }

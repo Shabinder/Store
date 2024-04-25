@@ -39,8 +39,7 @@ class HomeTabUi : HomeTab.Ui {
         state.feed.entries.allIds.forEach { entryId ->
             state.feed.entries.byId[entryId]?.let {
                 FeedItem(it) {
-                    val userLogin = it.authorUri.removePrefix("https://github.com/")
-                    state.eventSink(HomeTab.Event.OpenDetailedView.User(userLogin))
+                    state.eventSink(HomeTab.Event.OpenDetailedView.User(it.authorUri))
                 }
             }
 

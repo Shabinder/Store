@@ -27,7 +27,7 @@ interface HomeTab : Screen {
         data class OpenWebView(val url: String) : Event
         sealed interface OpenDetailedView : Event {
 
-            data class User(val login: String) : OpenDetailedView
+            data class User(val uri: String) : OpenDetailedView
             data class Repository(val id: String) : OpenDetailedView
         }
     }
