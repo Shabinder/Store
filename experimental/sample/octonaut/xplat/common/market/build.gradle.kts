@@ -19,6 +19,7 @@ kotlin {
                 api(project(":experimental:sample:octonaut:xplat:domain:user:api"))
                 api(project(":experimental:sample:octonaut:xplat:domain:notifications:api"))
                 api(project(":experimental:sample:octonaut:xplat:domain:feed:api"))
+                api(project(":experimental:sample:octonaut:xplat:domain:repository:api"))
             }
         }
     }

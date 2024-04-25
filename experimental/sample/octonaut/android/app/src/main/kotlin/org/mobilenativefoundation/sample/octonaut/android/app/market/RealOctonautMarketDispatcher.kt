@@ -6,6 +6,8 @@ import org.mobilenativefoundation.sample.octonaut.xplat.common.market.OctonautMa
 import org.mobilenativefoundation.sample.octonaut.xplat.domain.feed.api.*
 import org.mobilenativefoundation.sample.octonaut.xplat.domain.notifications.api.Notification
 import org.mobilenativefoundation.sample.octonaut.xplat.domain.notifications.api.NotificationsState
+import org.mobilenativefoundation.sample.octonaut.xplat.domain.repository.api.RepositoriesState
+import org.mobilenativefoundation.sample.octonaut.xplat.domain.repository.api.Repository
 import org.mobilenativefoundation.sample.octonaut.xplat.domain.user.api.User
 import org.mobilenativefoundation.sample.octonaut.xplat.domain.user.api.UsersState
 
@@ -123,7 +125,6 @@ class RealOctonautMarketDispatcher(
                     thumbnails = thumbnailsState
                 )
 
-
                 prevState.copy(
                     feed = feedState
                 )
@@ -209,6 +210,33 @@ class RealOctonautMarketDispatcher(
                     notifications = notificationsState
                 )
 
+            }
+
+            is OctonautMarketAction.AddRepository -> {
+                val repository = Repository(
+                    action.repository.id,
+                    action.repository.name
+                )
+
+                val allIds = if (repository.id !in prevState.repositories.byId) {
+                    val copy = prevState.repositories.allIds.toMutableList()
+                    copy.add(repository.id)
+                    copy
+                } else {
+                    prevState.repositories.allIds
+                }
+
+                val byId = prevState.repositories.byId.toMutableMap()
+                byId[repository.id] = repository
+
+                val repositoriesState = RepositoriesState(
+                    byId = byId,
+                    allIds = allIds,
+                )
+
+                prevState.copy(
+                    repositories = repositoriesState
+                )
             }
         }
 

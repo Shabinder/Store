@@ -5,4 +5,5 @@ interface NetworkingClient {
 
     suspend fun listNotifications(queryParams: ListNotificationsQueryParams): ListNotificationsResponse
     suspend fun getFeed(): Feed
+    suspend fun getRepository(query: GetRepositoryQuery): GetRepositoryQuery.Data?
 }

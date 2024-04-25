@@ -47,6 +47,7 @@ dependencies {
     implementation(project(":experimental:sample:octonaut:xplat:foundation:webview"))
     implementation(project(":experimental:sample:octonaut:xplat:common:market"))
     implementation(project(":experimental:sample:octonaut:xplat:domain:user:impl"))
+    implementation(project(":experimental:sample:octonaut:xplat:domain:repository:impl"))
     implementation(project(":experimental:sample:octonaut:xplat:domain:feed:impl"))
     implementation(project(":experimental:sample:octonaut:xplat:domain:notifications:impl"))
     implementation(project(":experimental:sample:octonaut:xplat:feat:homeTab:impl"))

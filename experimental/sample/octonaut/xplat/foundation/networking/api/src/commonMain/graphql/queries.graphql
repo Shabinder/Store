@@ -41,5 +41,26 @@ query GetUser($login: String!) {
     }
 }
 
-
+query GetRepository($owner: String!, $name: String!) {
+    repository(owner: $owner, name:$name) {
+        id
+        name
+        owner {
+            id
+            login
+        }
+        stargazerCount
+        forkCount
+        repositoryTopics(first: 10){
+            nodes {
+                id
+                topic {
+                    id
+                    name
+                }
+            }
+        }
+        homepageUrl
+    }
+}
 

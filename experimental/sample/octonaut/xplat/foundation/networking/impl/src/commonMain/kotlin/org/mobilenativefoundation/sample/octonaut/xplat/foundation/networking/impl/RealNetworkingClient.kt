@@ -82,4 +82,9 @@ class RealNetworkingClient(
 
         return XML.decodeFromString(Feed::class.serializer(), userFeedHttpResponse.bodyAsText())
     }
+
+    override suspend fun getRepository(query: GetRepositoryQuery): GetRepositoryQuery.Data? {
+        val response = apolloClient.query(query).execute()
+        return response.data
+    }
 }

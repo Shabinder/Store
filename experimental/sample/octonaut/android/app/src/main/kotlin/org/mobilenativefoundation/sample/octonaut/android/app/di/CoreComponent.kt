@@ -26,6 +26,9 @@ import org.mobilenativefoundation.sample.octonaut.xplat.domain.feed.impl.FeedSto
 import org.mobilenativefoundation.sample.octonaut.xplat.domain.notifications.api.NotificationsStore
 import org.mobilenativefoundation.sample.octonaut.xplat.domain.notifications.api.NotificationsSupplier
 import org.mobilenativefoundation.sample.octonaut.xplat.domain.notifications.impl.NotificationsStoreFactory
+import org.mobilenativefoundation.sample.octonaut.xplat.domain.repository.api.RepositoryStore
+import org.mobilenativefoundation.sample.octonaut.xplat.domain.repository.api.RepositorySupplier
+import org.mobilenativefoundation.sample.octonaut.xplat.domain.repository.impl.RepositoryStoreFactory
 import org.mobilenativefoundation.sample.octonaut.xplat.domain.user.api.CurrentUserSupplier
 import org.mobilenativefoundation.sample.octonaut.xplat.domain.user.api.UserStore
 import org.mobilenativefoundation.sample.octonaut.xplat.domain.user.api.UserSupplier
@@ -118,6 +121,13 @@ abstract class CoreComponent : NetworkingComponent {
 
     @Provides
     @UserScope
+    fun provideRepositoryStore(repositoryStoreFactory: RepositoryStoreFactory): RepositoryStore {
+        return repositoryStoreFactory.create()
+    }
+
+
+    @Provides
+    @UserScope
     fun provideNotificationsStore(notificationsStoreFactory: NotificationsStoreFactory): NotificationsStore {
         return notificationsStoreFactory.create()
     }
@@ -149,6 +159,26 @@ abstract class CoreComponent : NetworkingComponent {
         return RealMarketSupplier(
             coroutineDispatcher,
             userStore,
+            marketDispatcher,
+            marketActionFactory
+        )
+    }
+
+    @Provides
+    @UserScope
+    fun provideRepositorySupplier(
+        coroutineDispatcher: CoroutineDispatcher,
+        repositoryStore: RepositoryStore,
+        marketDispatcher: OctonautMarketDispatcher,
+    ): RepositorySupplier {
+
+        val marketActionFactory = MarketActionFactory<GetRepositoryQuery.Repository, OctonautMarketAction> { storeOutput ->
+            OctonautMarketAction.AddRepository(storeOutput)
+        }
+
+        return RealMarketSupplier(
+            coroutineDispatcher,
+            repositoryStore,
             marketDispatcher,
             marketActionFactory
         )
