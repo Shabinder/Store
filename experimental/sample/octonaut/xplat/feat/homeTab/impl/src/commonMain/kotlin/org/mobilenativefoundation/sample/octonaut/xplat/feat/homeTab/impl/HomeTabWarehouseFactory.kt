@@ -17,13 +17,13 @@ class HomeTabWarehouseFactory(
 
         return warehouseBuilder
             .extractor { marketState ->
-                HomeTabWarehouseState(marketState.currentUser, marketState.feed)
+                HomeTabWarehouseState(marketState.currentUser?.user, marketState.feed)
             }
             .actionHandler { action, marketState ->
                 when (action) {
                     HomeTabWarehouseAction.Refresh -> {
                         // Refresh user
-                        val currentUser = marketState.currentUser!!
+                        val currentUser = marketState.currentUser!!.user!!
                         userSupplier.supply(GetUserQuery(currentUser.login))
 
                         // Refresh repositories

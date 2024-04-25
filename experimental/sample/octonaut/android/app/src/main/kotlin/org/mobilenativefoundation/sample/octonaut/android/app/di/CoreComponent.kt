@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
+import org.mobilenativefoundation.market.combineReducers
 import org.mobilenativefoundation.market.impl.MarketActionFactory
 import org.mobilenativefoundation.market.impl.RealMarketSupplier
 import org.mobilenativefoundation.market.impl.RealScheduledMarketSupplier
@@ -16,9 +17,8 @@ import org.mobilenativefoundation.sample.octonaut.android.app.circuit.OctonautPr
 import org.mobilenativefoundation.sample.octonaut.android.app.circuit.OctonautScreenFactory
 import org.mobilenativefoundation.sample.octonaut.android.app.circuit.OctonautUiFactory
 import org.mobilenativefoundation.sample.octonaut.android.app.circuit.ScreenFactory
-import org.mobilenativefoundation.sample.octonaut.android.app.market.MutableOctonautMarket
-import org.mobilenativefoundation.sample.octonaut.android.app.market.RealMutableOctonautMarket
-import org.mobilenativefoundation.sample.octonaut.android.app.market.RealOctonautMarketDispatcher
+import org.mobilenativefoundation.sample.octonaut.android.app.market.*
+import org.mobilenativefoundation.sample.octonaut.android.app.market.reducers.*
 import org.mobilenativefoundation.sample.octonaut.xplat.common.market.*
 import org.mobilenativefoundation.sample.octonaut.xplat.domain.feed.api.FeedStore
 import org.mobilenativefoundation.sample.octonaut.xplat.domain.feed.api.FeedSupplier
@@ -86,10 +86,21 @@ abstract class CoreComponent : NetworkingComponent {
     @Provides
     fun provideMarket(mutableMarket: MutableOctonautMarket): OctonautMarket = mutableMarket
 
+    @Provides
+    fun provideRootReducer(): RootReducer {
+        return combineReducers(
+            currentUserReducer,
+            notificationsReducer,
+            feedReducer,
+            usersReducer,
+            repositoriesReducer
+        )
+    }
+
     @UserScope
     @Provides
-    fun provideMarketDispatcher(mutableMarket: MutableOctonautMarket): OctonautMarketDispatcher {
-        return RealOctonautMarketDispatcher(mutableMarket)
+    fun provideMarketDispatcher(mutableMarket: MutableOctonautMarket, rootReducer: RootReducer): OctonautMarketDispatcher {
+        return RealOctonautMarketDispatcher(mutableMarket, rootReducer)
     }
 
     @UserScope
@@ -172,9 +183,10 @@ abstract class CoreComponent : NetworkingComponent {
         marketDispatcher: OctonautMarketDispatcher,
     ): RepositorySupplier {
 
-        val marketActionFactory = MarketActionFactory<GetRepositoryQuery.Repository, OctonautMarketAction> { storeOutput ->
-            OctonautMarketAction.AddRepository(storeOutput)
-        }
+        val marketActionFactory =
+            MarketActionFactory<GetRepositoryQuery.Repository, OctonautMarketAction> { storeOutput ->
+                OctonautMarketAction.AddRepository(storeOutput)
+            }
 
         return RealMarketSupplier(
             coroutineDispatcher,

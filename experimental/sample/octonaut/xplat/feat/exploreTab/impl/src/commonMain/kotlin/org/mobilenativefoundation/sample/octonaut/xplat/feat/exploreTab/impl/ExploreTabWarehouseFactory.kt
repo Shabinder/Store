@@ -13,7 +13,7 @@ class ExploreTabWarehouseFactory(
 
         return warehouseBuilder.extractor { marketState ->
             ExploreTabWarehouseState(
-                user = marketState.currentUser,
+                user = marketState.currentUser?.user,
                 searchResults = emptyList() // TODO
             )
         }.actionHandler { action, marketState ->
