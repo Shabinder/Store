@@ -39,6 +39,8 @@ kotlin {
                 implementation(libs.kotlinx.coroutines.core)
                 api(project(":store"))
                 api(libs.kotlinx.datetime)
+                api(libs.kotlinx.serialization.core)
+                api(libs.kotlinx.serialization.json)
             }
         }
 
