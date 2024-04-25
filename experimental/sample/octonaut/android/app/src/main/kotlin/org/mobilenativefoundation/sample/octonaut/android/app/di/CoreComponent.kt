@@ -34,8 +34,12 @@ import org.mobilenativefoundation.sample.octonaut.xplat.feat.*
 import org.mobilenativefoundation.sample.octonaut.xplat.feat.exploreTab.api.ExploreTab
 import org.mobilenativefoundation.sample.octonaut.xplat.feat.exploreTab.impl.*
 import org.mobilenativefoundation.sample.octonaut.xplat.feat.homeTab.api.HomeTab
-import org.mobilenativefoundation.sample.octonaut.xplat.feat.homeTab.impl.*
+import org.mobilenativefoundation.sample.octonaut.xplat.feat.homeTab.impl.HomeTabUi
+import org.mobilenativefoundation.sample.octonaut.xplat.feat.homeTab.impl.HomeTabWarehouse
+import org.mobilenativefoundation.sample.octonaut.xplat.feat.homeTab.impl.HomeTabWarehouseFactory
+import org.mobilenativefoundation.sample.octonaut.xplat.feat.homeTab.impl.RealHomeTab
 import org.mobilenativefoundation.sample.octonaut.xplat.feat.notificationsTab.api.NotificationsTab
+import org.mobilenativefoundation.sample.octonaut.xplat.feat.userProfile.impl.UserProfileScreenUi
 import org.mobilenativefoundation.sample.octonaut.xplat.foundation.di.api.UserScope
 import org.mobilenativefoundation.sample.octonaut.xplat.foundation.networking.api.*
 import org.mobilenativefoundation.sample.octonaut.xplat.foundation.networking.impl.Env
@@ -237,13 +241,6 @@ abstract class CoreComponent : NetworkingComponent {
         return homeTabWarehouseFactory.create()
     }
 
-    @Provides
-    fun provideHomeTabPresenter(
-        warehouse: HomeTabWarehouse,
-        webViewUrlStateHolder: WebViewUrlStateHolder
-    ): HomeTabPresenter {
-        return HomeTabPresenter(warehouse, webViewUrlStateHolder)
-    }
 
     @Provides
     fun provideHomeTabUi(): HomeTabUi = HomeTabUi()
@@ -319,6 +316,8 @@ abstract class CoreComponent : NetworkingComponent {
         }
     }
 
+    @Provides
+    fun provideUserProfileScreenUi(): UserProfileScreenUi = UserProfileScreenUi()
 
     companion object
 }

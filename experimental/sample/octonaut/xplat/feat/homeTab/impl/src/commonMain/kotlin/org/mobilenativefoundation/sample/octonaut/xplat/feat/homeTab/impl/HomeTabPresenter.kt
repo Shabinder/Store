@@ -2,14 +2,19 @@ package org.mobilenativefoundation.sample.octonaut.xplat.feat.homeTab.impl
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import com.slack.circuit.runtime.Navigator
+import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.sample.octonaut.xplat.feat.homeTab.api.HomeTab
+import org.mobilenativefoundation.sample.octonaut.xplat.feat.userProfile.api.LaunchUserProfileScreen
+import org.mobilenativefoundation.sample.octonaut.xplat.feat.userProfile.api.UserProfileScreen
 import org.mobilenativefoundation.sample.octonaut.xplat.foundation.webview.WebViewUrlStateHolder
 
 @Inject
 class HomeTabPresenter(
     private val warehouse: HomeTabWarehouse,
-    private val webViewUrlStateHolder: WebViewUrlStateHolder
+    private val webViewUrlStateHolder: WebViewUrlStateHolder,
+    @Assisted private val navigator: Navigator
 ) : HomeTab.Presenter {
 
     private fun on(event: HomeTab.Event) {
@@ -20,7 +25,9 @@ class HomeTabPresenter(
             }
 
             is HomeTab.Event.OpenDetailedView.Repository -> TODO()
-            is HomeTab.Event.OpenDetailedView.User -> TODO()
+            is HomeTab.Event.OpenDetailedView.User -> {
+                navigator.goTo(LaunchUserProfileScreen(event.login))
+            }
         }
     }
 

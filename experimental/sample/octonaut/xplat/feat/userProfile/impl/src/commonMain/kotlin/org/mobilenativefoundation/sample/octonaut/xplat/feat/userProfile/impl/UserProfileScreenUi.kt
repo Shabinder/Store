@@ -23,7 +23,6 @@ class UserProfileScreenUi : UserProfileScreen.Ui {
 
     @Composable
     private fun LoadedContent(state: UserProfileScreen.State.Loaded) {
-
-
+        Text(state.user.name)
     }
 }

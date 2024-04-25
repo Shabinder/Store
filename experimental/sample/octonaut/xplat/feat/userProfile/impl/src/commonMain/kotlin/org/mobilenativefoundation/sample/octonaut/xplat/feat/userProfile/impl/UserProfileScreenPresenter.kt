@@ -2,17 +2,20 @@ package org.mobilenativefoundation.sample.octonaut.xplat.feat.userProfile.impl
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.sample.octonaut.xplat.feat.userProfile.api.UserProfileScreen
 
 @Inject
 class UserProfileScreenPresenter(
-    private val screen: UserProfileScreen,
-    private val warehouse: UserProfileScreenWarehouse
+    @Assisted private val login: String,
+    warehouseFactory: (login: String) -> UserProfileScreenWarehouseFactory
 ) : UserProfileScreen.Presenter {
 
+    private val warehouse = warehouseFactory(login).create()
+
     init {
-        warehouse.dispatch(UserProfileScreenWarehouseAction.LoadUser(screen.login))
+        warehouse.dispatch(UserProfileScreenWarehouseAction.LoadUser(login))
     }
 
     private fun on(event: UserProfileScreen.Event) {
@@ -31,6 +34,8 @@ class UserProfileScreenPresenter(
     override fun present(): UserProfileScreen.State {
         val warehouseState = warehouse.state.collectAsState()
 
-        return UserProfileScreen.State.Loading(::on)
+        return warehouseState.value.user?.let {
+            UserProfileScreen.State.Loaded(it, ::on)
+        } ?: UserProfileScreen.State.Loading(::on)
     }
 }

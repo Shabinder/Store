@@ -3,6 +3,7 @@ plugins {
     id("plugin.octonaut.kotlin.multiplatform")
     alias(libs.plugins.serialization)
     alias(libs.plugins.compose)
+    alias(libs.plugins.kotlin.plugin.parcelize)
 }
 
 kotlin {

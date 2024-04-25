@@ -10,6 +10,8 @@ import org.mobilenativefoundation.sample.octonaut.xplat.feat.exploreTab.impl.Exp
 import org.mobilenativefoundation.sample.octonaut.xplat.feat.homeTab.api.HomeTab
 import org.mobilenativefoundation.sample.octonaut.xplat.feat.homeTab.impl.HomeTabUi
 import org.mobilenativefoundation.sample.octonaut.xplat.feat.notificationsTab.api.NotificationsTab
+import org.mobilenativefoundation.sample.octonaut.xplat.feat.userProfile.api.UserProfileScreen
+import org.mobilenativefoundation.sample.octonaut.xplat.feat.userProfile.impl.UserProfileScreenUi
 import org.mobilenativefoundation.sample.octonaut.xplat.foundation.di.api.UserScope
 
 @Inject
@@ -17,13 +19,15 @@ import org.mobilenativefoundation.sample.octonaut.xplat.foundation.di.api.UserSc
 class OctonautUiFactory(
     private val homeTabUi: HomeTabUi,
     private val exploreTabUi: ExploreTabUi,
-    private val notificationsTabUi: NotificationsTabUi
+    private val notificationsTabUi: NotificationsTabUi,
+    private val userProfileScreenUi: UserProfileScreenUi
 ) : Ui.Factory {
     override fun create(screen: Screen, context: CircuitContext): Ui<*>? {
         return when (screen) {
             is HomeTab -> homeTabUi
             is ExploreTab -> exploreTabUi
             is NotificationsTab -> notificationsTabUi
+            is UserProfileScreen -> userProfileScreenUi
             else -> null
         }
     }

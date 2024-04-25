@@ -50,6 +50,7 @@ dependencies {
     implementation(project(":experimental:sample:octonaut:xplat:domain:feed:impl"))
     implementation(project(":experimental:sample:octonaut:xplat:domain:notifications:impl"))
     implementation(project(":experimental:sample:octonaut:xplat:feat:homeTab:impl"))
+    implementation(project(":experimental:sample:octonaut:xplat:feat:userProfile:impl"))
     implementation(project(":experimental:sample:octonaut:xplat:feat:notificationsTab:impl"))
     implementation(project(":experimental:sample:octonaut:xplat:feat:exploreTab:impl"))
     implementation(project(":experimental:sample:octonaut:xplat:feat:profileTab:impl"))

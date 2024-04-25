@@ -162,9 +162,12 @@ class RealOctonautMarketDispatcher(
                 val byId = prevState.users.byId.toMutableMap()
                 byId[user.id] = user
 
+                val loginToId = allIds.mapNotNull { id -> byId[id] }.associate { it.login to it.id }
+
                 val usersState = UsersState(
                     byId = byId,
-                    allIds = allIds
+                    allIds = allIds,
+                    loginToId = loginToId
                 )
 
                 prevState.copy(

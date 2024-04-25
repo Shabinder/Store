@@ -1,6 +1,7 @@
 package org.mobilenativefoundation.sample.octonaut.xplat.foundation.networking.impl
 
 import io.ktor.client.*
+import io.ktor.client.engine.apache5.*
 
 actual fun httpClient(config: HttpClientConfig<*>.() -> Unit) = HttpClient(Apache5) {
     engine {

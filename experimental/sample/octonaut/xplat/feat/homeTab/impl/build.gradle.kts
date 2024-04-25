@@ -25,7 +25,7 @@ kotlin {
                 api(project(":experimental:sample:octonaut:xplat:feat:homeTab:api"))
                 api(project(":experimental:sample:octonaut:xplat:foundation:di:api"))
                 api(project(":experimental:sample:octonaut:xplat:foundation:webview"))
-                api(project(":experimental:sample:octonaut:xplat:feat:exploreTab:api"))
+                api(project(":experimental:sample:octonaut:xplat:feat:userProfile:api"))
                 implementation(libs.coil.compose)
                 implementation(libs.coil.network)
                 implementation(libs.ktor.core)

@@ -26,10 +26,9 @@ interface HomeTab : Screen {
         data object Refresh : Event
         data class OpenWebView(val url: String) : Event
         sealed interface OpenDetailedView : Event {
-            val id: String
 
-            data class User(override val id: String) : OpenDetailedView
-            data class Repository(override val id: String) : OpenDetailedView
+            data class User(val login: String) : OpenDetailedView
+            data class Repository(val id: String) : OpenDetailedView
         }
     }
 

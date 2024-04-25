@@ -1,9 +1,10 @@
 package org.mobilenativefoundation.sample.octonaut.xplat.feat.userProfile.impl
 
 import org.mobilenativefoundation.market.warehouse.Warehouse
+import org.mobilenativefoundation.sample.octonaut.xplat.domain.user.api.User
 
 data class UserProfileScreenWarehouseState(
-    val user: Any
+    val user: User?
 ) : Warehouse.State
 
 sealed interface UserProfileScreenWarehouseAction : Warehouse.Action {

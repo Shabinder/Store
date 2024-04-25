@@ -15,7 +15,6 @@ kotlin {
                 api(libs.circuit.foundation)
                 api(libs.apollo.runtime)
                 api(libs.kotlinx.serialization.core)
-                implementation(libs.ktor.serialization.xml)
                 api(project(":experimental:sample:octonaut:xplat:foundation:di:api"))
                 api("io.github.pdvrieze.xmlutil:serialization:0.86.3")
 

@@ -3,11 +3,14 @@ package org.mobilenativefoundation.sample.octonaut.xplat.feat.userProfile.api
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.screen.Screen
+import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.sample.octonaut.xplat.domain.user.api.User
 import com.slack.circuit.runtime.presenter.Presenter as CircuitPresenter
 import com.slack.circuit.runtime.ui.Ui as CircuitUi
 
+@Inject
 interface UserProfileScreen : Screen {
+
     val login: String
 
     sealed interface State : CircuitUiState {
@@ -30,3 +33,7 @@ interface UserProfileScreen : Screen {
     interface Ui : CircuitUi<State>
     interface Presenter : CircuitPresenter<State>
 }
+
+expect class LaunchUserProfileScreen(
+    login: String
+): UserProfileScreen

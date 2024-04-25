@@ -13,7 +13,6 @@ kotlin {
                 api(compose.components.resources)
                 api(libs.circuit.foundation)
                 api(libs.kotlinx.serialization.core)
-                implementation(libs.ktor.serialization.xml)
                 api(project(":experimental:sample:octonaut:xplat:foundation:di:api"))
                 implementation(libs.compose.webview.multiplatform)
             }
