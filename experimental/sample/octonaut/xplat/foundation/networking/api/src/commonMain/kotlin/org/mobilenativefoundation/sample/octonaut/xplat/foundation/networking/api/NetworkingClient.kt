@@ -4,4 +4,5 @@ interface NetworkingClient {
     suspend fun getUser(query: GetUserQuery): GetUserQuery.Data?
 
     suspend fun listNotifications(queryParams: ListNotificationsQueryParams): ListNotificationsResponse
+    suspend fun getFeed(): Feed
 }

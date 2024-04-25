@@ -22,8 +22,11 @@ kotlin {
                 implementation(libs.ktor.core)
                 implementation(libs.ktor.negotiation)
                 implementation(libs.ktor.serialization.json)
+                implementation(libs.ktor.serialization.xml)
+                implementation(libs.kotlinx.serialization.core)
                 api(project(":experimental:sample:octonaut:xplat:foundation:networking:api"))
                 api(project(":experimental:sample:octonaut:xplat:foundation:di:api"))
+                implementation("io.github.pdvrieze.xmlutil:serialization:0.86.3")
             }
         }
 

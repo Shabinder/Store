@@ -14,7 +14,7 @@ class NotificationsTabWarehouseFactory(
             warehouseBuilderFactory.create<NotificationsTabWarehouseState, NotificationsTabWarehouseAction>()
 
         return warehouseBuilder.extractor { marketState ->
-            NotificationsTabWarehouseState(marketState.notifications)
+            NotificationsTabWarehouseState(marketState.notifications.allIds.mapNotNull { marketState.notifications.byId[it] })
         }
             .actionHandler { action, marketState ->
                 when (action) {

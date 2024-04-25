@@ -17,6 +17,7 @@ kotlin {
                 api(project(":experimental:sample:octonaut:xplat:foundation:di:api"))
                 api(project(":store"))
                 api(project(":experimental:sample:octonaut:xplat:domain:user:api"))
+                api(project(":experimental:sample:octonaut:xplat:domain:feed:api"))
             }
         }
     }

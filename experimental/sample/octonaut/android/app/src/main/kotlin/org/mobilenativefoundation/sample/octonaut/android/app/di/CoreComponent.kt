@@ -6,6 +6,7 @@ import com.slack.circuit.runtime.ui.Ui
 import io.ktor.client.*
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 import org.mobilenativefoundation.market.impl.MarketActionFactory
@@ -19,9 +20,13 @@ import org.mobilenativefoundation.sample.octonaut.android.app.market.MutableOcto
 import org.mobilenativefoundation.sample.octonaut.android.app.market.RealMutableOctonautMarket
 import org.mobilenativefoundation.sample.octonaut.android.app.market.RealOctonautMarketDispatcher
 import org.mobilenativefoundation.sample.octonaut.xplat.common.market.*
+import org.mobilenativefoundation.sample.octonaut.xplat.domain.feed.api.FeedStore
+import org.mobilenativefoundation.sample.octonaut.xplat.domain.feed.api.FeedSupplier
+import org.mobilenativefoundation.sample.octonaut.xplat.domain.feed.impl.FeedStoreFactory
 import org.mobilenativefoundation.sample.octonaut.xplat.domain.notifications.api.NotificationsStore
 import org.mobilenativefoundation.sample.octonaut.xplat.domain.notifications.api.NotificationsSupplier
 import org.mobilenativefoundation.sample.octonaut.xplat.domain.notifications.impl.NotificationsStoreFactory
+import org.mobilenativefoundation.sample.octonaut.xplat.domain.user.api.CurrentUserSupplier
 import org.mobilenativefoundation.sample.octonaut.xplat.domain.user.api.UserStore
 import org.mobilenativefoundation.sample.octonaut.xplat.domain.user.api.UserSupplier
 import org.mobilenativefoundation.sample.octonaut.xplat.domain.user.impl.UserStoreFactory
@@ -32,13 +37,11 @@ import org.mobilenativefoundation.sample.octonaut.xplat.feat.homeTab.api.HomeTab
 import org.mobilenativefoundation.sample.octonaut.xplat.feat.homeTab.impl.*
 import org.mobilenativefoundation.sample.octonaut.xplat.feat.notificationsTab.api.NotificationsTab
 import org.mobilenativefoundation.sample.octonaut.xplat.foundation.di.api.UserScope
-import org.mobilenativefoundation.sample.octonaut.xplat.foundation.networking.api.GetUserQuery
-import org.mobilenativefoundation.sample.octonaut.xplat.foundation.networking.api.ListNotificationsResponse
-import org.mobilenativefoundation.sample.octonaut.xplat.foundation.networking.api.NetworkingClient
-import org.mobilenativefoundation.sample.octonaut.xplat.foundation.networking.api.NetworkingComponent
+import org.mobilenativefoundation.sample.octonaut.xplat.foundation.networking.api.*
 import org.mobilenativefoundation.sample.octonaut.xplat.foundation.networking.impl.Env
 import org.mobilenativefoundation.sample.octonaut.xplat.foundation.networking.impl.RealNetworkingClient
 import org.mobilenativefoundation.sample.octonaut.xplat.foundation.networking.impl.httpClient
+import org.mobilenativefoundation.sample.octonaut.xplat.foundation.webview.WebViewUrlStateHolder
 
 @UserScope
 @Component
@@ -51,8 +54,10 @@ abstract class CoreComponent : NetworkingComponent {
     abstract val mutableMarket: MutableOctonautMarket
     abstract val marketDispatcher: OctonautMarketDispatcher
     abstract val coroutineDispatcher: CoroutineDispatcher
-    abstract val userSupplier: UserSupplier
+    abstract val currentUserSupplier: CurrentUserSupplier
     abstract val scheduledNotificationsSupplier: NotificationsSupplier
+    abstract val feedSupplier: FeedSupplier
+    abstract val webViewUrlStateHolder: WebViewUrlStateHolder
 
     @UserScope
     @Provides
@@ -113,6 +118,17 @@ abstract class CoreComponent : NetworkingComponent {
         return notificationsStoreFactory.create()
     }
 
+    @Provides
+    fun provideFeedStoreFactory(networkingClient: NetworkingClient): FeedStoreFactory {
+        return FeedStoreFactory(networkingClient)
+    }
+
+    @Provides
+    @UserScope
+    fun provideFeedStore(notificationsStoreFactory: FeedStoreFactory): FeedStore {
+        return notificationsStoreFactory.create()
+    }
+
 
     @Provides
     @UserScope
@@ -123,7 +139,48 @@ abstract class CoreComponent : NetworkingComponent {
     ): UserSupplier {
 
         val marketActionFactory = MarketActionFactory<GetUserQuery.User, OctonautMarketAction> { storeOutput ->
-            OctonautMarketAction.UpdateUser(storeOutput)
+            OctonautMarketAction.AddUser(storeOutput)
+        }
+
+        return RealMarketSupplier(
+            coroutineDispatcher,
+            userStore,
+            marketDispatcher,
+            marketActionFactory
+        )
+    }
+
+    @Provides
+    @UserScope
+    fun provideCurrentUserSupplier(
+        coroutineDispatcher: CoroutineDispatcher,
+        userStore: UserStore,
+        marketDispatcher: OctonautMarketDispatcher,
+    ): CurrentUserSupplier {
+
+        val marketActionFactory = MarketActionFactory<GetUserQuery.User, OctonautMarketAction> { storeOutput ->
+            OctonautMarketAction.UpdateCurrentUser(storeOutput)
+        }
+
+        return RealMarketSupplier(
+            coroutineDispatcher,
+            userStore,
+            marketDispatcher,
+            marketActionFactory
+        )
+    }
+
+    @Provides
+    @UserScope
+    fun provideFeedSupplier(
+        coroutineDispatcher: CoroutineDispatcher,
+        userStore: FeedStore,
+        marketDispatcher: OctonautMarketDispatcher,
+    ): FeedSupplier {
+
+        val marketActionFactory = MarketActionFactory<Feed, OctonautMarketAction> { storeOutput ->
+            println("STORE OUTPUT = $storeOutput")
+            OctonautMarketAction.UpdateFeed(storeOutput)
         }
 
         return RealMarketSupplier(
@@ -182,9 +239,10 @@ abstract class CoreComponent : NetworkingComponent {
 
     @Provides
     fun provideHomeTabPresenter(
-        warehouse: HomeTabWarehouse
+        warehouse: HomeTabWarehouse,
+        webViewUrlStateHolder: WebViewUrlStateHolder
     ): HomeTabPresenter {
-        return HomeTabPresenter(warehouse)
+        return HomeTabPresenter(warehouse, webViewUrlStateHolder)
     }
 
     @Provides
@@ -252,6 +310,14 @@ abstract class CoreComponent : NetworkingComponent {
 
     @Provides
     fun provideNotificationsTab(): NotificationsTab = RealNotificationsTab
+
+    @Provides
+    @UserScope
+    fun provideWebViewUrlStateHolder(): WebViewUrlStateHolder {
+        return object : WebViewUrlStateHolder {
+            override val url = MutableStateFlow<String?>(null)
+        }
+    }
 
 
     companion object

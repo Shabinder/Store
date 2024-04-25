@@ -5,23 +5,27 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import coil3.annotation.ExperimentalCoilApi
-import com.slack.circuit.foundation.Circuit
-import com.slack.circuit.foundation.CircuitCompositionLocals
-import com.slack.circuit.foundation.CircuitContent
-import com.slack.circuit.runtime.screen.Screen
+import com.multiplatform.webview.web.WebView
+import com.multiplatform.webview.web.WebViewNavigator
+import com.multiplatform.webview.web.rememberWebViewState
+import com.slack.circuit.backstack.rememberSaveableBackStack
+import com.slack.circuit.foundation.*
 import me.tatarka.inject.annotations.Inject
 import org.mobilenativefoundation.sample.octonaut.android.app.di.CoreComponent
 import org.mobilenativefoundation.sample.octonaut.android.app.di.create
@@ -31,7 +35,7 @@ import org.mobilenativefoundation.sample.octonaut.xplat.foundation.networking.ap
 import kotlin.time.Duration.Companion.minutes
 
 
-@OptIn(ExperimentalCoilApi::class)
+@OptIn(ExperimentalCoilApi::class, ExperimentalMaterial3Api::class)
 @Inject
 class MainActivity : ComponentActivity() {
 
@@ -51,27 +55,33 @@ class MainActivity : ComponentActivity() {
 
         setContent {
 
+            val homeTab = remember { coreComponent.screenFactory.homeTab() }
+            val exploreTab = remember { coreComponent.screenFactory.exploreTab() }
+            val notificationsTab = remember { coreComponent.screenFactory.notificationsTab() }
+
+            val webViewUrlState = coreComponent.webViewUrlStateHolder.url.collectAsState()
+
+            val webViewState = webViewUrlState.value?.let { rememberWebViewState(it) }
+
+
+            val backStack = rememberSaveableBackStack(root = homeTab)
+            val navigator = rememberCircuitNavigator(backStack)
+
             CircuitCompositionLocals(circuit) {
 
-                val homeTab = remember { coreComponent.screenFactory.homeTab() }
-                val exploreTab = remember { coreComponent.screenFactory.exploreTab() }
-                val notificationsTab = remember { coreComponent.screenFactory.notificationsTab()}
-                val activeScreen = remember { mutableStateOf<Screen>(homeTab) }
 
                 OctonautTheme {
                     Box(
                         modifier = Modifier.fillMaxSize()
                     ) {
-
                         LaunchedEffect(Unit) {
                             try {
-
-                                coreComponent.userSupplier.supply(GetUserQuery("matt-ramotar"))
-
+                                coreComponent.currentUserSupplier.supply(GetUserQuery("matt-ramotar"))
                                 coreComponent.scheduledNotificationsSupplier.supply(
                                     ListNotificationsQueryParams(),
                                     5.minutes
                                 )
+                                coreComponent.feedSupplier.supply(Unit)
 
                             } catch (error: Throwable) {
                                 println("Error: ${error.stackTraceToString()}")
@@ -84,7 +94,7 @@ class MainActivity : ComponentActivity() {
                                 BottomAppBar(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
                                     IconButton(
                                         onClick = {
-                                            activeScreen.value = homeTab
+                                            navigator.goTo(homeTab)
                                         }
                                     ) {
                                         Icon(Icons.Default.Home, "")
@@ -92,7 +102,7 @@ class MainActivity : ComponentActivity() {
 
                                     IconButton(
                                         onClick = {
-                                            activeScreen.value = notificationsTab
+                                            navigator.goTo(notificationsTab)
                                         }
                                     ) {
                                         Icon(Icons.Default.Notifications, "")
@@ -100,7 +110,7 @@ class MainActivity : ComponentActivity() {
 
                                     IconButton(
                                         onClick = {
-                                            activeScreen.value = exploreTab
+                                            navigator.goTo(exploreTab)
                                         }
                                     ) {
                                         Icon(Icons.Default.Search, "")
@@ -115,11 +125,48 @@ class MainActivity : ComponentActivity() {
                             }
                         ) { innerPadding ->
 
-                            CircuitContent(
-                                screen = activeScreen.value,
+                            NavigableCircuitContent(
+                                navigator,
+                                backStack,
                                 modifier = Modifier.padding(innerPadding)
-                                    .background(MaterialTheme.colorScheme.background)
+                                    .background(MaterialTheme.colorScheme.background),
+                                decoration = NavigatorDefaults.EmptyDecoration
                             )
+                        }
+
+                        webViewState?.let {
+                            val webViewNavigator = WebViewNavigator(rememberCoroutineScope())
+
+                            Box(modifier = Modifier.fillMaxSize()) {
+                                Column {
+                                    TopAppBar(
+                                        title = {
+                                            Text(webViewState.pageTitle?.let { "${it}..." } ?: "",
+                                                style = MaterialTheme.typography.labelLarge,
+                                                maxLines = 1)
+                                        },
+                                        navigationIcon = {
+                                            IconButton(onClick = {
+                                                if (webViewNavigator.canGoBack) {
+                                                    webViewNavigator.navigateBack()
+                                                } else {
+                                                    coreComponent.webViewUrlStateHolder.url.value = null
+                                                }
+
+                                            }) {
+                                                Icon(Icons.AutoMirrored.Default.ArrowBack, "")
+                                            }
+                                        }
+                                    )
+                                    WebView(
+                                        it,
+                                        modifier = Modifier.fillMaxSize(),
+                                        captureBackPresses = true,
+                                        navigator = webViewNavigator
+                                    )
+                                }
+
+                            }
                         }
                     }
                 }

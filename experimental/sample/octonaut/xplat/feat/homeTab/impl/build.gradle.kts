@@ -24,9 +24,12 @@ kotlin {
                 api(project(":experimental:sample:octonaut:xplat:common:market"))
                 api(project(":experimental:sample:octonaut:xplat:feat:homeTab:api"))
                 api(project(":experimental:sample:octonaut:xplat:foundation:di:api"))
+                api(project(":experimental:sample:octonaut:xplat:foundation:webview"))
+                api(project(":experimental:sample:octonaut:xplat:feat:exploreTab:api"))
                 implementation(libs.coil.compose)
                 implementation(libs.coil.network)
                 implementation(libs.ktor.core)
+                api(libs.compose.webview.multiplatform)
             }
         }
 
