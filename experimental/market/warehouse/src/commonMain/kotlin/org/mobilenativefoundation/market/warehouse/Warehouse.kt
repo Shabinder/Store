@@ -26,15 +26,15 @@ interface Warehouse<S : Warehouse.State, A : Warehouse.Action> {
 class RealWarehouse<S : Warehouse.State, A : Warehouse.Action, MS : Market.State, M : Market<MS>>(
     coroutineDispatcher: CoroutineDispatcher,
     private val market: M,
-    private val extractor: (MS) -> S,
+    private val selector: Market.Selector<MS, S>,
     private val actionHandler: (A, MS) -> Unit
 ) : Warehouse<S, A> {
 
     private val coroutineScope = CoroutineScope(coroutineDispatcher)
 
     override val state: StateFlow<S> = market.state.map {
-        extractor(it)
-    }.stateIn(coroutineScope, SharingStarted.Eagerly, extractor(market.state.value))
+        selector.select(it)
+    }.stateIn(coroutineScope, SharingStarted.Eagerly, selector.select(market.state.value))
 
 
     override fun <D : Any> subscribe(selector: Warehouse.Selector<S, D>): Flow<D> =

@@ -9,21 +9,23 @@ import org.mobilenativefoundation.sample.octonaut.xplat.foundation.networking.ap
 @Inject
 class HomeTabWarehouseFactory(
     private val userSupplier: UserSupplier,
-    private val warehouseBuilderFactory: WarehouseBuilderFactory
+    warehouseBuilderFactory: WarehouseBuilderFactory
 ) {
-    fun create(): HomeTabWarehouse {
-        val warehouseBuilder = warehouseBuilderFactory
-            .create<HomeTabWarehouseState, HomeTabWarehouseAction>()
+    private val warehouseBuilder = warehouseBuilderFactory.create<HomeTabWarehouseState, HomeTabWarehouseAction>()
 
-        return warehouseBuilder
-            .extractor { marketState ->
-                HomeTabWarehouseState(marketState.currentUser?.user, marketState.feed)
+    fun create(): HomeTabWarehouse =
+        warehouseBuilder
+            .memoizedSelector(getParams = { _ -> }) { state ->
+                HomeTabWarehouseState(
+                    state.currentUser.user,
+                    state.feed
+                )
             }
             .actionHandler { action, marketState ->
                 when (action) {
                     HomeTabWarehouseAction.Refresh -> {
                         // Refresh user
-                        val currentUser = marketState.currentUser!!.user!!
+                        val currentUser = marketState.currentUser.user!!
                         userSupplier.supply(GetUserQuery(currentUser.login))
 
                         // Refresh repositories
@@ -32,5 +34,4 @@ class HomeTabWarehouseFactory(
                 }
             }
             .build()
-    }
 }

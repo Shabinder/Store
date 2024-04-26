@@ -225,7 +225,6 @@ abstract class CoreComponent : NetworkingComponent {
     ): FeedSupplier {
 
         val marketActionFactory = MarketActionFactory<Feed, OctonautMarketAction> { storeOutput ->
-            println("STORE OUTPUT = $storeOutput")
             OctonautMarketAction.UpdateFeed(storeOutput)
         }
 

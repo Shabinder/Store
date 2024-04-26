@@ -45,10 +45,8 @@ class RealScheduledMarketSupplier<K : Any, O : Any, A : Market.Action, D : Marke
 
     private suspend fun supplyMarket(key: K) {
         try {
-            println("SUPPLYING MARKET for key $key")
             val storeOutput = store.fresh(key)
             val marketAction = marketActionFactory.create(storeOutput)
-            println("UPDATING MARKET WITH $storeOutput")
             marketDispatcher.dispatch(marketAction)
         } catch (e: Exception) {
             // TODO

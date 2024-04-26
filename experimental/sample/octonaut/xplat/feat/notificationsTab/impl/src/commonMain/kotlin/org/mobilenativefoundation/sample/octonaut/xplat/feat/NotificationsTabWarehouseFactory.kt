@@ -7,16 +7,17 @@ import org.mobilenativefoundation.sample.octonaut.xplat.domain.notifications.api
 @Inject
 class NotificationsTabWarehouseFactory(
     private val notificationsSupplier: NotificationsSupplier,
-    private val warehouseBuilderFactory: WarehouseBuilderFactory
+    warehouseBuilderFactory: WarehouseBuilderFactory
 ) {
-    fun create(): NotificationsTabWarehouse {
-        val warehouseBuilder =
-            warehouseBuilderFactory.create<NotificationsTabWarehouseState, NotificationsTabWarehouseAction>()
+    private val warehouseBuilder =
+        warehouseBuilderFactory.create<NotificationsTabWarehouseState, NotificationsTabWarehouseAction>()
 
-        return warehouseBuilder.extractor { marketState ->
-            NotificationsTabWarehouseState(marketState.notifications.allIds.mapNotNull { marketState.notifications.byId[it] })
-        }
-            .actionHandler { action, marketState ->
+    fun create(): NotificationsTabWarehouse =
+        warehouseBuilder
+            .memoizedSelector(getParams = { _ -> }) { state ->
+                NotificationsTabWarehouseState(state.notifications.allIds.mapNotNull { state.notifications.byId[it] })
+            }
+            .actionHandler { action, _ ->
                 when (action) {
                     is NotificationsTabWarehouseAction.MarkDone -> {
                         // TODO
@@ -24,5 +25,4 @@ class NotificationsTabWarehouseFactory(
                 }
             }
             .build()
-    }
 }

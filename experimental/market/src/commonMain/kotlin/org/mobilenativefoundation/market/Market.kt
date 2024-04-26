@@ -17,4 +17,8 @@ interface Market<S: Market.State> {
     interface Dispatcher<A : Action> {
         fun dispatch(action: A)
     }
+
+    fun interface Selector<S: State, R: Any> {
+        fun select(state: S): R
+    }
 }

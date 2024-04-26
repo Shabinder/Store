@@ -14,7 +14,6 @@ class UserStoreFactory(
     fun create(): UserStore {
         val storeBuilder = StoreBuilder.from(
             fetcher = Fetcher.of { query: GetUserQuery ->
-                println("QUERY = $query")
                 networkingClient.getUser(query)?.user ?: throw IllegalStateException("No user")
             },
         )

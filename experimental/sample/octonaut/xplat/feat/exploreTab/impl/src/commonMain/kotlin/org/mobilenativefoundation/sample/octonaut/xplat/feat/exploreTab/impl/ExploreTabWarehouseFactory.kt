@@ -5,24 +5,24 @@ import org.mobilenativefoundation.sample.octonaut.xplat.common.market.WarehouseB
 
 @Inject
 class ExploreTabWarehouseFactory(
-    private val warehouseBuilderFactory: WarehouseBuilderFactory
+    warehouseBuilderFactory: WarehouseBuilderFactory
 ) {
-    fun create(): ExploreTabWarehouse {
-        val warehouseBuilder = warehouseBuilderFactory.create<
-                ExploreTabWarehouseState, ExploreTabWarehouseAction>()
 
-        return warehouseBuilder.extractor { marketState ->
-            ExploreTabWarehouseState(
-                user = marketState.currentUser?.user,
-                searchResults = emptyList() // TODO
-            )
-        }.actionHandler { action, marketState ->
-            when (action) {
-                is ExploreTabWarehouseAction.Search -> {
-                    // TODO
-                }
+    private val warehouseBuilder = warehouseBuilderFactory.create<ExploreTabWarehouseState, ExploreTabWarehouseAction>()
+
+    fun create(): ExploreTabWarehouse =
+        warehouseBuilder
+            .memoizedSelector(getParams = { _ -> }) { state ->
+                ExploreTabWarehouseState(
+                    state.currentUser.user,
+                    emptyList()
+                )
             }
-        }.build()
-    }
+            .actionHandler { action, _ ->
+                when (action) {
+                    is ExploreTabWarehouseAction.Search -> {
+                        // TODO
+                    }
+                }
+            }.build()
 }
-
