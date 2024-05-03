@@ -8,7 +8,7 @@ import org.mobilenativefoundation.market.MarketSupplier
 import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.impl.extensions.fresh
 
-class RealMarketSupplier<K : Any, O : Any, A : Market.Action, D : Market.Dispatcher<A>>(
+internal class RealMarketSupplier<K : Any, O : Any, A : Market.Action, D : Market.Dispatcher<A>>(
     coroutineDispatcher: CoroutineDispatcher,
     private val store: Store<K, O>,
     private val marketDispatcher: D,
