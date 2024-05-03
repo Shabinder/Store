@@ -1,6 +1,6 @@
 plugins {
-    id("plugin.octonaut.android.library")
-    id("plugin.octonaut.kotlin.multiplatform")
+    id("plugin.scoop.android.library")
+    id("plugin.scoop.kotlin.multiplatform")
     alias(libs.plugins.serialization)
     alias(libs.plugins.compose)
     alias(libs.plugins.ksp)
@@ -23,8 +23,8 @@ kotlin {
                 implementation(libs.ktor.negotiation)
                 implementation(libs.ktor.serialization.json)
                 implementation(libs.kotlinx.serialization.core)
-                api(project(":experimental:sample:octonaut:xplat:foundation:networking:api"))
-                api(project(":experimental:sample:octonaut:xplat:foundation:di:api"))
+                api(project(":experimental:sample:scoop:xplat:foundation:networking:api"))
+                api(project(":experimental:sample:scoop:xplat:foundation:di"))
                 implementation("io.github.pdvrieze.xmlutil:serialization:0.86.3")
             }
         }

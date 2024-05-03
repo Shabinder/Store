@@ -1,6 +1,6 @@
 plugins {
-    id("plugin.octonaut.android.library")
-    id("plugin.octonaut.kotlin.multiplatform")
+    id("plugin.scoop.android.library")
+    id("plugin.scoop.kotlin.multiplatform")
     alias(libs.plugins.serialization)
     alias(libs.plugins.compose)
     id("com.apollographql.apollo3") version "3.8.2"
@@ -15,7 +15,7 @@ kotlin {
                 api(libs.circuit.foundation)
                 api(libs.apollo.runtime)
                 api(libs.kotlinx.serialization.core)
-                api(project(":experimental:sample:scoop:xplat:foundation:di:api"))
+                api(project(":experimental:sample:scoop:xplat:foundation:di"))
                 api("io.github.pdvrieze.xmlutil:serialization:0.86.3")
 
             }

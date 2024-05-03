@@ -1,5 +1,5 @@
 pluginManagement {
-    includeBuild("experimental/sample/octonaut/tooling")
+    includeBuild("experimental/sample/scoop/tooling")
 }
 
 plugins {
@@ -16,32 +16,11 @@ include ':paging'
 include ':core'
 include ':experimental:market'
 include ':experimental:market:warehouse'
-
-include ':experimental:sample:octonaut:android:app'
-include ':experimental:sample:octonaut:xplat:foundation:di:api'
-include ':experimental:sample:octonaut:xplat:foundation:networking:api'
-include ':experimental:sample:octonaut:xplat:foundation:networking:impl'
-include ':experimental:sample:octonaut:xplat:foundation:webview'
-include ':experimental:sample:octonaut:xplat:common:market'
-include ':experimental:sample:octonaut:xplat:domain:user:api'
-include ':experimental:sample:octonaut:xplat:domain:user:impl'
-include ':experimental:sample:octonaut:xplat:domain:notifications:api'
-include ':experimental:sample:octonaut:xplat:domain:notifications:impl'
-include ':experimental:sample:octonaut:xplat:domain:feed:api'
-include ':experimental:sample:octonaut:xplat:domain:feed:impl'
-include ':experimental:sample:octonaut:xplat:domain:repository:api'
-include ':experimental:sample:octonaut:xplat:domain:repository:impl'
-include ':experimental:sample:octonaut:xplat:feat:homeTab:api'
-include ':experimental:sample:octonaut:xplat:feat:homeTab:impl'
-include ':experimental:sample:octonaut:xplat:feat:userProfile:api'
-include ':experimental:sample:octonaut:xplat:feat:userProfile:impl'
-include ':experimental:sample:octonaut:xplat:feat:notificationsTab:api'
-include ':experimental:sample:octonaut:xplat:feat:notificationsTab:impl'
-include ':experimental:sample:octonaut:xplat:feat:exploreTab:api'
-include ':experimental:sample:octonaut:xplat:feat:exploreTab:impl'
-include ':experimental:sample:octonaut:xplat:feat:profileTab:api'
-include ':experimental:sample:octonaut:xplat:feat:profileTab:impl'
+include ':experimental:paging'
 
 include ':experimental:sample:scoop:xplat:foundation:di'
 include ':experimental:sample:scoop:xplat:foundation:networking:api'
 include ':experimental:sample:scoop:xplat:foundation:networking:impl'
+include ':experimental:sample:scoop:xplat:common:market'
+include ':experimental:sample:scoop:xplat:domain:story:api'
+include ':experimental:sample:scoop:xplat:domain:story:impl'

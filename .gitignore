@@ -52,4 +52,3 @@ store/kover
 yarn.lock
 
 **/*Env.kt
-experimental/sample/ev/xplat/foundation/networking/impl/src/commonMain/kotlin/org/mobilenativefoundation/sample/ev/xplat/foundation/networking/impl/Env.kt

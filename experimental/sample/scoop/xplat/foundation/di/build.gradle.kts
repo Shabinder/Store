@@ -1,6 +1,6 @@
 plugins {
-    id("plugin.octonaut.android.library")
-    id("plugin.octonaut.kotlin.multiplatform")
+    id("plugin.scoop.android.library")
+    id("plugin.scoop.kotlin.multiplatform")
     alias(libs.plugins.serialization)
     alias(libs.plugins.compose)
 }

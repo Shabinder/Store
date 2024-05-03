@@ -1,0 +1,32 @@
+query GetStories($limit: Int!, $offset: Int!) {
+    stories(
+        order_by: {publication_date: desc},
+        limit: $limit,
+        offset: $offset
+    ) {
+        ...StoryFields
+    }
+}
+
+query GetStory($id: Int!) {
+    stories_by_pk(id: $id) {
+        ...StoryFields
+    }
+}
+
+fragment StoryFields on stories {
+    id
+    title
+    description
+    url
+    publication_date
+    author {
+        name
+        photo_url
+    }
+    story_thumbnails {
+        url
+        width
+        height
+    }
+}
