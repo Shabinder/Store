@@ -5,16 +5,16 @@ package org.mobilenativefoundation.storex.paging
  * The [PagingBuffer] is responsible for caching and providing access to the loaded pages of data.
  * It allows retrieving data by load parameters, page key, or accessing the entire buffer.
  */
-interface PagingBuffer<Id : Comparable<Id>, K : StoreXPaging.Key, V : Identifiable<Id>, E : StoreXPaging.Error> {
-    fun get(params: PagingSource.LoadParams<K>): StoreXPaging.Data.Page<Id, K, V>?
+interface PagingBuffer<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any> {
+    fun get(params: PagingSource.LoadParams<K>): StoreX.Paging.Data.Page<Id, K, V>?
 
-    fun get(key: K): StoreXPaging.Data.Page<Id, K, V>?
+    fun get(key: K): StoreX.Paging.Data.Page<Id, K, V>?
 
-    fun get(id: Id): StoreXPaging.Data.Item<Id, V>?
+    fun get(id: Id): StoreX.Paging.Data.Item<Id, V>?
 
-    fun head(): StoreXPaging.Data.Page<Id, K, V>?
+    fun head(): StoreX.Paging.Data.Page<Id, K, V>?
 
-    fun getAll(): List<StoreXPaging.Data.Page<Id, K, V>>
+    fun getAll(): List<StoreX.Paging.Data.Page<Id, K, V>>
 
     fun isEmpty(): Boolean
 
@@ -24,5 +24,5 @@ interface PagingBuffer<Id : Comparable<Id>, K : StoreXPaging.Key, V : Identifiab
         anchorPosition: K,
         prefetchPosition: K?,
         pagingConfig: PagingConfig
-    ): List<StoreXPaging.Data.Item<Id, V>>
+    ): List<StoreX.Paging.Data.Item<Id, V>>
 }

@@ -1,11 +1,10 @@
 package org.mobilenativefoundation.storex.paging.impl
 
-import org.mobilenativefoundation.storex.paging.*
-
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import org.mobilenativefoundation.storex.paging.PagingSource
 
-class RealRetriesManager<K : StoreXPaging.Key> : RetriesManager<K> {
+class RealRetriesManager<K : Any> : RetriesManager<K> {
     private val retryCounts = mutableMapOf<PagingSource.LoadParams<K>, Int>()
     private val mutex = Mutex()
     override suspend fun resetFor(params: PagingSource.LoadParams<K>) {

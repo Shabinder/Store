@@ -14,6 +14,7 @@ kotlin {
                 api(libs.circuit.foundation)
                 api(libs.kotlinInject.runtime)
                 api(project(":experimental:market"))
+                api(project(":experimental:paging"))
                 api(project(":experimental:sample:scoop:xplat:foundation:networking:api"))
                 api(project(":experimental:sample:scoop:xplat:foundation:di"))
                 api(project(":store"))

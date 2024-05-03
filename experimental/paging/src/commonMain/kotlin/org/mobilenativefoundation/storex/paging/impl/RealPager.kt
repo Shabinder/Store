@@ -7,7 +7,7 @@ import kotlinx.coroutines.launch
 import org.mobilenativefoundation.storex.paging.*
 
 
-class RealPager<Id : Comparable<Id>, K : StoreXPaging.Key, V : Identifiable<Id>, E : StoreXPaging.Error>(
+class RealPager<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
     dispatcher: CoroutineDispatcher,
     pagingStateProvider: PagingStateProvider<Id, K, V, E>,
     private val loader: Loader<Id, K, V, E>,
@@ -31,10 +31,10 @@ class RealPager<Id : Comparable<Id>, K : StoreXPaging.Key, V : Identifiable<Id>,
         }
     }
 
-    override val state: StateFlow<StoreXPaging.State<Id, K, V, E>> = pagingStateProvider.stateFlow()
+    override val state: StateFlow<StoreX.Paging.State<Id, K, V, E>> = pagingStateProvider.stateFlow()
 
-    override val pagingItems: Flow<StoreXPaging.Items<Id, V>> =
-        state.filterIsInstance<StoreXPaging.State.Data<Id, K, V, E>>().map { dataState ->
+    override val pagingItems: Flow<StoreX.Paging.Items<Id, V>> =
+        state.filterIsInstance<StoreX.Paging.State.Data<Id, K, V, E>>().map { dataState ->
             aggregatingStrategy.aggregate(
                 dataState.pagingBuffer,
                 dataState.anchorPosition,
@@ -42,5 +42,5 @@ class RealPager<Id : Comparable<Id>, K : StoreXPaging.Key, V : Identifiable<Id>,
             )
         }
 
-    override val flow: Flow<StoreXPaging.State<Id, K, V, E>> = pagingStateProvider.stateFlow()
+    override val flow: Flow<StoreX.Paging.State<Id, K, V, E>> = pagingStateProvider.stateFlow()
 }

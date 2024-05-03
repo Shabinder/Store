@@ -14,7 +14,7 @@ typealias K = Timeline.GetFeedRequest
 typealias V = Timeline.Post
 typealias E = Timeline.Error
 typealias SPV = PagingSource.LoadResult.Data<Id, K, V, E>
-typealias SIV = StoreXPaging.Data.Item<Id, V>
+typealias SIV = StoreX.Paging.Data.Item<Id, V>
 
 object Timeline {
 
@@ -24,7 +24,7 @@ object Timeline {
         val cursor: String,
         val size: Int,
         val headers: MutableMap<String, String> = mutableMapOf()
-    ) : StoreXPaging.Key
+    )
 
     data class Post(
         override val id: Id
@@ -37,10 +37,10 @@ object Timeline {
         val nextCursor: String?
     )
 
-    sealed interface Error : StoreXPaging.Error {
+    sealed interface Error {
         data class Exception(
             val throwable: Throwable,
-            override val origin: StoreXPaging.DataSource
+            val origin: StoreX.Paging.DataSource
         ) : Error
     }
 
@@ -182,14 +182,14 @@ object Timeline {
                 return StoreBuilder.from<K, SPV>(
                     fetcher = Fetcher.of { request: GetFeedRequest ->
                         val response = feedService.get(request)
-                        val items = response.posts.map { StoreXPaging.Data.Item(it) }
+                        val items = response.posts.map { StoreX.Paging.Data.Item(it) }
                         PagingSource.LoadResult.Data(
                             items = items,
                             key = request,
                             nextKey = response.nextCursor?.let { request.copy(cursor = it) },
                             itemsBefore = response.postsBefore,
                             itemsAfter = response.postsAfter,
-                            origin = StoreXPaging.DataSource.NETWORK,
+                            origin = StoreX.Paging.DataSource.NETWORK,
                             extras = mapOf()
                         )
                     }

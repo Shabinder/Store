@@ -7,7 +7,7 @@ import org.mobilenativefoundation.store.store5.StoreReadRequest
 import org.mobilenativefoundation.store.store5.StoreReadResponse
 
 @Suppress("UNCHECKED_CAST")
-fun <Id : Comparable<Id>, K : StoreXPaging.Key, V : Identifiable<Id>, E : StoreXPaging.Error> Store<K, PagingSource.LoadResult.Data<Id, K, V, E>>.paged(
+fun <Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any> Store<K, PagingSource.LoadResult.Data<Id, K, V, E>>.paged(
     params: PagingSource.LoadParams<K>,
     throwableConverter: (Throwable) -> E,
     messageConverter: (String) -> E,

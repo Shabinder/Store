@@ -3,7 +3,7 @@ package org.mobilenativefoundation.storex.paging.impl
 import org.mobilenativefoundation.storex.paging.*
 
 
-class RealLoader<Id : Comparable<Id>, K : StoreXPaging.Key, V : Identifiable<Id>, E : StoreXPaging.Error>(
+class RealLoader<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
     private val middleware: List<Middleware<K>>,
     private val queueManager: QueueManager<K>,
     private val strategy: PagingSource.LoadParams.Strategy,

@@ -1,9 +1,10 @@
 package monster.scoop.xplat.domain.story.api
 
 import kotlinx.datetime.LocalDateTime
+import org.mobilenativefoundation.storex.paging.Identifiable
 
 data class Story(
-    val id: Int,
+    override val id: Int,
     val title: String,
     val description: String,
     val url: String,
@@ -11,4 +12,4 @@ data class Story(
     val authorId: Int,
     val storyThumbnailIds: List<Int>,
     val content: String
-)
+): Identifiable<Int>

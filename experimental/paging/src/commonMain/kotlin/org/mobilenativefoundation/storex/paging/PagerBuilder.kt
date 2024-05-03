@@ -1,27 +1,17 @@
 package org.mobilenativefoundation.storex.paging
 
-import org.mobilenativefoundation.storex.paging.impl.DefaultFetchingStrategy
-import org.mobilenativefoundation.storex.paging.impl.RealAggregatingStrategy
-import org.mobilenativefoundation.storex.paging.impl.RealJobCoordinator
-import org.mobilenativefoundation.storex.paging.impl.RealLoader
-import org.mobilenativefoundation.storex.paging.impl.RealMutablePagingBuffer
-import org.mobilenativefoundation.storex.paging.impl.RealPager
-import org.mobilenativefoundation.storex.paging.impl.RealPagingSourceController
-import org.mobilenativefoundation.storex.paging.impl.RealPagingStateManager
-import org.mobilenativefoundation.storex.paging.impl.RealQueueManager
-import org.mobilenativefoundation.storex.paging.impl.RealRetriesManager
-import org.mobilenativefoundation.storex.paging.impl.RetriesManager
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.plus
 import org.mobilenativefoundation.store.store5.Store
+import org.mobilenativefoundation.storex.paging.impl.*
 
-class PagerBuilder<Id : Comparable<Id>, K : StoreXPaging.Key, V : Identifiable<Id>, E : StoreXPaging.Error>(
+class PagerBuilder<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
     private val dispatcher: CoroutineDispatcher,
 ) {
 
-    private var initialState: StoreXPaging.State<Id, K, V, E>? = null
+    private var initialState: StoreX.Paging.State<Id, K, V, E>? = null
     private var mutablePagingBuffer: MutablePagingBuffer<Id, K, V, E>? = null
 
     private var pagingConfig: PagingConfig = PagingConfig()
@@ -42,7 +32,7 @@ class PagerBuilder<Id : Comparable<Id>, K : StoreXPaging.Key, V : Identifiable<I
 
     fun initialState(
         mutablePagingBuffer: MutablePagingBuffer<Id, K, V, E>,
-        state: StoreXPaging.State<Id, K, V, E>
+        state: StoreX.Paging.State<Id, K, V, E>
     ) = apply {
         this.initialState = state
         this.mutablePagingBuffer = mutablePagingBuffer
@@ -119,7 +109,7 @@ class PagerBuilder<Id : Comparable<Id>, K : StoreXPaging.Key, V : Identifiable<I
             this.mutablePagingBuffer ?: RealMutablePagingBuffer(pagingBufferMaxSize)
 
         val initialState =
-            this.initialState ?: StoreXPaging.State.Initial(null, null, mutablePagingBuffer)
+            this.initialState ?: StoreX.Paging.State.Initial(null, null, mutablePagingBuffer)
 
         val pagingStateManager: PagingStateManager<Id, K, V, E> =
             RealPagingStateManager(initialState, mutablePagingBuffer)
@@ -134,14 +124,15 @@ class PagerBuilder<Id : Comparable<Id>, K : StoreXPaging.Key, V : Identifiable<I
 
         val retriesManager: RetriesManager<K> = RealRetriesManager()
 
-        val pagingSourceController: org.mobilenativefoundation.storex.paging.PagingSourceController<K> = RealPagingSourceController(
-            sideEffects = sideEffects,
-            pagingConfig = pagingConfig,
-            jobCoordinator = jobCoordinator,
-            pagingSource = pagingSource,
-            pagingStateManager = pagingStateManager,
-            retriesManager = retriesManager
-        )
+        val pagingSourceController: org.mobilenativefoundation.storex.paging.PagingSourceController<K> =
+            RealPagingSourceController(
+                sideEffects = sideEffects,
+                pagingConfig = pagingConfig,
+                jobCoordinator = jobCoordinator,
+                pagingSource = pagingSource,
+                pagingStateManager = pagingStateManager,
+                retriesManager = retriesManager
+            )
 
         val queueManager: QueueManager<K> = RealQueueManager(
             dispatcher = dispatcher,

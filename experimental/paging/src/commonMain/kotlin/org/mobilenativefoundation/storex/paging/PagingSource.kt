@@ -1,9 +1,9 @@
 package org.mobilenativefoundation.storex.paging
 
-interface PagingSource<Id : Comparable<Id>, K : StoreXPaging.Key, V : Identifiable<Id>, E : StoreXPaging.Error> {
+interface PagingSource<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any> {
     fun load(params: LoadParams<K>, onStateTransition: OnStateTransition<Id, K, V, E>)
 
-    data class LoadParams<K : StoreXPaging.Key>(
+    data class LoadParams<K : Any>(
         val key: K,
         val strategy: Strategy
     ) {
@@ -13,28 +13,28 @@ interface PagingSource<Id : Comparable<Id>, K : StoreXPaging.Key, V : Identifiab
         }
     }
 
-    sealed interface LoadResult<Id : Comparable<Id>, out K : StoreXPaging.Key, out V : Identifiable<Id>, out E : StoreXPaging.Error> {
+    sealed interface LoadResult<Id : Comparable<Id>, out K : Any, out V : Identifiable<Id>, out E : Any> {
 
-        data class Error<Id : Comparable<Id>, out K : StoreXPaging.Key, out V : Identifiable<Id>, out E : StoreXPaging.Error>(
+        data class Error<Id : Comparable<Id>, out K : Any, out V : Identifiable<Id>, out E : Any>(
             val value: E,
         ) : LoadResult<Id, K, V, E>
 
-        data class Data<Id : Comparable<Id>, out K : StoreXPaging.Key, out V : Identifiable<Id>, out E : StoreXPaging.Error>(
-            val items: List<StoreXPaging.Data.Item<Id, V>>,
+        data class Data<Id : Comparable<Id>, out K : Any, out V : Identifiable<Id>, out E : Any>(
+            val items: List<StoreX.Paging.Data.Item<Id, V>>,
             val key: K,
             val nextKey: K?,
             val itemsBefore: Int?,
             val itemsAfter: Int?,
-            val origin: StoreXPaging.DataSource,
+            val origin: StoreX.Paging.DataSource,
             val extras: Map<String, Any> = mapOf()
         ) : LoadResult<Id, K, V, E>
 
-        data class Loading<Id : Comparable<Id>, out K : StoreXPaging.Key, out V : Identifiable<Id>, out E : StoreXPaging.Error>(
+        data class Loading<Id : Comparable<Id>, out K : Any, out V : Identifiable<Id>, out E : Any>(
             val extras: Map<String, Any> = mapOf()
         ) : LoadResult<Id, K, V, E>
     }
 
-    data class OnStateTransition<Id : Comparable<Id>, K : StoreXPaging.Key, V : Identifiable<Id>, E : StoreXPaging.Error>(
+    data class OnStateTransition<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
         val onLoading: suspend () -> Unit,
         val onError: suspend (LoadResult.Error<Id, K, V, E>) -> Unit,
         val onData: suspend (LoadResult.Data<Id, K, V, E>) -> Unit

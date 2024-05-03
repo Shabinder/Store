@@ -9,9 +9,9 @@ import kotlinx.coroutines.sync.withLock
 import org.mobilenativefoundation.store.store5.StoreReadResponse
 import org.mobilenativefoundation.storex.paging.Identifiable
 import org.mobilenativefoundation.storex.paging.PagingSource
-import org.mobilenativefoundation.storex.paging.StoreXPaging
+import org.mobilenativefoundation.storex.paging.StoreX
 
-class StorePagingSourceStreamProvider<Id : Comparable<Id>, K : StoreXPaging.Key, V : Identifiable<Id>, E : StoreXPaging.Error>(
+class StorePagingSourceStreamProvider<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
     private val createPageStream: (PagingSource.LoadParams<K>) -> Flow<PagingSource.LoadResult<Id, K, V, E>>,
     private val createItemStream: ((Id) -> Flow<StoreReadResponse<V>>)?,
 ) : PagingSourceStreamProvider<Id, K, V, E> {
@@ -68,7 +68,7 @@ class StorePagingSourceStreamProvider<Id : Comparable<Id>, K : StoreXPaging.Key,
                         val updatedItems = currentData.items.toMutableList()
                         val item = updatedItems[index]
                         if (item != updatedValue) {
-                            updatedItems[index] = StoreXPaging.Data.Item(updatedValue)
+                            updatedItems[index] = StoreX.Paging.Data.Item(updatedValue)
                             val updatedPage = currentData.copy(items = updatedItems)
                             this.loadResultsData[parentKey] = updatedPage
                             emit(updatedPage)

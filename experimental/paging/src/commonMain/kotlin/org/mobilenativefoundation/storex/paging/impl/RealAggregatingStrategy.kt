@@ -4,7 +4,7 @@ import org.mobilenativefoundation.storex.paging.*
 
 
 @Suppress("UNCHECKED_CAST")
-class RealAggregatingStrategy<Id : Comparable<Id>, K : StoreXPaging.Key, V : Identifiable<Id>, E : StoreXPaging.Error>(
+class RealAggregatingStrategy<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
     private val operations: List<Operation<Id, K, V>>,
     private val pagingConfig: PagingConfig,
 ) : AggregatingStrategy<Id, K, V, E> {
@@ -13,14 +13,14 @@ class RealAggregatingStrategy<Id : Comparable<Id>, K : StoreXPaging.Key, V : Ide
         pagingBuffer: PagingBuffer<Id, K, V, E>,
         anchorPosition: K?,
         prefetchPosition: K?
-    ): StoreXPaging.Items<Id, V> {
-        if (pagingBuffer.isEmpty()) return StoreXPaging.Items(emptyList())
+    ): StoreX.Paging.Items<Id, V> {
+        if (pagingBuffer.isEmpty()) return StoreX.Paging.Items(emptyList())
 
-        val orderedItems = mutableListOf<StoreXPaging.Data.Item<Id, V>>()
+        val orderedItems = mutableListOf<StoreX.Paging.Data.Item<Id, V>>()
 
         var currentPage = pagingBuffer.head()
 
-        fun loadItemsFromPagingBuffer(page: StoreXPaging.Data.Page<Id, K, V>) =
+        fun loadItemsFromPagingBuffer(page: StoreX.Paging.Data.Page<Id, K, V>) =
             page.items.mapNotNull { itemId -> pagingBuffer.get(itemId) }
 
         while (currentPage != null) {
@@ -35,12 +35,12 @@ class RealAggregatingStrategy<Id : Comparable<Id>, K : StoreXPaging.Key, V : Ide
 
         val nextOrderedItems = applyOperations(orderedItems)
 
-        return StoreXPaging.Items(nextOrderedItems)
+        return StoreX.Paging.Items(nextOrderedItems)
     }
 
     private fun applyOperations(
-        orderedItems: MutableList<StoreXPaging.Data.Item<Id, V>>,
-    ): MutableList<StoreXPaging.Data.Item<Id, V>> {
+        orderedItems: MutableList<StoreX.Paging.Data.Item<Id, V>>,
+    ): MutableList<StoreX.Paging.Data.Item<Id, V>> {
 
         operations.forEach { operation ->
             val nextOrderedItems = when (operation) {
@@ -70,8 +70,8 @@ class RealAggregatingStrategy<Id : Comparable<Id>, K : StoreXPaging.Key, V : Ide
         return orderedItems
     }
 
-    private fun MutableList<StoreXPaging.Data.Item<Id, V>>.replaceWith(
-        items: List<StoreXPaging.Data.Item<Id, V>>
+    private fun MutableList<StoreX.Paging.Data.Item<Id, V>>.replaceWith(
+        items: List<StoreX.Paging.Data.Item<Id, V>>
     ) = apply {
         clear()
         addAll(items)

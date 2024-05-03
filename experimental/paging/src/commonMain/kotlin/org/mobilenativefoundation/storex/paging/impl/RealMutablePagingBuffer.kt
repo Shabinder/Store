@@ -3,26 +3,26 @@ package org.mobilenativefoundation.storex.paging.impl
 import org.mobilenativefoundation.storex.paging.*
 
 
-class RealMutablePagingBuffer<Id : Comparable<Id>, K : StoreXPaging.Key, V : Identifiable<Id>, E : StoreXPaging.Error>(
+class RealMutablePagingBuffer<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
     private val maxSize: Int = 500
 ) : MutablePagingBuffer<Id, K, V, E> {
 
-    private val pages: Array<StoreXPaging.Data.Page<Id, K, V>?> =
+    private val pages: Array<StoreX.Paging.Data.Page<Id, K, V>?> =
         arrayOfNulls(maxSize)
     private val paramsToIndex: MutableMap<PagingSource.LoadParams<K>, Int> = mutableMapOf()
     private val keyToIndex: MutableMap<K, Int> = mutableMapOf()
-    private val items: MutableMap<Id, StoreXPaging.Data.Item<Id, V>> = mutableMapOf()
+    private val items: MutableMap<Id, StoreX.Paging.Data.Item<Id, V>> = mutableMapOf()
 
     private var head = 0
     private var tail = 0
     private var size = 0
 
-    override fun get(params: PagingSource.LoadParams<K>): StoreXPaging.Data.Page<Id, K, V>? {
+    override fun get(params: PagingSource.LoadParams<K>): StoreX.Paging.Data.Page<Id, K, V>? {
         val index = paramsToIndex[params]
         return if (index != null) pages[index] else null
     }
 
-    override fun get(key: K): StoreXPaging.Data.Page<Id, K, V>? {
+    override fun get(key: K): StoreX.Paging.Data.Page<Id, K, V>? {
         val index = keyToIndex[key]
         return if (index != null) pages[index] else null
     }
@@ -48,7 +48,7 @@ class RealMutablePagingBuffer<Id : Comparable<Id>, K : StoreXPaging.Key, V : Ide
         page: PagingSource.LoadResult.Data<Id, K, V, E>
     ) {
         val index = computeIndex(params.key)
-        pages[index] = StoreXPaging.Data.Page(
+        pages[index] = StoreX.Paging.Data.Page(
             items = page.items.map { it.value.id },
             key = page.key,
             nextKey = page.nextKey,
@@ -67,16 +67,16 @@ class RealMutablePagingBuffer<Id : Comparable<Id>, K : StoreXPaging.Key, V : Ide
         }
     }
 
-    override fun get(id: Id): StoreXPaging.Data.Item<Id, V>? {
+    override fun get(id: Id): StoreX.Paging.Data.Item<Id, V>? {
         return items[id]
     }
 
-    override fun head(): StoreXPaging.Data.Page<Id, K, V>? {
+    override fun head(): StoreX.Paging.Data.Page<Id, K, V>? {
         return pages[head]
     }
 
-    override fun getAll(): List<StoreXPaging.Data.Page<Id, K, V>> {
-        val pages = mutableListOf<StoreXPaging.Data.Page<Id, K, V>>()
+    override fun getAll(): List<StoreX.Paging.Data.Page<Id, K, V>> {
+        val pages = mutableListOf<StoreX.Paging.Data.Page<Id, K, V>>()
         var index = head
         var count = 0
         while (count < size) {
@@ -100,7 +100,7 @@ class RealMutablePagingBuffer<Id : Comparable<Id>, K : StoreXPaging.Key, V : Ide
         anchorPosition: K,
         prefetchPosition: K?,
         pagingConfig: PagingConfig
-    ): List<StoreXPaging.Data.Item<Id, V>> {
+    ): List<StoreX.Paging.Data.Item<Id, V>> {
         val buffer = getAll()
 
         val anchorIndex = indexOf(anchorPosition)

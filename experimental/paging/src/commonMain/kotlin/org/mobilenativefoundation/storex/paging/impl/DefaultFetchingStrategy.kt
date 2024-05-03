@@ -3,11 +3,11 @@ package org.mobilenativefoundation.storex.paging.impl
 import org.mobilenativefoundation.storex.paging.*
 import kotlin.math.max
 
-class DefaultFetchingStrategy<Id : Comparable<Id>, K : StoreXPaging.Key, V : Identifiable<Id>, E : StoreXPaging.Error> :
+class DefaultFetchingStrategy<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any> :
     FetchingStrategy<Id, K, V, E> {
     override fun shouldFetch(
         params: PagingSource.LoadParams<K>,
-        pagingState: StoreXPaging.State<Id, K, V, E>,
+        pagingState: StoreX.Paging.State<Id, K, V, E>,
         pagingConfig: PagingConfig,
     ): Boolean {
 

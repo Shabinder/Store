@@ -7,5 +7,5 @@ fun interface ValidationStrategy<Id : Comparable<Id>, V : Identifiable<Id>> {
     /**
      * Validates the paged data against specific rules or constraints.
      */
-    operator fun invoke(data: List<StoreXPaging.Data.Item<Id, V>>): List<StoreXPaging.Data.Item<Id, V>>
+    operator fun invoke(data: List<StoreX.Paging.Data.Item<Id, V>>): List<StoreX.Paging.Data.Item<Id, V>>
 }

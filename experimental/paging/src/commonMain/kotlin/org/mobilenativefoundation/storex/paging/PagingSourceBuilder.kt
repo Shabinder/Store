@@ -6,7 +6,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.StoreReadRequest
 
-class PagingSourceBuilder<Id : Comparable<Id>, K : StoreXPaging.Key, V : Identifiable<Id>, E : StoreXPaging.Error> internal constructor(
+class PagingSourceBuilder<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any> internal constructor(
     private val dispatcher: CoroutineDispatcher,
     private val pageStore: Store<K, PagingSource.LoadResult.Data<Id, K, V, E>>,
     private val throwableConverter: (Throwable) -> E,

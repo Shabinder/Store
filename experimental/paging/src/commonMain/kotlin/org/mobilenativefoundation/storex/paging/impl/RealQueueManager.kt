@@ -1,12 +1,11 @@
 package org.mobilenativefoundation.storex.paging.impl
 
-import org.mobilenativefoundation.storex.paging.*
-
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import org.mobilenativefoundation.storex.paging.*
 
-class RealQueueManager<Id : Comparable<Id>, K : StoreXPaging.Key, V : Identifiable<Id>, E : StoreXPaging.Error>(
+class RealQueueManager<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
     dispatcher: CoroutineDispatcher,
     private val pagingConfig: PagingConfig,
     private val fetchingStrategy: FetchingStrategy<Id, K, V, E>,
@@ -54,6 +53,6 @@ class RealQueueManager<Id : Comparable<Id>, K : StoreXPaging.Key, V : Identifiab
         nextKey = null,
         itemsBefore = null,
         itemsAfter = null,
-        origin = StoreXPaging.DataSource.PLACEHOLDER,
+        origin = StoreX.Paging.DataSource.PLACEHOLDER,
     )
 }

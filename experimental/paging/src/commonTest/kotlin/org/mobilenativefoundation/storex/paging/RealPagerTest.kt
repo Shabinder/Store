@@ -29,12 +29,12 @@ class RealPagerTest {
         val throwableConverter = { throwable: Throwable ->
             Timeline.Error.Exception(
                 throwable,
-                StoreXPaging.DataSource.NETWORK
+                StoreX.Paging.DataSource.NETWORK
             )
         }
 
         val messageConverter = { message: String ->
-            Timeline.Error.Exception(Throwable(message), StoreXPaging.DataSource.NETWORK)
+            Timeline.Error.Exception(Throwable(message), StoreX.Paging.DataSource.NETWORK)
         }
 
         val keyFactory = KeyFactory<Id, K> {
@@ -42,7 +42,7 @@ class RealPagerTest {
         }
 
         val placeholderFactory = PlaceholderFactory {
-            StoreXPaging.Data.Item(Timeline.Post(PLACEHOLDER_TAG))
+            StoreX.Paging.Data.Item(Timeline.Post(PLACEHOLDER_TAG))
         }
 
         return PagerBuilder<Id, K, V, E>(
@@ -70,15 +70,15 @@ class RealPagerTest {
 
             // Initial
             val initial = awaitItem()
-            assertIs<StoreXPaging.State.Initial<Id, K, V, E>>(initial)
+            assertIs<StoreX.Paging.State.Initial<Id, K, V, E>>(initial)
 
             // Loading
             val loading = awaitItem()
-            assertIs<StoreXPaging.State.Loading<Id, K, V, E>>(loading)
+            assertIs<StoreX.Paging.State.Loading<Id, K, V, E>>(loading)
 
             // Idle
             val idle = awaitItem()
-            assertIs<StoreXPaging.State.Idle<Id, K, V, E>>(idle)
+            assertIs<StoreX.Paging.State.Idle<Id, K, V, E>>(idle)
 
             requests.emit(
                 "11"
@@ -86,11 +86,11 @@ class RealPagerTest {
 
             // Loading more
             val loadingMore = awaitItem()
-            assertIs<StoreXPaging.State.LoadingMore<Id, K, V, E>>(loadingMore)
+            assertIs<StoreX.Paging.State.LoadingMore<Id, K, V, E>>(loadingMore)
 
             // Idle
             val idle2 = awaitItem()
-            assertIs<StoreXPaging.State.Idle<Id, K, V, E>>(idle2)
+            assertIs<StoreX.Paging.State.Idle<Id, K, V, E>>(idle2)
 
             requests.emit(
                 "21"
@@ -98,12 +98,12 @@ class RealPagerTest {
 
             // Loading more
             val loadingMore2 = awaitItem()
-            assertIs<StoreXPaging.State.LoadingMore<Id, K, V, E>>(loadingMore2)
+            assertIs<StoreX.Paging.State.LoadingMore<Id, K, V, E>>(loadingMore2)
 
 
             // Idle
             val idle3 = awaitItem()
-            assertIs<StoreXPaging.State.Idle<Id, K, V, E>>(idle3)
+            assertIs<StoreX.Paging.State.Idle<Id, K, V, E>>(idle3)
 
             expectNoEvents()
         }
@@ -120,29 +120,29 @@ class RealPagerTest {
 
             // Items
             val items1 = awaitItem()
-            assertIs<StoreXPaging.Items<Id, V>>(items1)
+            assertIs<StoreX.Paging.Items<Id, V>>(items1)
 
             requests.emit("11")
 
             // Items + Placeholders
             val itemsAndPlaceholders = awaitItem()
-            assertIs<StoreXPaging.Items<Id, V>>(itemsAndPlaceholders)
+            assertIs<StoreX.Paging.Items<Id, V>>(itemsAndPlaceholders)
 
 
             // Items
             val items2 = awaitItem()
-            assertIs<StoreXPaging.Items<Id, V>>(items2)
+            assertIs<StoreX.Paging.Items<Id, V>>(items2)
 
             requests.emit("21")
 
             // Items + Placeholders
             val itemsAndPlaceholders2 = awaitItem()
-            assertIs<StoreXPaging.Items<Id, V>>(itemsAndPlaceholders2)
+            assertIs<StoreX.Paging.Items<Id, V>>(itemsAndPlaceholders2)
 
 
             // Items
             val items3 = awaitItem()
-            assertIs<StoreXPaging.Items<Id, V>>(items3)
+            assertIs<StoreX.Paging.Items<Id, V>>(items3)
 
             expectNoEvents()
 

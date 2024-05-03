@@ -3,7 +3,7 @@ package org.mobilenativefoundation.storex.paging
 /**
  * Represents a mutable version of [PagingBuffer] that allows adding and updating paging data.
  */
-interface MutablePagingBuffer<Id : Comparable<Id>, K : StoreXPaging.Key, V : Identifiable<Id>, E: StoreXPaging.Error> :
+interface MutablePagingBuffer<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any> :
     PagingBuffer<Id, K, V, E> {
 
     /**

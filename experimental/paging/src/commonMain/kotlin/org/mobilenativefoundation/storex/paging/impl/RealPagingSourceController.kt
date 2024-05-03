@@ -3,7 +3,7 @@ package org.mobilenativefoundation.storex.paging.impl
 import org.mobilenativefoundation.storex.paging.*
 
 
-class RealPagingSourceController<Id : Comparable<Id>, K : StoreXPaging.Key, V : Identifiable<Id>, E : StoreXPaging.Error>(
+class RealPagingSourceController<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
     private val sideEffects: List<SideEffect<Id, K, V, E>>,
     private val pagingConfig: PagingConfig,
     private val jobCoordinator: JobCoordinator,
@@ -21,18 +21,18 @@ class RealPagingSourceController<Id : Comparable<Id>, K : StoreXPaging.Key, V : 
     private suspend fun onLoading(params: PagingSource.LoadParams<K>) {
         pagingStateManager.update { prevState ->
             when (prevState) {
-                is StoreXPaging.State.Data -> {
-                    StoreXPaging.State.LoadingMore(
+                is StoreX.Paging.State.Data -> {
+                    StoreX.Paging.State.LoadingMore(
                         pagingBuffer = prevState.pagingBuffer,
                         anchorPosition = params.key,
                         prefetchPosition = prevState.prefetchPosition
                     )
                 }
 
-                is StoreXPaging.State.Initial,
-                is StoreXPaging.State.Loading,
-                is StoreXPaging.State.Error -> {
-                    StoreXPaging.State.Loading(
+                is StoreX.Paging.State.Initial,
+                is StoreX.Paging.State.Loading,
+                is StoreX.Paging.State.Error -> {
+                    StoreX.Paging.State.Loading(
                         pagingBuffer = prevState.pagingBuffer,
                         anchorPosition = params.key,
                         prefetchPosition = prevState.prefetchPosition
@@ -54,7 +54,7 @@ class RealPagingSourceController<Id : Comparable<Id>, K : StoreXPaging.Key, V : 
 
         pagingStateManager.update { prevState ->
 
-            val nextState = StoreXPaging.State.Idle(
+            val nextState = StoreX.Paging.State.Idle(
                 pagingBuffer = prevState.pagingBuffer,
                 anchorPosition = prevState.anchorPosition,
                 prefetchPosition = prevState.prefetchPosition,
@@ -76,8 +76,8 @@ class RealPagingSourceController<Id : Comparable<Id>, K : StoreXPaging.Key, V : 
         suspend fun passErrorThroughAndLaunchSideEffects() {
             pagingStateManager.update { prevState ->
                 when (prevState) {
-                    is StoreXPaging.State.ErrorLoadingMore -> {
-                        StoreXPaging.State.ErrorLoadingMore(
+                    is StoreX.Paging.State.ErrorLoadingMore -> {
+                        StoreX.Paging.State.ErrorLoadingMore(
                             pagingBuffer = prevState.pagingBuffer,
                             error = error.value,
                             anchorPosition = prevState.anchorPosition,
@@ -85,8 +85,8 @@ class RealPagingSourceController<Id : Comparable<Id>, K : StoreXPaging.Key, V : 
                         )
                     }
 
-                    is StoreXPaging.State.Data -> {
-                        StoreXPaging.State.ErrorLoadingMore(
+                    is StoreX.Paging.State.Data -> {
+                        StoreX.Paging.State.ErrorLoadingMore(
                             pagingBuffer = prevState.pagingBuffer,
                             error = error.value,
                             anchorPosition = prevState.anchorPosition,
@@ -94,10 +94,10 @@ class RealPagingSourceController<Id : Comparable<Id>, K : StoreXPaging.Key, V : 
                         )
                     }
 
-                    is StoreXPaging.State.Initial,
-                    is StoreXPaging.State.Loading,
-                    is StoreXPaging.State.Error -> {
-                        StoreXPaging.State.Error(
+                    is StoreX.Paging.State.Initial,
+                    is StoreX.Paging.State.Loading,
+                    is StoreX.Paging.State.Error -> {
+                        StoreX.Paging.State.Error(
                             value = error.value,
                             pagingBuffer = prevState.pagingBuffer,
                             anchorPosition = prevState.anchorPosition,
@@ -148,7 +148,7 @@ class RealPagingSourceController<Id : Comparable<Id>, K : StoreXPaging.Key, V : 
             }
         )
 
-    private fun launchSideEffects(state: StoreXPaging.State<Id, K, V, E>) {
+    private fun launchSideEffects(state: StoreX.Paging.State<Id, K, V, E>) {
         sideEffects.forEach { it(state) }
     }
 }

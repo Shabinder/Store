@@ -6,9 +6,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import org.mobilenativefoundation.storex.paging.Identifiable
 import org.mobilenativefoundation.storex.paging.PagingSource
-import org.mobilenativefoundation.storex.paging.StoreXPaging
 
-class StorePagingSource<Id : Comparable<Id>, K : StoreXPaging.Key, V : Identifiable<Id>, E : StoreXPaging.Error>(
+class StorePagingSource<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
     dispatcher: CoroutineDispatcher,
     private val streamProvider: StorePagingSourceStreamProvider<Id, K, V, E>,
 ) : PagingSource<Id, K, V, E> {
