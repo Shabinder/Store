@@ -43,6 +43,11 @@ dependencies {
     implementation(libs.ktor.negotiation)
 
     implementation(libs.compose.webview.multiplatform)
+
+    implementation(project(":experimental:market"))
+    implementation(project(":experimental:market:warehouse"))
+    implementation(project(":experimental:sample:scoop:xplat:foundation:di"))
+    implementation(project(":experimental:sample:scoop:xplat:common:market"))
 }
 
 ksp {

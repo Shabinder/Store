@@ -2,4 +2,4 @@ package monster.scoop.xplat.common.market
 
 import org.mobilenativefoundation.market.Market
 
-typealias ScoopMarket = Market<ScoopState>
+sealed interface ScoopAction : Market.Action
