@@ -22,7 +22,7 @@ interface PagingSource<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : A
         data class Data<Id : Comparable<Id>, out K : Any, out V : Identifiable<Id>, out E : Any>(
             val items: List<StoreX.Paging.Data.Item<Id, V>>,
             val key: K,
-            val nextKey: K?,
+            val nextOffset: Id?,
             val itemsBefore: Int?,
             val itemsAfter: Int?,
             val origin: StoreX.Paging.DataSource,

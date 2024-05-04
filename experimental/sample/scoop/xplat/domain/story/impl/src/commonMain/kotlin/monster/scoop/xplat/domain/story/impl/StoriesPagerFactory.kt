@@ -35,42 +35,19 @@ class StoriesMarketPagerFactory(
         }
     )
 
-    private fun actionFactory(pagingState: StoriesPagingState): ScoopAction.Stories = when (pagingState) {
-        is StoreX.Paging.State.ErrorLoadingMore -> ScoopAction.Stories.Paging.UpdateData(
-            status = StatefulMarket.PagingState.Data.Status.ErrorLoadingMore(
-                pagingState.error
+    private fun actionFactory(pagingState: StoriesPagingState): ScoopAction.Stories = when (pagingState.status) {
+        is StoreX.Paging.State.Status.Error -> TODO()
+        StoreX.Paging.State.Status.Idle -> {
+            ScoopAction.Stories.Paging.SetData(
+                stories = pagingState.pagingBuffer.getAllItems().map { it.value },
+                lastModified = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
+                lastRefreshed = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
+                status = StatefulMarket.PagingState.Data.Status.Idle
             )
-        )
+        }
 
-        is StoreX.Paging.State.Idle -> ScoopAction.Stories.Paging.SetData(
-            stories = pagingState.pagingBuffer.getAllItems().map { it.value },
-            anchorPosition = pagingState.anchorPosition,
-            prefetchPosition = pagingState.prefetchPosition,
-            lastModified = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
-            lastRefreshed = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
-            status = StatefulMarket.PagingState.Data.Status.Idle
-
-        )
-
-        is StoreX.Paging.State.LoadingMore -> ScoopAction.Stories.Paging.UpdateData(
-            status = StatefulMarket.PagingState.Data.Status.LoadingMore
-        )
-
-        is StoreX.Paging.State.Error -> ScoopAction.Stories.Paging.SetError(
-            pagingState.value,
-            pagingState.prefetchPosition,
-            pagingState.anchorPosition
-        )
-
-        is StoreX.Paging.State.Initial -> ScoopAction.Stories.Paging.SetInitial(
-            pagingState.prefetchPosition,
-            pagingState.anchorPosition
-        )
-
-        is StoreX.Paging.State.Loading -> ScoopAction.Stories.Paging.SetLoading(
-            pagingState.prefetchPosition,
-            pagingState.anchorPosition
-        )
+        StoreX.Paging.State.Status.Initial -> TODO()
+        StoreX.Paging.State.Status.Loading -> TODO()
     }
 }
 
@@ -128,16 +105,16 @@ class StoriesPagerFactory(
             if (data != null) {
                 val stories = data.stories.map { it.toDomainModel() }
 
-                val nextKey = key.copy(offset = stories.last().id)
-                val count = 100 // TODO
+                val count = data.stories_aggregate.aggregate?.count
+
                 val itemsBefore = stories.first().id // TODO
 
-                val itemsAfter = count - stories.last().id
+                val itemsAfter = count?.let { it - itemsBefore }
 
                 val pagingSourceData = StoriesPagingSourceData(
                     items = stories.map { StoreX.Paging.Data.Item(it) },
                     key = key,
-                    nextKey = nextKey,
+                    nextOffset = stories.last().id, // Offset rather than +1, server is responsible for getting next
                     itemsBefore = itemsBefore,
                     itemsAfter = itemsAfter,
                     origin = StoreX.Paging.DataSource.NETWORK,

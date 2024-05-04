@@ -186,7 +186,7 @@ object Timeline {
                         PagingSource.LoadResult.Data(
                             items = items,
                             key = request,
-                            nextKey = response.nextCursor?.let { request.copy(cursor = it) },
+                            nextOffset = response.nextCursor?.let { request.copy(cursor = it) },
                             itemsBefore = response.postsBefore,
                             itemsAfter = response.postsAfter,
                             origin = StoreX.Paging.DataSource.NETWORK,

@@ -108,10 +108,12 @@ class PagerBuilder<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
             this.mutablePagingBuffer ?: RealMutablePagingBuffer(pagingBufferMaxSize)
 
         val initialState =
-            this.initialState ?: StoreX.Paging.State.Initial(null, null, mutablePagingBuffer)
+            this.initialState ?: StoreX.Paging.State(mutablePagingBuffer)
 
         val pagingStateManager: PagingStateManager<Id, K, V, E> =
             RealPagingStateManager(initialState, mutablePagingBuffer)
+
+        val fetchingStateManager: FetchingStateManager<Id> = RealFetchingStateManager()
 
         val aggregatingStrategy: AggregatingStrategy<Id, K, V, E> =
             RealAggregatingStrategy(operations, pagingConfig)
@@ -123,14 +125,17 @@ class PagerBuilder<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
 
         val retriesManager: RetriesManager<K> = RealRetriesManager()
 
-        val pagingSourceController: org.mobilenativefoundation.storex.paging.PagingSourceController<K> =
+        val loaderInjector = Injector<Loader<Id, K, V, E>>()
+
+        val pagingSourceController: PagingSourceController<K> =
             RealPagingSourceController(
                 sideEffects = sideEffects,
                 pagingConfig = pagingConfig,
                 jobCoordinator = jobCoordinator,
                 pagingSource = pagingSource,
                 pagingStateManager = pagingStateManager,
-                retriesManager = retriesManager
+                retriesManager = retriesManager,
+                loaderInjector = loaderInjector
             )
 
         val queueManager: QueueManager<K> = RealQueueManager(
@@ -140,22 +145,26 @@ class PagerBuilder<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
             mutablePagingBuffer = mutablePagingBuffer,
             pagingSourceController = pagingSourceController,
             pagingStateProvider = pagingStateManager,
-            placeholderFactory = placeholderFactory
+            placeholderFactory = placeholderFactory,
+            fetchingStateProvider = fetchingStateManager
         )
 
         val loader: Loader<Id, K, V, E> = RealLoader(
             middleware = middleware,
             queueManager = queueManager,
             strategy = loadingStrategy,
-            keyFactory = keyFactory
+            keyFactory = keyFactory,
         )
+
+        loaderInjector.inject(loader)
 
         return RealPager(
             dispatcher = dispatcher,
             pagingStateProvider = pagingStateManager,
             loader = loader,
             launchEffects = launchEffects,
-            aggregatingStrategy = aggregatingStrategy
+            aggregatingStrategy = aggregatingStrategy,
+            fetchingStateManager = fetchingStateManager
         )
     }
 }

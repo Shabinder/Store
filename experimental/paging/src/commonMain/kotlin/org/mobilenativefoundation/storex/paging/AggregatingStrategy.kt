@@ -5,8 +5,6 @@ package org.mobilenativefoundation.storex.paging
  */
 interface AggregatingStrategy<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any> {
     fun aggregate(
-        pagingBuffer: PagingBuffer<Id, K, V, E>,
-        anchorPosition: Id?,
-        prefetchPosition: Id?
+        state: StoreX.Paging.State<Id, K, V, E>
     ): StoreX.Paging.Items<Id, V>
 }

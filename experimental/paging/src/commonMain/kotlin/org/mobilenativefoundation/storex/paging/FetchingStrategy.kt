@@ -16,6 +16,7 @@ fun interface FetchingStrategy<Id : Comparable<Id>, K : Any, V : Identifiable<Id
      */
     fun shouldFetch(
         params: PagingSource.LoadParams<K>,
+        fetchingState: FetchingState<Id>,
         pagingState: StoreX.Paging.State<Id, K, V, E>,
         pagingConfig: PagingConfig,
     ): Boolean

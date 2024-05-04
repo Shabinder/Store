@@ -13,11 +13,16 @@ class RealQueueManager<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : A
     private val pagingSourceController: PagingSourceController<K>,
     private val pagingStateProvider: PagingStateProvider<Id, K, V, E>,
     private val placeholderFactory: PlaceholderFactory<Id, V>,
+    private val fetchingStateProvider: FetchingStateProvider<Id>,
 ) : QueueManager<K> {
     private val coroutineScope: CoroutineScope = CoroutineScope(dispatcher)
 
-
+    // TODO: This won't work if anchor passes prefetch
     private val queue: ArrayDeque<PagingSource.LoadParams<K>> = ArrayDeque()
+    // TODO: What about refresh, need to reset this
+
+    private val processedParams: MutableSet<PagingSource.LoadParams<K>> = mutableSetOf()
+
     override fun enqueue(params: PagingSource.LoadParams<K>) {
         queue.addLast(params)
 
@@ -29,8 +34,12 @@ class RealQueueManager<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : A
     private suspend fun processQueue() {
         while (queue.isNotEmpty()) {
             val nextPagingParams = queue.removeFirst()
+
+            if (nextPagingParams in processedParams) return
+
             if (fetchingStrategy.shouldFetch(
                     nextPagingParams,
+                    fetchingStateProvider.getState(),
                     pagingStateProvider.getState(),
                     pagingConfig,
                 )
@@ -43,6 +52,8 @@ class RealQueueManager<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : A
                 )
 
                 pagingSourceController.lazyLoad(nextPagingParams)
+
+                processedParams.add(nextPagingParams)
             }
         }
     }
@@ -50,7 +61,7 @@ class RealQueueManager<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : A
     private fun createPlaceholders(count: Int, key: K) = PagingSource.LoadResult.Data<Id, K, V, E>(
         items = List(count) { placeholderFactory() },
         key = key,
-        nextKey = null,
+        nextOffset = null,
         itemsBefore = null,
         itemsAfter = null,
         origin = StoreX.Paging.DataSource.PLACEHOLDER,

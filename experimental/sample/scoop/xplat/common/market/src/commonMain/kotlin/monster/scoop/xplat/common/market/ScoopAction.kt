@@ -23,17 +23,13 @@ sealed interface ScoopAction : Market.Action {
 
             data class SetData(
                 val stories: List<Story>,
-                val anchorPosition: Int?,
-                val prefetchPosition: Int?,
                 val lastModified: LocalDateTime,
                 val lastRefreshed: LocalDateTime,
                 val status: Status<StoriesError>
             ) : Paging
 
             data class UpdateData(
-                val allIds: List<Int>? = null,
-                val anchorPosition: Int? = null,
-                val prefetchPosition: Int? = null,
+                val stories: List<Story>? = null,
                 val lastModified: LocalDateTime? = null,
                 val lastRefreshed: LocalDateTime? = null,
                 val status: Status<StoriesError>? = null

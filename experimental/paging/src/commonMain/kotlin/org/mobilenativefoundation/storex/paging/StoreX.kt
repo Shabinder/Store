@@ -1,7 +1,5 @@
 package org.mobilenativefoundation.storex.paging
 
-import kotlinx.datetime.Clock
-
 
 object StoreX {
 
@@ -17,7 +15,7 @@ object StoreX {
             data class Page<Id : Comparable<Id>, out K : Any, out V : Identifiable<Id>>(
                 val items: List<Id>,
                 val key: K,
-                val nextKey: K?,
+                val next: Id?,
                 val itemsBefore: Int?,
                 val itemsAfter: Int?,
                 val origin: DataSource,
@@ -32,57 +30,22 @@ object StoreX {
             PLACEHOLDER
         }
 
-        sealed interface State<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any> {
-            val anchorPosition: Id?
-            val prefetchPosition: Id?
-            val pagingBuffer: PagingBuffer<Id, K, V, E>
 
-            data class Initial<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
-                override val prefetchPosition: Id?,
-                override val anchorPosition: Id?,
-                override val pagingBuffer: PagingBuffer<Id, K, V, E>
-            ) : State<Id, K, V, E>
-
-            data class Loading<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
-                override val prefetchPosition: Id?,
-                override val anchorPosition: Id?,
-                override val pagingBuffer: PagingBuffer<Id, K, V, E>
-            ) : State<Id, K, V, E>
-
-            data class Error<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
-                val value: E,
-                override val prefetchPosition: Id?,
-                override val anchorPosition: Id?,
-                override val pagingBuffer: PagingBuffer<Id, K, V, E>
-            ) : State<Id, K, V, E>
-
-            sealed interface Data<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any> :
-                State<Id, K, V, E>
-
-            data class Idle<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
-                override val pagingBuffer: PagingBuffer<Id, K, V, E>,
-                override val anchorPosition: Id?,
-                override val prefetchPosition: Id?,
-                private val created: Long = Clock.System.now().epochSeconds,
-            ) : Data<Id, K, V, E>
-
-            data class LoadingMore<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
-                override val pagingBuffer: PagingBuffer<Id, K, V, E>,
-                override val anchorPosition: Id?,
-                override val prefetchPosition: Id?,
-            ) : Data<Id, K, V, E>
-
-
-            data class ErrorLoadingMore<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
-                override val pagingBuffer: PagingBuffer<Id, K, V, E>,
-                val error: E,
-                override val anchorPosition: Id?,
-                override val prefetchPosition: Id?,
-            ) : Data<Id, K, V, E>
+        data class State<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
+            val pagingBuffer: PagingBuffer<Id, K, V, E>,
+            val status: Status<E> = Status.Initial
+        ) {
+            sealed interface Status<out E : Any> {
+                data object Initial : Status<Nothing>
+                data object Loading : Status<Nothing>
+                data class Error<E : Any>(val error: E) : Status<E>
+                data object Idle : Status<Nothing>
+            }
         }
 
         data class Items<Id : Comparable<Id>, out V : Identifiable<Id>>(
-            val value: List<Data.Item<Id, V>>
+            val allIds: List<Id> = emptyList(),
+            val byId: Map<Id, Data.Item<Id, V>> = emptyMap(),
         )
 
     }

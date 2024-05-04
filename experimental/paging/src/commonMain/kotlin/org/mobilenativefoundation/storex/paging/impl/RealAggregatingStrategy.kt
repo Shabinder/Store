@@ -9,19 +9,15 @@ class RealAggregatingStrategy<Id : Comparable<Id>, K : Any, V : Identifiable<Id>
     private val pagingConfig: PagingConfig,
 ) : AggregatingStrategy<Id, K, V, E> {
 
-    override fun aggregate(
-        pagingBuffer: PagingBuffer<Id, K, V, E>,
-        anchorPosition: Id?,
-        prefetchPosition: Id?
-    ): StoreX.Paging.Items<Id, V> {
-        if (pagingBuffer.isEmpty()) return StoreX.Paging.Items(emptyList())
+    override fun aggregate(state: StoreX.Paging.State<Id, K, V, E>): StoreX.Paging.Items<Id, V> {
+        if (state.pagingBuffer.isEmpty()) return StoreX.Paging.Items()
 
         val orderedItems = mutableListOf<StoreX.Paging.Data.Item<Id, V>>()
 
-        var currentPage = pagingBuffer.head()
+        var currentPage = state.pagingBuffer.head()
 
         fun loadItemsFromPagingBuffer(page: StoreX.Paging.Data.Page<Id, K, V>) =
-            page.items.mapNotNull { itemId -> pagingBuffer.get(itemId) }
+            page.items.mapNotNull { itemId -> state.pagingBuffer.get(itemId) }
 
         while (currentPage != null) {
             when (pagingConfig.insertionStrategy) {
@@ -30,12 +26,16 @@ class RealAggregatingStrategy<Id : Comparable<Id>, K : Any, V : Identifiable<Id>
                 InsertionStrategy.REPLACE -> orderedItems.replaceWith(loadItemsFromPagingBuffer(currentPage))
             }
 
-            currentPage = currentPage.nextKey?.let { pagingBuffer.get(it) }
+
+            currentPage = currentPage.next?.let { state.pagingBuffer.getPageContaining(it) }
         }
 
         val nextOrderedItems = applyOperations(orderedItems)
 
-        return StoreX.Paging.Items(nextOrderedItems)
+        return StoreX.Paging.Items(
+            allIds = nextOrderedItems.map { it.value.id },
+            byId = nextOrderedItems.associateBy { it.value.id }
+        )
     }
 
     private fun applyOperations(

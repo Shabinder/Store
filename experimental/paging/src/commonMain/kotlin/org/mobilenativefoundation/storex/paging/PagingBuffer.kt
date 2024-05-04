@@ -11,6 +11,7 @@ interface PagingBuffer<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : A
     fun get(key: K): StoreX.Paging.Data.Page<Id, K, V>?
 
     fun get(id: Id): StoreX.Paging.Data.Item<Id, V>?
+    fun getPageContaining(id: Id): StoreX.Paging.Data.Page<Id, K, V>?
 
     fun head(): StoreX.Paging.Data.Page<Id, K, V>?
 

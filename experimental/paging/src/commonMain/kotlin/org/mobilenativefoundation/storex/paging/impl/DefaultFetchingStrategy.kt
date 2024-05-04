@@ -7,12 +7,13 @@ class DefaultFetchingStrategy<Id : Comparable<Id>, K : Any, V : Identifiable<Id>
     FetchingStrategy<Id, K, V, E> {
     override fun shouldFetch(
         params: PagingSource.LoadParams<K>,
+        fetchingState: FetchingState<Id>,
         pagingState: StoreX.Paging.State<Id, K, V, E>,
         pagingConfig: PagingConfig,
     ): Boolean {
 
-        pagingState.anchorPosition?.let { anchorPosition ->
-            pagingState.prefetchPosition?.let { prefetchPosition ->
+        fetchingState.anchorPosition?.let { anchorPosition ->
+            fetchingState.prefetchPosition?.let { prefetchPosition ->
 
                 val indexOfAnchor = pagingState.pagingBuffer.indexOf(anchorPosition)
                 val indexOfPrefetch = pagingState.pagingBuffer.indexOf(prefetchPosition)

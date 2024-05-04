@@ -10,7 +10,10 @@ class RealPagingSourceController<Id : Comparable<Id>, K : Any, V : Identifiable<
     private val pagingSource: PagingSource<Id, K, V, E>,
     private val pagingStateManager: PagingStateManager<Id, K, V, E>,
     private val retriesManager: RetriesManager<K>,
+    loaderInjector: Injector<Loader<Id, K, V, E>>
 ) : PagingSourceController<K> {
+
+    private val loader = loaderInjector.require()
 
     override fun lazyLoad(params: PagingSource.LoadParams<K>) {
         jobCoordinator.launchIfNotActive(params) {
@@ -18,27 +21,9 @@ class RealPagingSourceController<Id : Comparable<Id>, K : Any, V : Identifiable<
         }
     }
 
-    private suspend fun onLoading(params: PagingSource.LoadParams<K>) {
+    private suspend fun onLoading() {
         pagingStateManager.update { prevState ->
-            when (prevState) {
-                is StoreX.Paging.State.Data -> {
-                    StoreX.Paging.State.LoadingMore(
-                        pagingBuffer = prevState.pagingBuffer,
-                        anchorPosition = prevState.anchorPosition, // TODO
-                        prefetchPosition = prevState.prefetchPosition
-                    )
-                }
-
-                is StoreX.Paging.State.Initial,
-                is StoreX.Paging.State.Loading,
-                is StoreX.Paging.State.Error -> {
-                    StoreX.Paging.State.Loading(
-                        pagingBuffer = prevState.pagingBuffer,
-                        anchorPosition = prevState.anchorPosition, // TODO
-                        prefetchPosition = prevState.prefetchPosition
-                    )
-                }
-            }
+            prevState.copy(status = StoreX.Paging.State.Status.Loading)
         }
     }
 
@@ -52,20 +37,13 @@ class RealPagingSourceController<Id : Comparable<Id>, K : Any, V : Identifiable<
             mutablePagingBuffer.put(params, data)
         }
 
-        pagingStateManager.update { prevState ->
-
-            val nextState = StoreX.Paging.State.Idle(
-                pagingBuffer = prevState.pagingBuffer,
-                anchorPosition = prevState.anchorPosition,
-                prefetchPosition = prevState.prefetchPosition,
-            )
-
-
-            nextState
-        }
-
-
         launchSideEffects(pagingStateManager.getState())
+
+        // TODO: Handle prefetching
+
+        data.nextOffset?.let {
+            loader(it)
+        }
     }
 
     private suspend fun onError(
@@ -75,36 +53,7 @@ class RealPagingSourceController<Id : Comparable<Id>, K : Any, V : Identifiable<
 
         suspend fun passErrorThroughAndLaunchSideEffects() {
             pagingStateManager.update { prevState ->
-                when (prevState) {
-                    is StoreX.Paging.State.ErrorLoadingMore -> {
-                        StoreX.Paging.State.ErrorLoadingMore(
-                            pagingBuffer = prevState.pagingBuffer,
-                            error = error.value,
-                            anchorPosition = prevState.anchorPosition,
-                            prefetchPosition = prevState.prefetchPosition
-                        )
-                    }
-
-                    is StoreX.Paging.State.Data -> {
-                        StoreX.Paging.State.ErrorLoadingMore(
-                            pagingBuffer = prevState.pagingBuffer,
-                            error = error.value,
-                            anchorPosition = prevState.anchorPosition,
-                            prefetchPosition = prevState.prefetchPosition
-                        )
-                    }
-
-                    is StoreX.Paging.State.Initial,
-                    is StoreX.Paging.State.Loading,
-                    is StoreX.Paging.State.Error -> {
-                        StoreX.Paging.State.Error(
-                            value = error.value,
-                            pagingBuffer = prevState.pagingBuffer,
-                            anchorPosition = prevState.anchorPosition,
-                            prefetchPosition = prevState.prefetchPosition
-                        )
-                    }
-                }
+                prevState.copy(status = StoreX.Paging.State.Status.Error(error.value))
             }
 
             launchSideEffects(pagingStateManager.getState())
@@ -138,7 +87,7 @@ class RealPagingSourceController<Id : Comparable<Id>, K : Any, V : Identifiable<
     private fun createOnStateTransition(params: PagingSource.LoadParams<K>) =
         PagingSource.OnStateTransition<Id, K, V, E>(
             onLoading = {
-                onLoading(params)
+                onLoading()
             },
             onError = { error ->
                 onError(params, error)

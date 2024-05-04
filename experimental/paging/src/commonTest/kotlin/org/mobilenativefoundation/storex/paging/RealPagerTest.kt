@@ -9,6 +9,7 @@ import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.storex.paging.Timeline.PLACEHOLDER_TAG
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertIs
 
 class RealPagerTest {
@@ -70,15 +71,15 @@ class RealPagerTest {
 
             // Initial
             val initial = awaitItem()
-            assertIs<StoreX.Paging.State.Initial<Id, K, V, E>>(initial)
+            assertEquals(StoreX.Paging.State.Status.Initial, initial.status)
 
             // Loading
             val loading = awaitItem()
-            assertIs<StoreX.Paging.State.Loading<Id, K, V, E>>(loading)
+            assertEquals(StoreX.Paging.State.Status.Loading, loading.status)
 
             // Idle
             val idle = awaitItem()
-            assertIs<StoreX.Paging.State.Idle<Id, K, V, E>>(idle)
+            assertEquals(StoreX.Paging.State.Status.Idle, idle.status)
 
             requests.emit(
                 "11"
@@ -86,11 +87,11 @@ class RealPagerTest {
 
             // Loading more
             val loadingMore = awaitItem()
-            assertIs<StoreX.Paging.State.LoadingMore<Id, K, V, E>>(loadingMore)
+            assertEquals(StoreX.Paging.State.Status.Loading, loadingMore.status)
 
             // Idle
             val idle2 = awaitItem()
-            assertIs<StoreX.Paging.State.Idle<Id, K, V, E>>(idle2)
+            assertEquals(StoreX.Paging.State.Status.Idle, idle2.status)
 
             requests.emit(
                 "21"
@@ -98,12 +99,12 @@ class RealPagerTest {
 
             // Loading more
             val loadingMore2 = awaitItem()
-            assertIs<StoreX.Paging.State.LoadingMore<Id, K, V, E>>(loadingMore2)
+            assertEquals(StoreX.Paging.State.Status.Loading, loadingMore2.status)
 
 
             // Idle
             val idle3 = awaitItem()
-            assertIs<StoreX.Paging.State.Idle<Id, K, V, E>>(idle3)
+            assertEquals(StoreX.Paging.State.Status.Idle, idle3.status)
 
             expectNoEvents()
         }
