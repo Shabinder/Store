@@ -11,8 +11,8 @@ class RealAggregatingStrategy<Id : Comparable<Id>, K : Any, V : Identifiable<Id>
 
     override fun aggregate(
         pagingBuffer: PagingBuffer<Id, K, V, E>,
-        anchorPosition: K?,
-        prefetchPosition: K?
+        anchorPosition: Id?,
+        prefetchPosition: Id?
     ): StoreX.Paging.Items<Id, V> {
         if (pagingBuffer.isEmpty()) return StoreX.Paging.Items(emptyList())
 

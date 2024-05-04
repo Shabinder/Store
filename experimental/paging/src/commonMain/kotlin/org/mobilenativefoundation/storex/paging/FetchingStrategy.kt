@@ -8,7 +8,7 @@ package org.mobilenativefoundation.storex.paging
  * Implementing a custom [FetchingStrategy] allows you to define your own logic for when to fetch more data.
  * For example, you can fetch more data when the user scrolls near the end of the currently loaded data, or when a certain number of items are remaining in the buffer.
  */
-interface FetchingStrategy<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any> {
+fun interface FetchingStrategy<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any> {
 
     /**
      * Determines whether to fetch more data based on the current state of the pager.

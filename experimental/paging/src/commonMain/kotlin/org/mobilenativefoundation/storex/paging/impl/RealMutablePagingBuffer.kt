@@ -48,8 +48,10 @@ class RealMutablePagingBuffer<Id : Comparable<Id>, K : Any, V : Identifiable<Id>
         page: PagingSource.LoadResult.Data<Id, K, V, E>
     ) {
         val index = computeIndex(params.key)
-        pages[index] = StoreX.Paging.Data.Page(
-            items = page.items.map { it.value.id },
+
+        val newItemIds = page.items.map { it.value.id }
+        val newPage = StoreX.Paging.Data.Page<Id, K, V>(
+            items = newItemIds,
             key = page.key,
             nextKey = page.nextKey,
             itemsBefore = page.itemsBefore,
@@ -57,6 +59,8 @@ class RealMutablePagingBuffer<Id : Comparable<Id>, K : Any, V : Identifiable<Id>
             origin = page.origin,
             extras = page.extras
         )
+
+        pages[index] = newPage
         paramsToIndex[params] = index
         keyToIndex[params.key] = index
         tail = (tail + 1) % maxSize
@@ -90,7 +94,29 @@ class RealMutablePagingBuffer<Id : Comparable<Id>, K : Any, V : Identifiable<Id>
         return pages
     }
 
+    override fun getAllItems(): List<StoreX.Paging.Data.Item<Id, V>> {
+        return items.values.toList()
+    }
+
     override fun isEmpty(): Boolean = size == 0
+    override fun indexOf(id: Id): Int {
+        if (id !in items) return -1
+
+        var index = head
+        var count = 0
+        while (count < size) {
+            val page = pages[index]
+            if (page != null) {
+                val itemIndex = page.items.indexOf(id)
+                if (itemIndex != -1) {
+                    return count * maxSize + itemIndex
+                }
+            }
+            index = (index + 1) % maxSize
+            count++
+        }
+        return -1
+    }
 
     override fun indexOf(key: K): Int {
         return keyToIndex[key] ?: -1

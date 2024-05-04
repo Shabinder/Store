@@ -1,5 +1,6 @@
 package monster.scoop.xplat.common.market
 
-import org.mobilenativefoundation.market.Market
+import org.mobilenativefoundation.market.StatefulMarket
 
-typealias ScoopMarket = Market<ScoopState>
+
+typealias ScoopMarket = StatefulMarket<ScoopState>

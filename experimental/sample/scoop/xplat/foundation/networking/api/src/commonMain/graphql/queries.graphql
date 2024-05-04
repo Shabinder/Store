@@ -6,6 +6,12 @@ query GetStories($limit: Int!, $offset: Int!) {
     ) {
         ...StoryFields
     }
+
+    stories_aggregate {
+        aggregate {
+            count
+        }
+    }
 }
 
 query GetStory($id: Int!) {

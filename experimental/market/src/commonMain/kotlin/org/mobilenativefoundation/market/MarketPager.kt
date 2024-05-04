@@ -18,7 +18,7 @@ interface MarketPager<Id : Comparable<Id>> {
         fun <Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any, A : Market.Action, D : Market.Dispatcher<A>> from(
             coroutineDispatcher: CoroutineDispatcher,
             marketDispatcher: D,
-            actionFactory: (state: StoreX.Paging.State<Id, K, V, E>) -> A,
+            actionFactory: (pagingState: StoreX.Paging.State<Id, K, V, E>) -> A,
             pagerBuilder: PagerBuilder<Id, K, V, E>.() -> Pager<Id, K, V, E>
         ): MarketPager<Id> {
             return RealMarketPager(

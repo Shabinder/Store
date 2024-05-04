@@ -24,7 +24,7 @@ class RealPagingSourceController<Id : Comparable<Id>, K : Any, V : Identifiable<
                 is StoreX.Paging.State.Data -> {
                     StoreX.Paging.State.LoadingMore(
                         pagingBuffer = prevState.pagingBuffer,
-                        anchorPosition = params.key,
+                        anchorPosition = prevState.anchorPosition, // TODO
                         prefetchPosition = prevState.prefetchPosition
                     )
                 }
@@ -34,7 +34,7 @@ class RealPagingSourceController<Id : Comparable<Id>, K : Any, V : Identifiable<
                 is StoreX.Paging.State.Error -> {
                     StoreX.Paging.State.Loading(
                         pagingBuffer = prevState.pagingBuffer,
-                        anchorPosition = params.key,
+                        anchorPosition = prevState.anchorPosition, // TODO
                         prefetchPosition = prevState.prefetchPosition
                     )
                 }

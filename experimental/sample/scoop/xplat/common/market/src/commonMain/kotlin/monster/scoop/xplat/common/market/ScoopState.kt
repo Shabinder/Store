@@ -1,11 +1,18 @@
 package monster.scoop.xplat.common.market
 
 import monster.scoop.xplat.domain.story.api.StoriesState
-import org.mobilenativefoundation.market.Market
+import org.mobilenativefoundation.market.StatefulMarket
 
 data class ScoopState(
-    val stories: StoriesState = StoriesState()
-) : Market.State
+    override val subStates: Map<String, StatefulMarket.SubState> = subStates()
+) : StatefulMarket.State
+
+private fun subStates(): Map<String, StatefulMarket.SubState> = buildMap {
+    "stories" to StoriesState()
+}
+
+
+
 
 
 

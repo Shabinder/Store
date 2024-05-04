@@ -16,9 +16,12 @@ interface PagingBuffer<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : A
 
     fun getAll(): List<StoreX.Paging.Data.Page<Id, K, V>>
 
+    fun getAllItems(): List<StoreX.Paging.Data.Item<Id, V>>
+
     fun isEmpty(): Boolean
 
     fun indexOf(key: K): Int
+    fun indexOf(id: Id): Int
 
     fun getItemsInRange(
         anchorPosition: K,

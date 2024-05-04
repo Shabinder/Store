@@ -33,26 +33,26 @@ object StoreX {
         }
 
         sealed interface State<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any> {
-            val anchorPosition: K?
-            val prefetchPosition: K?
+            val anchorPosition: Id?
+            val prefetchPosition: Id?
             val pagingBuffer: PagingBuffer<Id, K, V, E>
 
             data class Initial<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
-                override val prefetchPosition: K?,
-                override val anchorPosition: K?,
+                override val prefetchPosition: Id?,
+                override val anchorPosition: Id?,
                 override val pagingBuffer: PagingBuffer<Id, K, V, E>
             ) : State<Id, K, V, E>
 
             data class Loading<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
-                override val prefetchPosition: K?,
-                override val anchorPosition: K?,
+                override val prefetchPosition: Id?,
+                override val anchorPosition: Id?,
                 override val pagingBuffer: PagingBuffer<Id, K, V, E>
             ) : State<Id, K, V, E>
 
             data class Error<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
                 val value: E,
-                override val prefetchPosition: K?,
-                override val anchorPosition: K?,
+                override val prefetchPosition: Id?,
+                override val anchorPosition: Id?,
                 override val pagingBuffer: PagingBuffer<Id, K, V, E>
             ) : State<Id, K, V, E>
 
@@ -61,23 +61,23 @@ object StoreX {
 
             data class Idle<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
                 override val pagingBuffer: PagingBuffer<Id, K, V, E>,
-                override val anchorPosition: K?,
-                override val prefetchPosition: K?,
+                override val anchorPosition: Id?,
+                override val prefetchPosition: Id?,
                 private val created: Long = Clock.System.now().epochSeconds,
             ) : Data<Id, K, V, E>
 
             data class LoadingMore<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
                 override val pagingBuffer: PagingBuffer<Id, K, V, E>,
-                override val anchorPosition: K?,
-                override val prefetchPosition: K?,
+                override val anchorPosition: Id?,
+                override val prefetchPosition: Id?,
             ) : Data<Id, K, V, E>
 
 
             data class ErrorLoadingMore<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
                 override val pagingBuffer: PagingBuffer<Id, K, V, E>,
                 val error: E,
-                override val anchorPosition: K?,
-                override val prefetchPosition: K?,
+                override val anchorPosition: Id?,
+                override val prefetchPosition: Id?,
             ) : Data<Id, K, V, E>
         }
 

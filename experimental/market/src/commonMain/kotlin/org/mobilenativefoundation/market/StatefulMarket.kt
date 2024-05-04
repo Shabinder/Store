@@ -2,31 +2,30 @@ package org.mobilenativefoundation.market
 
 import org.mobilenativefoundation.storex.paging.Identifiable
 
-interface StatefulMarket<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any, S : StatefulMarket.State<Id, K, V, E>> :
-    Market<S> {
+interface StatefulMarket<S : StatefulMarket.State> : Market<S> {
 
-    interface State<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any> : Market.State {
-        val subStates: Map<String, SubState<Id, K, V, E>>
+    interface State : Market.State {
+        val subStates: Map<String, SubState>
     }
 
-    sealed interface SubState<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>
+    sealed interface SubState
 
-    data class NormalizedState<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
-        val allIds: List<Id>,
-        val byId: Map<Id, ItemState<Id, K, V, E>>
-    ) : SubState<Id, K, V, E>
+    data class NormalizedState<Id : Comparable<Id>, V : Identifiable<Id>, E : Any>(
+        val allIds: List<Id> = emptyList(),
+        val byId: Map<Id, ItemState<Id, V, E>> = emptyMap()
+    ) : SubState
 
 
-    sealed interface ItemState<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any> {
-        data object Initial : ItemState<Nothing, Nothing, Nothing, Nothing>
-        data object Loading : ItemState<Nothing, Nothing, Nothing, Nothing>
-        data class Error<E : Any>(val error: E) : ItemState<Nothing, Nothing, Nothing, E>
+    sealed interface ItemState<Id : Comparable<Id>, V : Identifiable<Id>, E : Any> {
+        data object Initial : ItemState<Nothing, Nothing, Nothing>
+        data object Loading : ItemState<Nothing, Nothing, Nothing>
+        data class Error<E : Any>(val error: E) : ItemState<Nothing, Nothing, E>
         data class Data<Id : Comparable<Id>, V : Identifiable<Id>>(
             val value: V,
             val status: Status,
             val lastModified: Long,
             val lastRefreshed: Long,
-        ) : SubState<Id, Nothing, V, Nothing> {
+        ) : SubState {
             enum class Status {
                 Idle,
                 Downloading,
@@ -36,40 +35,42 @@ interface StatefulMarket<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E :
     }
 
 
-    sealed interface PagingState<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any> : SubState<Id, K, V, E> {
+    sealed interface PagingState<Id : Comparable<Id>, V : Identifiable<Id>, E : Any> : SubState {
         val anchorPosition: Id?
         val prefetchPosition: Id?
 
-        data class Initial<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
+        data class Initial<Id : Comparable<Id>, V : Identifiable<Id>, E : Any>(
             override val prefetchPosition: Id?,
             override val anchorPosition: Id?,
-        ) : PagingState<Id, K, V, E>
+        ) : PagingState<Id, V, E>
 
-        data class Loading<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
+        data class Loading<Id : Comparable<Id>, V : Identifiable<Id>, E : Any>(
             override val prefetchPosition: Id?,
             override val anchorPosition: Id?,
-        ) : PagingState<Id, K, V, E>
+        ) : PagingState<Id, V, E>
 
-        data class Error<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
+        data class Error<Id : Comparable<Id>, V : Identifiable<Id>, E : Any>(
             val value: E,
             override val prefetchPosition: Id?,
             override val anchorPosition: Id?,
-        ) : PagingState<Id, K, V, E>
+        ) : PagingState<Id, V, E>
 
-        data class Data<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
+        data class Data<Id : Comparable<Id>, V : Identifiable<Id>, E : Any>(
             val allIds: List<Id>,
             override val anchorPosition: Id?,
             override val prefetchPosition: Id?,
             val lastModified: Long,
             val lastRefreshed: Long,
-            val status: Status
-        ) : PagingState<Id, K, V, E> {
-            enum class Status {
-                Idle,
-                LoadingMore,
-                ErrorLoadingMore,
-                Refreshing
+            val status: Status<E>
+        ) : PagingState<Id, V, E> {
+
+            sealed interface Status<out E : Any> {
+                data object Idle : Status<Nothing>
+                data class ErrorLoadingMore<E : Any>(val error: E) : Status<E>
+                data object LoadingMore : Status<Nothing>
+                data object Refreshing : Status<Nothing>
             }
+
         }
     }
 }

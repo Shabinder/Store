@@ -43,17 +43,16 @@ class PagerBuilder<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
         pageStore: Store<K, PagingSource.LoadResult.Data<Id, K, V, E>>,
         throwableConverter: (Throwable) -> E,
         messageConverter: (String) -> E,
-        builder: PagingSourceBuilder<Id, K, V, E>.() -> PagingSourceBuilder<Id, K, V, E>
+        itemStore: Store<Id, V>,
     ) =
         apply {
-            this.pagingSource = builder(
-                PagingSourceBuilder(
-                    dispatcher,
-                    pageStore,
-                    throwableConverter,
-                    messageConverter
-                )
-            ).build()
+            this.pagingSource = PagingSourceBuilder(
+                dispatcher,
+                pageStore,
+                throwableConverter,
+                messageConverter
+            ).itemStore(itemStore)
+                .build()
         }
 
     fun pagingSource(
