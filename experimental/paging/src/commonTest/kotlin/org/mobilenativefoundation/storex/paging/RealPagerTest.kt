@@ -65,9 +65,9 @@ class RealPagerTest {
             "1"
         )
 
-        pager.flow.test {
+        pager(requests)
 
-            pager(requests)
+        pager.flow.test {
 
             // Initial
             val initial = awaitItem()
@@ -81,10 +81,6 @@ class RealPagerTest {
             val idle = awaitItem()
             assertEquals(StoreX.Paging.State.Status.Idle, idle.status)
 
-            requests.emit(
-                "11"
-            )
-
             // Loading more
             val loadingMore = awaitItem()
             assertEquals(StoreX.Paging.State.Status.Loading, loadingMore.status)
@@ -93,14 +89,9 @@ class RealPagerTest {
             val idle2 = awaitItem()
             assertEquals(StoreX.Paging.State.Status.Idle, idle2.status)
 
-            requests.emit(
-                "21"
-            )
-
             // Loading more
             val loadingMore2 = awaitItem()
             assertEquals(StoreX.Paging.State.Status.Loading, loadingMore2.status)
-
 
             // Idle
             val idle3 = awaitItem()
@@ -123,8 +114,6 @@ class RealPagerTest {
             val items1 = awaitItem()
             assertIs<StoreX.Paging.Items<Id, V>>(items1)
 
-            requests.emit("11")
-
             // Items + Placeholders
             val itemsAndPlaceholders = awaitItem()
             assertIs<StoreX.Paging.Items<Id, V>>(itemsAndPlaceholders)
@@ -133,8 +122,6 @@ class RealPagerTest {
             // Items
             val items2 = awaitItem()
             assertIs<StoreX.Paging.Items<Id, V>>(items2)
-
-            requests.emit("21")
 
             // Items + Placeholders
             val itemsAndPlaceholders2 = awaitItem()

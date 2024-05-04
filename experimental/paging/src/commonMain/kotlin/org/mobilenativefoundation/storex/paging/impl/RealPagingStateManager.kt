@@ -12,8 +12,10 @@ class RealPagingStateManager<Id : Comparable<Id>, K : Any, V : Identifiable<Id>,
     private val mutablePagingBuffer: MutablePagingBuffer<Id, K, V, E>,
 ) : PagingStateManager<Id, K, V, E> {
     private val _state = MutableStateFlow(initialState)
+
     override suspend fun update(nextState: StoreX.Paging.State<Id, K, V, E>) {
         _state.value = nextState
+        println("UPDATED STATE: ${_state.value}")
     }
 
     override suspend fun update(reducer: (StoreX.Paging.State<Id, K, V, E>) -> StoreX.Paging.State<Id, K, V, E>) {
@@ -23,6 +25,9 @@ class RealPagingStateManager<Id : Comparable<Id>, K : Any, V : Identifiable<Id>,
 
     override suspend fun mutate(mutator: (MutablePagingBuffer<Id, K, V, E>) -> Unit) {
         mutator(mutablePagingBuffer)
+        update { prevState ->
+            prevState.copy(pagingBuffer = mutablePagingBuffer, status = StoreX.Paging.State.Status.Idle)
+        }
     }
 
     override fun stateFlow(): StateFlow<StoreX.Paging.State<Id, K, V, E>> {

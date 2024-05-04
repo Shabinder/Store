@@ -45,6 +45,8 @@ class RealQueueManager<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : A
                 )
             ) {
 
+                println("SHOULD FETCH")
+
                 // Add placeholders to paging buffer
                 mutablePagingBuffer.put(
                     nextPagingParams,
@@ -52,6 +54,7 @@ class RealQueueManager<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : A
                 )
 
                 pagingSourceController.lazyLoad(nextPagingParams)
+                println("LAZY LOADING")
 
                 processedParams.add(nextPagingParams)
             }

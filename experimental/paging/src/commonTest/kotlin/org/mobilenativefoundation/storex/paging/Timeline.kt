@@ -4,6 +4,7 @@ package org.mobilenativefoundation.storex.paging
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.mobilenativefoundation.store.store5.Fetcher
+import org.mobilenativefoundation.store.store5.FetcherResult
 import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.StoreBuilder
 import kotlin.math.max
@@ -99,11 +100,18 @@ object Timeline {
                 val startIndexInclusive = posts.indexOfFirst { it.id == request.cursor }
                 val endIndexExclusive = startIndexInclusive + request.size
                 val feedPosts = posts.subList(startIndexInclusive, endIndexExclusive)
+
+                val nextCursor = if (endIndexExclusive >= posts.size) {
+                    null
+                } else {
+                    posts[endIndexExclusive].id
+                }
+
                 Feed(
                     posts = feedPosts,
                     postsBefore = startIndexInclusive,
                     postsAfter = posts.size - endIndexExclusive + 1,
-                    nextCursor = posts[endIndexExclusive].id
+                    nextCursor = nextCursor
                 )
             } catch (error: Throwable) {
                 throw error
@@ -179,21 +187,23 @@ object Timeline {
             fun create(
                 feedService: Backend.FeedService
             ): Store<K, SPV> {
-                return StoreBuilder.from<K, SPV>(
-                    fetcher = Fetcher.of { request: GetFeedRequest ->
-                        val response = feedService.get(request)
-                        val items = response.posts.map { StoreX.Paging.Data.Item(it) }
+                val fetcher = Fetcher.ofResult<K, SPV> { request ->
+                    val response = feedService.get(request)
+                    val items = response.posts.map { StoreX.Paging.Data.Item(it) }
+                    FetcherResult.Data(
                         PagingSource.LoadResult.Data(
                             items = items,
                             key = request,
-                            nextOffset = response.nextCursor?.let { request.copy(cursor = it) },
+                            nextOffset = response.nextCursor,
                             itemsBefore = response.postsBefore,
                             itemsAfter = response.postsAfter,
                             origin = StoreX.Paging.DataSource.NETWORK,
                             extras = mapOf()
                         )
-                    }
-                ).build()
+                    )
+                }
+
+                return StoreBuilder.from(fetcher = fetcher).build()
             }
         }
     }

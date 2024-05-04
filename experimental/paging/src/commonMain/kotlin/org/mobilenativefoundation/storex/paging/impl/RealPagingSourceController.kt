@@ -13,10 +13,11 @@ class RealPagingSourceController<Id : Comparable<Id>, K : Any, V : Identifiable<
     loaderInjector: Injector<Loader<Id, K, V, E>>
 ) : PagingSourceController<K> {
 
-    private val loader = loaderInjector.require()
+    private val loader = lazy { loaderInjector.require() }
 
     override fun lazyLoad(params: PagingSource.LoadParams<K>) {
         jobCoordinator.launchIfNotActive(params) {
+            println("LAUNCHING")
             pagingSource.load(params, onStateTransition = createOnStateTransition(params))
         }
     }
@@ -31,10 +32,12 @@ class RealPagingSourceController<Id : Comparable<Id>, K : Any, V : Identifiable<
         params: PagingSource.LoadParams<K>,
         data: PagingSource.LoadResult.Data<Id, K, V, E>
     ) {
+        println("ON DATA, item count: ${data.items.size}")
         retriesManager.resetFor(params)
 
         pagingStateManager.mutate { mutablePagingBuffer ->
             mutablePagingBuffer.put(params, data)
+            println("Updated paging buffer: ${mutablePagingBuffer.getAllItems().size}")
         }
 
         launchSideEffects(pagingStateManager.getState())
@@ -42,7 +45,7 @@ class RealPagingSourceController<Id : Comparable<Id>, K : Any, V : Identifiable<
         // TODO: Handle prefetching
 
         data.nextOffset?.let {
-            loader(it)
+            loader.value(it)
         }
     }
 

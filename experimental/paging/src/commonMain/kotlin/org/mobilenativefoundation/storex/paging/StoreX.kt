@@ -33,8 +33,9 @@ object StoreX {
 
         data class State<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
             val pagingBuffer: PagingBuffer<Id, K, V, E>,
-            val status: Status<E> = Status.Initial
+            val status: Status<E> = Status.Initial,
         ) {
+
             sealed interface Status<out E : Any> {
                 data object Initial : Status<Nothing>
                 data object Loading : Status<Nothing>

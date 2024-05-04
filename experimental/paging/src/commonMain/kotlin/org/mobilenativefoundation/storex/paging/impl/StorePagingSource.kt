@@ -26,7 +26,6 @@ class StorePagingSource<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : 
                 flow.collect { loadResult ->
                     when (loadResult) {
                         is PagingSource.LoadResult.Data -> {
-
                             onStateTransition.onData(loadResult)
                         }
 
