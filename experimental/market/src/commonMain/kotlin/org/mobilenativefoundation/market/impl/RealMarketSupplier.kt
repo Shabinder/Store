@@ -28,3 +28,4 @@ internal class RealMarketSupplier<K : Any, O : Any, A : Market.Action, D : Marke
 fun interface MarketActionFactory<O : Any, A : Market.Action> {
     fun create(storeOutput: O): A
 }
+

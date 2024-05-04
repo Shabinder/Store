@@ -1,7 +1,7 @@
 package org.mobilenativefoundation.market
 
 
-class MemoizedSelector<S : Market.State, P : Any, R : Any>(
+private class MemoizedSelector<S : Market.State, P : Any, R : Any>(
     private val selector: (S) -> R,
     private val getParams: (S) -> P,
     private val areParamsEqual: (P, P) -> Boolean = { p1, p2 -> p1 == p2 },

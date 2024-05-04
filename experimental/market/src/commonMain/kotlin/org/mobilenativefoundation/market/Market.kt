@@ -2,7 +2,7 @@ package org.mobilenativefoundation.market
 
 import kotlinx.coroutines.flow.StateFlow
 
-interface Market<S: Market.State> {
+interface Market<S : Market.State> {
 
     val state: StateFlow<S>
 
@@ -18,7 +18,7 @@ interface Market<S: Market.State> {
         fun dispatch(action: A)
     }
 
-    fun interface Selector<S: State, R: Any> {
+    fun interface Selector<S : State, R : Any> {
         fun select(state: S): R
     }
 }
