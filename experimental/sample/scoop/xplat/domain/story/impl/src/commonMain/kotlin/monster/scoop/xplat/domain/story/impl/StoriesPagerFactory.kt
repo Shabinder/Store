@@ -105,19 +105,11 @@ class StoriesPagerFactory(
             if (data != null) {
                 val stories = data.stories.map { it.toDomainModel() }
 
-                val count = data.stories_aggregate.aggregate?.count
-
-                val itemsBefore = stories.first().id // TODO
-
-                val itemsAfter = count?.let { it - itemsBefore }
-
                 val origin = StoreX.Paging.DataSource.NETWORK
                 val pagingSourceData = StoriesPagingSourceData(
                     items = stories.map { StoreX.Paging.Data.Item(it, origin) },
                     key = key,
                     nextOffset = stories.last().id, // Offset rather than +1, server is responsible for getting next
-                    itemsBefore = itemsBefore,
-                    itemsAfter = itemsAfter,
                     origin = origin,
                     extras = mapOf()
                 )

@@ -20,7 +20,7 @@ class RealQueueManager<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : A
 
     private val queue: ArrayDeque<PagingSource.LoadParams<K>> = ArrayDeque()
 
-    // TODO: Reset on refresh
+    // TODO: Reset on restart
 
     private val processedParams: MutableSet<PagingSource.LoadParams<K>> = mutableSetOf()
 

@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
 
-interface Pager<Id : Comparable<Id>,  K : Any,  V : Identifiable<Id>,  E : Any> {
+interface Pager<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any> {
 
     val flow: Flow<StoreX.Paging.State<Id, K, V, E>>
 
@@ -12,5 +12,7 @@ interface Pager<Id : Comparable<Id>,  K : Any,  V : Identifiable<Id>,  E : Any> 
 
     val pagingItems: Flow<StoreX.Paging.AggregatedItems<Id, V>>
 
-    operator fun invoke(anchorPosition: Flow<Id>)
+    fun start(anchorPosition: Flow<Id>)
+
+    fun refresh()
 }

@@ -27,7 +27,7 @@ class RealPager<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
         }
     }
 
-    override operator fun invoke(anchorPosition: Flow<Id>) {
+    override fun start(anchorPosition: Flow<Id>) {
         coroutineScope.launch {
             anchorPosition.collectLatest { anchorPosition ->
                 fetchingStateManager.update { it.copy(anchorPosition = anchorPosition) }
@@ -41,4 +41,8 @@ class RealPager<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
     override val pagingItems: Flow<StoreX.Paging.AggregatedItems<Id, V>> = state.map { aggregatingStrategy.aggregate(it) }
 
     override val flow: Flow<StoreX.Paging.State<Id, K, V, E>> = pagingStateProvider.stateFlow()
+
+    override fun refresh() {
+        TODO("Not yet implemented")
+    }
 }
