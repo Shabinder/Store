@@ -87,7 +87,7 @@ class RealPagerTest {
             val requests = MutableStateFlow("1")
 
             // When
-            pager(requests)
+            pager.start(requests)
 
             // Then
             val expectedLoadingMoreTransitionCount = prefetchDistance / pageSize
@@ -150,7 +150,7 @@ class RealPagerTest {
             val requests = MutableStateFlow(initialId)
 
             // When
-            pager(requests)
+            pager.start(requests)
 
             // Then
             var lastPagingItems: StoreX.Paging.AggregatedItems<Id, V>? = null
