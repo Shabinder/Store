@@ -58,7 +58,7 @@ class StoriesPagerFactory(
 ) {
 
     private val placeholderFactory = StoriesPlaceholderFactory {
-        StoreX.Paging.Data.Item(Story.placeholder(),)
+        StoreX.Paging.Data.Item(Story.placeholder(), StoreX.Paging.DataSource.PLACEHOLDER)
     }
 
     private val keyFactory = StoriesKeyFactory { anchorPosition ->
@@ -111,13 +111,14 @@ class StoriesPagerFactory(
 
                 val itemsAfter = count?.let { it - itemsBefore }
 
+                val origin = StoreX.Paging.DataSource.NETWORK
                 val pagingSourceData = StoriesPagingSourceData(
-                    items = stories.map { StoreX.Paging.Data.Item(it,) },
+                    items = stories.map { StoreX.Paging.Data.Item(it, origin) },
                     key = key,
                     nextOffset = stories.last().id, // Offset rather than +1, server is responsible for getting next
                     itemsBefore = itemsBefore,
                     itemsAfter = itemsAfter,
-                    origin = StoreX.Paging.DataSource.NETWORK,
+                    origin = origin,
                     extras = mapOf()
                 )
 
