@@ -196,8 +196,6 @@ object Timeline {
                             items = items,
                             key = request,
                             nextOffset = response.nextCursor,
-                            itemsBefore = response.postsBefore,
-                            itemsAfter = response.postsAfter,
                             origin = StoreX.Paging.DataSource.NETWORK,
                             extras = mapOf()
                         )

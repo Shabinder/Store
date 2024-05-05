@@ -17,8 +17,6 @@ object StoreX {
                 val items: List<Id>,
                 val key: K,
                 val next: Id?,
-                val itemsBefore: Int?,
-                val itemsAfter: Int?,
                 val origin: DataSource,
                 val extras: Map<String, Any> = mapOf()
             ) : Data<Id, K, V>

@@ -57,8 +57,6 @@ class RealMutablePagingBuffer<Id : Comparable<Id>, K : Any, V : Identifiable<Id>
             items = newItemIds,
             key = page.key,
             next = page.nextOffset,
-            itemsBefore = page.itemsBefore,
-            itemsAfter = page.itemsAfter,
             origin = page.origin,
             extras = page.extras
         )

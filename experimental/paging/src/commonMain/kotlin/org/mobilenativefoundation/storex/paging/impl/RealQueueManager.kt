@@ -63,8 +63,6 @@ class RealQueueManager<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : A
         items = List(count) { placeholderFactory() },
         key = key,
         nextOffset = pagingOffsetCalculator.calculate(key),
-        itemsBefore = null,
-        itemsAfter = null,
         origin = StoreX.Paging.DataSource.PLACEHOLDER,
     )
 }

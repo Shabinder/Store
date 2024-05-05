@@ -23,8 +23,6 @@ interface PagingSource<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : A
             val items: List<StoreX.Paging.Data.Item<Id, V>>,
             val key: K,
             val nextOffset: Id?,
-            val itemsBefore: Int?,
-            val itemsAfter: Int?,
             val origin: StoreX.Paging.DataSource,
             val extras: Map<String, Any> = mapOf()
         ) : LoadResult<Id, K, V, E>
