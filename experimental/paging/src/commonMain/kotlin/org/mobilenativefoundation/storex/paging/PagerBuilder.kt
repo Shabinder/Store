@@ -50,12 +50,12 @@ class PagerBuilder<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
         onEachItemStoreResponse: ((id: Id, StoreReadResponse<V>) -> Unit)? = null
     ) =
         apply {
-            this.pagingSource = PagingSourceBuilder(
+            this.pagingSource = PagingSourceBuilder<Id, K, V, E>(
                 dispatcher,
-                pageStore,
                 throwableConverter,
                 messageConverter
             )
+                .pageStore(pageStore)
                 .itemStore(itemStore)
                 .apply {
                     onEachPagingSourceLoadResult?.let {
@@ -75,12 +75,12 @@ class PagerBuilder<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
         onEachPagingSourceLoadResult: ((key: K, PagingSource.LoadResult<Id, K, V, E>) -> Unit)? = null,
     ) =
         apply {
-            this.pagingSource = PagingSourceBuilder(
+            this.pagingSource = PagingSourceBuilder<Id, K, V, E>(
                 dispatcher,
-                pageStore,
                 throwableConverter,
                 messageConverter,
             )
+                .pageStore(pageStore)
                 .apply {
                     onEachPagingSourceLoadResult?.let {
                         onEachPagingSourceLoadResult(it)
