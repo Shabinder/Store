@@ -5,6 +5,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.plus
 import org.mobilenativefoundation.store.store5.Store
+import org.mobilenativefoundation.store.store5.StoreReadResponse
 import org.mobilenativefoundation.storex.paging.impl.*
 
 class PagerBuilder<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
@@ -45,6 +46,8 @@ class PagerBuilder<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
         throwableConverter: (Throwable) -> E,
         messageConverter: (String) -> E,
         itemStore: Store<Id, V>,
+        onEachPagingSourceLoadResult: ((key: K, PagingSource.LoadResult<Id, K, V, E>) -> Unit)? = null,
+        onEachItemStoreResponse: ((id: Id, StoreReadResponse<V>) -> Unit)? = null
     ) =
         apply {
             this.pagingSource = PagingSourceBuilder(
@@ -52,22 +55,38 @@ class PagerBuilder<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
                 pageStore,
                 throwableConverter,
                 messageConverter
-            ).itemStore(itemStore)
+            )
+                .itemStore(itemStore)
+                .apply {
+                    onEachPagingSourceLoadResult?.let {
+                        onEachPagingSourceLoadResult(it)
+                    }
+                    onEachItemStoreResponse?.let {
+                        onEachItemStoreResponse(it)
+                    }
+                }
                 .build()
         }
 
     fun pagingSource(
         pageStore: Store<K, PagingSource.LoadResult.Data<Id, K, V, E>>,
         throwableConverter: (Throwable) -> E,
-        messageConverter: (String) -> E
+        messageConverter: (String) -> E,
+        onEachPagingSourceLoadResult: ((key: K, PagingSource.LoadResult<Id, K, V, E>) -> Unit)? = null,
     ) =
         apply {
             this.pagingSource = PagingSourceBuilder(
                 dispatcher,
                 pageStore,
                 throwableConverter,
-                messageConverter
-            ).build()
+                messageConverter,
+            )
+                .apply {
+                    onEachPagingSourceLoadResult?.let {
+                        onEachPagingSourceLoadResult(it)
+                    }
+                }
+                .build()
         }
 
     fun pagingSource(pagingSource: PagingSource<Id, K, V, E>) =

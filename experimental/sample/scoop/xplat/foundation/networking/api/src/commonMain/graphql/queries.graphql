@@ -26,11 +26,14 @@ fragment StoryFields on stories {
     description
     url
     publication_date
+    content
     author {
+        id
         name
         photo_url
     }
     story_thumbnails {
+        id
         url
         width
         height

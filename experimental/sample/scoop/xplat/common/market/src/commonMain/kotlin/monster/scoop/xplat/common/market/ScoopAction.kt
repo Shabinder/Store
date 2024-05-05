@@ -1,6 +1,7 @@
 package monster.scoop.xplat.common.market
 
 import kotlinx.datetime.LocalDateTime
+import monster.scoop.xplat.domain.story.api.NetworkStory
 import monster.scoop.xplat.domain.story.api.StoriesError
 import monster.scoop.xplat.domain.story.api.Story
 import org.mobilenativefoundation.market.Market
@@ -15,6 +16,9 @@ sealed interface ScoopAction : Market.Action {
         data class PushStories(val stories: List<Story>) : Stories
 
         data class SetStory(val storyId: Int, val storyState: StoryState) : Stories
+        data class UpdateStoryDataStatus(val status: StatefulMarket.ItemState.Data.Status) : Stories
+
+        data class NormalizeStory(val story: NetworkStory) : Stories
 
         sealed interface Paging : Stories {
             data class SetInitial(val prefetchPosition: Int?, val anchorPosition: Int?) : Stories
@@ -33,6 +37,10 @@ sealed interface ScoopAction : Market.Action {
                 val lastModified: LocalDateTime? = null,
                 val lastRefreshed: LocalDateTime? = null,
                 val status: Status<StoriesError>? = null
+            ) : Paging
+
+            data class NormalizeAll(
+                val stories: List<NetworkStory>
             ) : Paging
         }
     }

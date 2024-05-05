@@ -4,6 +4,7 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import monster.scoop.xplat.foundation.networking.api.fragment.StoryFields
 import org.mobilenativefoundation.storex.paging.Identifiable
 
 data class Story(
@@ -12,9 +13,9 @@ data class Story(
     val description: String,
     val url: String,
     val publicationDate: LocalDateTime,
-    val authorId: Int,
+    val authorId: Int?,
     val storyThumbnailIds: List<Int>,
-    val content: String
+    val content: String?
 ) : Identifiable<Int> {
     companion object {
         fun placeholder() = Story(
@@ -30,10 +31,23 @@ data class Story(
     }
 }
 
-
-data class StoryThumbnail(
-    val id: Int,
-    val url: String,
-    val height: Int?,
-    val width: Int?
-)
+data class NetworkStory(
+    override val id: Int,
+    val data: StoryFields,
+) : Identifiable<Int> {
+    companion object {
+        fun placeholder() = NetworkStory(
+            id = -1,
+            data = StoryFields(
+                id = -1,
+                title = "",
+                description = "",
+                url = "",
+                publication_date = "",
+                author = null,
+                story_thumbnails = emptyList(),
+                content = ""
+            )
+        )
+    }
+}

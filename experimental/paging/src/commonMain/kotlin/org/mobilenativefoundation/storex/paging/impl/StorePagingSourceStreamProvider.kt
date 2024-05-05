@@ -15,6 +15,8 @@ import org.mobilenativefoundation.storex.paging.StoreX
 class StorePagingSourceStreamProvider<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
     private val createPageStream: (PagingSource.LoadParams<K>) -> Flow<PagingSource.LoadResult<Id, K, V, E>>,
     private val createItemStream: ((Id) -> Flow<StoreReadResponse<V>>)?,
+    private val onEachPagingSourceLoadResult: ((key: K, PagingSource.LoadResult<Id, K, V, E>) -> Unit)?,
+    private val onEachItemStoreResponse: ((id: Id, StoreReadResponse<V>) -> Unit)?
 ) : PagingSourceStreamProvider<Id, K, V, E> {
     private val loadResultsData: MutableMap<K, PagingSource.LoadResult.Data<Id, K, V, E>> =
         mutableMapOf()
@@ -49,6 +51,8 @@ class StorePagingSourceStreamProvider<Id : Comparable<Id>, K : Any, V : Identifi
                 is PagingSource.LoadResult.Error,
                 is PagingSource.LoadResult.Loading -> result
             }
+        }.onEach {
+            onEachPagingSourceLoadResult?.invoke(params.key, it)
         }
     }
 
@@ -85,6 +89,8 @@ class StorePagingSourceStreamProvider<Id : Comparable<Id>, K : Any, V : Identifi
                     }
                 }
             }
+
+            onEachItemStoreResponse?.invoke(data.id, response)
         }
     }
 }

@@ -1,64 +1,55 @@
 package monster.scoop.xplat.domain.story.impl
 
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.datetime.Clock
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import monster.scoop.xplat.common.market.ScoopAction
 import monster.scoop.xplat.common.market.ScoopDispatcher
 import monster.scoop.xplat.domain.story.api.*
 import monster.scoop.xplat.foundation.networking.api.GetStoriesQuery
 import monster.scoop.xplat.foundation.networking.api.GetStoryQuery
 import monster.scoop.xplat.foundation.networking.api.NetworkingClient
-import monster.scoop.xplat.foundation.networking.api.fragment.StoryFields
 import org.mobilenativefoundation.market.StatefulMarket
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.FetcherResult
-import org.mobilenativefoundation.storex.paging.ErrorHandlingStrategy
+import org.mobilenativefoundation.store.store5.StoreReadResponse
 import org.mobilenativefoundation.storex.paging.PagingConfig
+import org.mobilenativefoundation.storex.paging.PagingSource
 import org.mobilenativefoundation.storex.paging.StoreX
 
-class StoriesMarketPagerFactory(
-    private val coroutineDispatcher: CoroutineDispatcher,
-    private val marketDispatcher: ScoopDispatcher,
-    private val networkingClient: NetworkingClient
-) {
-    private val pagingConfig = PagingConfig(pageSize = 10, prefetchDistance = 20, initialLoadSize = 20)
 
-    fun create(): StoriesMarketPager = StoriesMarketPager.from(
-        coroutineDispatcher = coroutineDispatcher,
-        marketDispatcher = marketDispatcher,
-        actionFactory = ::actionFactory,
-        pagerBuilder = {
-            StoriesPagerFactory(coroutineDispatcher, pagingConfig, networkingClient).create()
-        }
-    )
+data class PageInfo(
+    val count: Int? = null,
+    val totalItems: Int? = null,
+    val itemsBefore: Int? = null,
+    val itemsAfter: Int? = null
+)
 
-    private fun actionFactory(pagingState: StoriesPagingState): ScoopAction.Stories = when (pagingState.status) {
-        is StoreX.Paging.State.Status.Error -> TODO()
-        StoreX.Paging.State.Status.Idle -> {
-            ScoopAction.Stories.Paging.SetData(
-                stories = pagingState.pagingBuffer.getAllItems().map { it.value },
-                lastModified = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
-                lastRefreshed = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
-                status = StatefulMarket.PagingState.Data.Status.Idle
-            )
-        }
-
-        StoreX.Paging.State.Status.Initial -> TODO()
-        StoreX.Paging.State.Status.Loading -> TODO()
-    }
-}
 
 class StoriesPagerFactory(
     private val coroutineDispatcher: CoroutineDispatcher,
     private val pagingConfig: PagingConfig,
     private val networkingClient: NetworkingClient,
+    private val marketDispatcher: ScoopDispatcher
 ) {
 
-    private val placeholderFactory = StoriesPlaceholderFactory {
-        StoreX.Paging.Data.Item(Story.placeholder(), StoreX.Paging.DataSource.PLACEHOLDER)
+    fun create(): StoriesNetworkPager = StoriesNetworkPagerBuilder(
+        coroutineDispatcher
+    )
+        .pagingConfig(pagingConfig)
+        .pagingSource(
+            pageStore = pageStore,
+            throwableConverter = { StoriesError.Default.Exception(it) },
+            messageConverter = { StoriesError.Default.Message(it) },
+            itemStore = itemStore,
+            onEachItemStoreResponse = ::onEachItemStoreResponse,
+            onEachPagingSourceLoadResult = ::onEachPagingSourceLoadResult
+        )
+        .build(
+            placeholderFactory = placeholderFactory,
+            keyFactory = keyFactory
+        )
+
+    private val placeholderFactory = StoriesNetworkPlaceholderFactory {
+        StoreX.Paging.Data.Item(NetworkStory.placeholder(), StoreX.Paging.DataSource.PLACEHOLDER)
     }
 
     private val keyFactory = StoriesKeyFactory { anchorPosition ->
@@ -68,80 +59,115 @@ class StoriesPagerFactory(
         )
     }
 
-    private fun StoryFields.Story_thumbnail.toDomainModel(): StoryThumbnail {
-        TODO()
-    }
-
-    private fun StoryFields.toDomainModel(): Story = Story(
-        id = this.id,
-        title = this.title,
-        description = this.description,
-        url = this.url,
-        publicationDate = LocalDateTime.parse(this.publication_date.toString()),
-        authorId = this.author.hashCode(), // TODO
-        storyThumbnailIds = emptyList(), // TODO
-        content = "" // TODO
-    )
-
-    private fun GetStoriesQuery.Story.toDomainModel(): Story = this.storyFields.toDomainModel()
-
-    private fun GetStoryQuery.Stories_by_pk.toDomainModel(): Story = this.storyFields.toDomainModel()
-
-    private val storiesItemStore = StoriesItemStoreBuilder.from(
+    private val itemStore = StoriesNetworkItemStoreBuilder.from(
         fetcher = Fetcher.ofResult { id: Int ->
             val data = networkingClient.getStory(GetStoryQuery(id))
             val storyFields = data?.stories_by_pk?.storyFields
             if (storyFields != null) {
-                FetcherResult.Data(storyFields.toDomainModel())
+                val networkStory = NetworkStory(
+                    id = storyFields.id,
+                    data = storyFields
+                )
+
+                FetcherResult.Data(networkStory)
             } else {
                 FetcherResult.Error.Message("Not found")
             }
         }
     ).build()
 
-    private val storiesPageStore = StoriesPageStoreBuilder.from(
+
+    private val pageStore: StoriesNetworkPageStore = StoriesNetworkPageStoreBuilder.from(
         fetcher = Fetcher.ofResult { key: StoriesPagingKey ->
+
             val data = networkingClient.getStories(GetStoriesQuery(key.limit, key.offset))
             if (data != null) {
-                val stories = data.stories.map { it.toDomainModel() }
+
+                val totalItems = data.stories_aggregate.aggregate?.count
+
+                val pageInfo = PageInfo(
+                    count = data.stories.size,
+                    totalItems = totalItems,
+                )
 
                 val origin = StoreX.Paging.DataSource.NETWORK
-                val pagingSourceData = StoriesPagingSourceData(
-                    items = stories.map { StoreX.Paging.Data.Item(it, origin) },
+                val pagingSourceData = StoriesNetworkPagingSourceData(
+                    items = data.stories.map {
+                        StoreX.Paging.Data.Item(
+                            NetworkStory(it.storyFields.id, it.storyFields),
+                            origin = origin
+                        )
+                    },
                     key = key,
-                    nextOffset = stories.last().id, // Offset rather than +1, server is responsible for getting next
+                    nextOffset = data.stories.lastOrNull()?.storyFields?.id, // Offset rather than +1, server is responsible for getting next
                     origin = origin,
-                    extras = mapOf()
+                    extras = buildMap {
+                        "pageInfo" to pageInfo
+                    }
                 )
 
                 FetcherResult.Data(pagingSourceData)
             } else {
                 FetcherResult.Error.Message("Not found")
             }
-        }
-
+        },
     ).build()
 
-    fun create(): StoriesPager = StoriesPagerBuilder(
-        coroutineDispatcher
-    )
-        .pagingConfig(pagingConfig)
+    private fun onEachPagingSourceLoadResult(key: StoriesPagingKey, result: StoriesNetworkPagingSourceLoadResult) {
+        when (result) {
+            is PagingSource.LoadResult.Data -> TODO()
+            is PagingSource.LoadResult.Error -> TODO()
+            is PagingSource.LoadResult.Loading -> TODO()
+        }
+    }
 
-        .pagingSource(
-            pageStore = storiesPageStore,
-            throwableConverter = { StoriesError.Default.Exception(it) },
-            messageConverter = { StoriesError.Default.Message(it) },
-            itemStore = storiesItemStore
+    // TODO: Handle mutations
+    // TODO: Handle data status changes
+    private fun onEachItemStoreResponse(id: Int, response: StoreReadResponse<NetworkStory>) {
+        val action = when (response) {
+            is StoreReadResponse.Data -> ScoopAction.Stories.NormalizeStory(response.value)
+            is StoreReadResponse.Error.Custom<*> -> ScoopAction.Stories.SetStory(
+                id,
+                StatefulMarket.ItemState.Error(StoriesError.Default.Message(response.error.toString()))
+            )
 
-        )
+            is StoreReadResponse.Error.Exception -> {
+                ScoopAction.Stories.SetStory(
+                    id,
+                    StatefulMarket.ItemState.Error(StoriesError.Default.Exception(response.error))
+                )
+            }
 
-        .errorHandlingStrategy(ErrorHandlingStrategy.RetryLast(3))
+            is StoreReadResponse.Error.Message -> {
+                ScoopAction.Stories.SetStory(
+                    id,
+                    StatefulMarket.ItemState.Error(StoriesError.Default.Message(response.message))
+                )
+            }
 
-        .build(
-            placeholderFactory = placeholderFactory,
-            keyFactory = keyFactory
-        )
+            StoreReadResponse.Initial -> {
+                ScoopAction.Stories.SetStory(
+                    id,
+                    StatefulMarket.ItemState.Initial(id)
+                )
+            }
+
+            is StoreReadResponse.Loading -> {
+                ScoopAction.Stories.SetStory(
+                    id,
+                    StatefulMarket.ItemState.Initial(id)
+                )
+            }
+
+            is StoreReadResponse.NoNewData -> {
+                ScoopAction.Stories.UpdateStoryDataStatus(
+                    StatefulMarket.ItemState.Data.Status.Idle
+                )
+            }
+        }
+
+        marketDispatcher.dispatch(action)
+    }
 }
-
 
 
