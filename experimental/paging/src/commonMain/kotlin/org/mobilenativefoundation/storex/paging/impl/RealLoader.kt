@@ -15,7 +15,7 @@ class RealLoader<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
             key = keyFactory.create(offset),
             strategy = strategy
         )
-        println("ENQUEUING $params")
+
         enqueue(applyMiddleware(params, 0))
     }
 
@@ -34,6 +34,6 @@ class RealLoader<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
 
     private fun enqueue(params: PagingSource.LoadParams<K>) {
         queueManager.enqueue(params)
-        println("ENQUEUED $params")
+
     }
 }

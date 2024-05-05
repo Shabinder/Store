@@ -16,6 +16,7 @@ typealias V = Timeline.Post
 typealias E = Timeline.Error
 typealias SPV = PagingSource.LoadResult.Data<Id, K, V, E>
 typealias SIV = StoreX.Paging.Data.Item<Id, V>
+typealias TimelinePagingState = StoreX.Paging.State<Id, K, V, E>
 
 object Timeline {
 
@@ -189,7 +190,7 @@ object Timeline {
             ): Store<K, SPV> {
                 val fetcher = Fetcher.ofResult<K, SPV> { request ->
                     val response = feedService.get(request)
-                    val items = response.posts.map { StoreX.Paging.Data.Item(it) }
+                    val items = response.posts.map { StoreX.Paging.Data.Item(it, StoreX.Paging.DataSource.NETWORK) }
                     FetcherResult.Data(
                         PagingSource.LoadResult.Data(
                             items = items,

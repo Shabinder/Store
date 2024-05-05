@@ -1,9 +1,10 @@
 package org.mobilenativefoundation.storex.paging.impl
 
 import org.mobilenativefoundation.storex.paging.*
-import kotlin.math.max
 
-class DefaultFetchingStrategy<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any> :
+class DefaultFetchingStrategy<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
+    private val pagedItemDistanceCalculator: PagedItemDistanceCalculator<Id>? = null
+) :
     FetchingStrategy<Id, K, V, E> {
     override fun shouldFetch(
         params: PagingSource.LoadParams<K>,
@@ -15,15 +16,11 @@ class DefaultFetchingStrategy<Id : Comparable<Id>, K : Any, V : Identifiable<Id>
         fetchingState.anchorPosition?.let { anchorPosition ->
             fetchingState.prefetchPosition?.let { prefetchPosition ->
 
-                val indexOfAnchor = pagingState.pagingBuffer.indexOf(anchorPosition)
-                val indexOfPrefetch = pagingState.pagingBuffer.indexOf(prefetchPosition)
+                val distance = pagedItemDistanceCalculator?.calculate(anchorPosition, prefetchPosition)
+                    ?: pagingState.pagingBuffer.minDistanceBetween(anchorPosition, prefetchPosition)
 
-                if ((indexOfAnchor == -1 && indexOfPrefetch == -1) || indexOfPrefetch == -1) return true
 
-                val effectiveAnchor = max(indexOfAnchor, 0)
-                val effectivePrefetch = (indexOfPrefetch + 1) * pagingConfig.pageSize
-
-                return effectivePrefetch - effectiveAnchor < pagingConfig.prefetchDistance
+                return distance < pagingConfig.prefetchDistance
             }
         }
 

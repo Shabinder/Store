@@ -10,14 +10,14 @@ class RealPagingSourceController<Id : Comparable<Id>, K : Any, V : Identifiable<
     private val pagingSource: PagingSource<Id, K, V, E>,
     private val pagingStateManager: PagingStateManager<Id, K, V, E>,
     private val retriesManager: RetriesManager<K>,
-    loaderInjector: Injector<Loader<Id, K, V, E>>
+    loaderInjector: Injector<Loader<Id, K, V, E>>,
+    private val fetchingStateManager: FetchingStateManager<Id>
 ) : PagingSourceController<K> {
 
     private val loader = lazy { loaderInjector.require() }
 
     override fun lazyLoad(params: PagingSource.LoadParams<K>) {
         jobCoordinator.launchIfNotActive(params) {
-            println("LAUNCHING")
             pagingSource.load(params, onStateTransition = createOnStateTransition(params))
         }
     }
@@ -32,12 +32,10 @@ class RealPagingSourceController<Id : Comparable<Id>, K : Any, V : Identifiable<
         params: PagingSource.LoadParams<K>,
         data: PagingSource.LoadResult.Data<Id, K, V, E>
     ) {
-        println("ON DATA, item count: ${data.items.size}")
         retriesManager.resetFor(params)
 
         pagingStateManager.mutate { mutablePagingBuffer ->
             mutablePagingBuffer.put(params, data)
-            println("Updated paging buffer: ${mutablePagingBuffer.getAllItems().size}")
         }
 
         launchSideEffects(pagingStateManager.getState())
@@ -45,6 +43,7 @@ class RealPagingSourceController<Id : Comparable<Id>, K : Any, V : Identifiable<
         // TODO: Handle prefetching
 
         data.nextOffset?.let {
+            fetchingStateManager.update { prevState -> prevState.copy(prefetchPosition = it) }
             loader.value(it)
         }
     }

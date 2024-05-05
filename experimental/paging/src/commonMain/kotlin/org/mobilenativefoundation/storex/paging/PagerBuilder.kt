@@ -23,7 +23,8 @@ class PagerBuilder<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
     private var errorHandlingStrategy: ErrorHandlingStrategy = ErrorHandlingStrategy.RetryLast(3)
     private var pagingBufferMaxSize: Int = 500
 
-    private var fetchingStrategy: FetchingStrategy<Id, K, V, E> = DefaultFetchingStrategy()
+    private lateinit var fetchingStrategy: FetchingStrategy<Id, K, V, E>
+    private lateinit var pagingOffsetCalculator: PagingOffsetCalculator<Id, K>
 
     private lateinit var pagingSource: PagingSource<Id, K, V, E>
 
@@ -98,6 +99,18 @@ class PagerBuilder<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
     fun fetchingStrategy(strategy: FetchingStrategy<Id, K, V, E>) =
         apply { this.fetchingStrategy = strategy }
 
+    fun defaultFetchingStrategy(
+        calculator: PagedItemDistanceCalculator<Id>? = null
+    ) = apply {
+        this.fetchingStrategy = DefaultFetchingStrategy(calculator)
+    }
+
+    fun pagingOffsetCalculator(
+        calculator: PagingOffsetCalculator<Id, K>
+    ) = apply {
+        this.pagingOffsetCalculator = calculator
+    }
+
     fun pagingBufferMaxSize(maxSize: Int) = apply { this.pagingBufferMaxSize = maxSize }
 
     fun build(
@@ -116,7 +129,7 @@ class PagerBuilder<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
         val fetchingStateManager: FetchingStateManager<Id> = RealFetchingStateManager()
 
         val aggregatingStrategy: AggregatingStrategy<Id, K, V, E> =
-            RealAggregatingStrategy(operations, pagingConfig)
+            RealAggregatingStrategy(operations, pagingConfig, placeholderFactory)
 
 
         val scope = CoroutineScope(dispatcher) + Job()
@@ -135,7 +148,8 @@ class PagerBuilder<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
                 pagingSource = pagingSource,
                 pagingStateManager = pagingStateManager,
                 retriesManager = retriesManager,
-                loaderInjector = loaderInjector
+                loaderInjector = loaderInjector,
+                fetchingStateManager = fetchingStateManager
             )
 
         val queueManager: QueueManager<K> = RealQueueManager(
@@ -146,7 +160,8 @@ class PagerBuilder<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
             pagingSourceController = pagingSourceController,
             pagingStateProvider = pagingStateManager,
             placeholderFactory = placeholderFactory,
-            fetchingStateProvider = fetchingStateManager
+            fetchingStateProvider = fetchingStateManager,
+            pagingOffsetCalculator = pagingOffsetCalculator
         )
 
         val loader: Loader<Id, K, V, E> = RealLoader(

@@ -12,6 +12,7 @@ interface PagingBuffer<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : A
 
     fun get(id: Id): StoreX.Paging.Data.Item<Id, V>?
     fun getPageContaining(id: Id): StoreX.Paging.Data.Page<Id, K, V>?
+    fun getNextPage(page: StoreX.Paging.Data.Page<Id, K, V>): StoreX.Paging.Data.Page<Id, K, V>?
 
     fun head(): StoreX.Paging.Data.Page<Id, K, V>?
 
@@ -22,7 +23,8 @@ interface PagingBuffer<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : A
     fun isEmpty(): Boolean
 
     fun indexOf(key: K): Int
-    fun indexOf(id: Id): Int
+    fun positionOf(id: Id): Int
+    fun minDistanceBetween(a: Id, b: Id): Int
 
     fun getItemsInRange(
         anchorPosition: K,

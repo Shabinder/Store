@@ -38,7 +38,7 @@ class RealPager<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : Any>(
 
     override val state: StateFlow<StoreX.Paging.State<Id, K, V, E>> = pagingStateProvider.stateFlow()
 
-    override val pagingItems: Flow<StoreX.Paging.Items<Id, V>> = state.map { aggregatingStrategy.aggregate(it) }
+    override val pagingItems: Flow<StoreX.Paging.AggregatedItems<Id, V>> = state.map { aggregatingStrategy.aggregate(it) }
 
     override val flow: Flow<StoreX.Paging.State<Id, K, V, E>> = pagingStateProvider.stateFlow()
 }

@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.mobilenativefoundation.store.store5.StoreReadResponse
+import org.mobilenativefoundation.store.store5.StoreReadResponseOrigin
 import org.mobilenativefoundation.storex.paging.Identifiable
 import org.mobilenativefoundation.storex.paging.PagingSource
 import org.mobilenativefoundation.storex.paging.StoreX
@@ -68,7 +69,15 @@ class StorePagingSourceStreamProvider<Id : Comparable<Id>, K : Any, V : Identifi
                         val updatedItems = currentData.items.toMutableList()
                         val item = updatedItems[index]
                         if (item != updatedValue) {
-                            updatedItems[index] = StoreX.Paging.Data.Item(updatedValue)
+
+                            // TODO : Move to util
+                            val origin = when (response.origin) {
+                                StoreReadResponseOrigin.Cache -> StoreX.Paging.DataSource.MEMORY_CACHE
+                                is StoreReadResponseOrigin.Fetcher -> StoreX.Paging.DataSource.NETWORK
+                                StoreReadResponseOrigin.Initial -> StoreX.Paging.DataSource.PLACEHOLDER
+                                StoreReadResponseOrigin.SourceOfTruth -> StoreX.Paging.DataSource.SOURCE_OF_TRUTH
+                            }
+                            updatedItems[index] = StoreX.Paging.Data.Item(updatedValue, origin)
                             val updatedPage = currentData.copy(items = updatedItems)
                             this.loadResultsData[parentKey] = updatedPage
                             emit(updatedPage)

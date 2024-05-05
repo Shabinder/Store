@@ -9,7 +9,8 @@ object StoreX {
 
 
             data class Item<Id : Comparable<Id>, out V : Identifiable<Id>>(
-                val value: V
+                val value: V,
+                val origin: DataSource
             ) : Data<Id, Nothing, V>
 
             data class Page<Id : Comparable<Id>, out K : Any, out V : Identifiable<Id>>(
@@ -44,9 +45,8 @@ object StoreX {
             }
         }
 
-        data class Items<Id : Comparable<Id>, out V : Identifiable<Id>>(
-            val allIds: List<Id> = emptyList(),
-            val byId: Map<Id, Data.Item<Id, V>> = emptyMap(),
+        data class AggregatedItems<Id : Comparable<Id>, out V : Identifiable<Id>>(
+            val value: List<Data.Item<Id, V>> = emptyList()
         )
 
     }

@@ -10,7 +10,7 @@ interface Pager<Id : Comparable<Id>,  K : Any,  V : Identifiable<Id>,  E : Any> 
 
     val state: StateFlow<StoreX.Paging.State<Id, K, V, E>>
 
-    val pagingItems: Flow<StoreX.Paging.Items<Id, V>>
+    val pagingItems: Flow<StoreX.Paging.AggregatedItems<Id, V>>
 
     operator fun invoke(anchorPosition: Flow<Id>)
 }

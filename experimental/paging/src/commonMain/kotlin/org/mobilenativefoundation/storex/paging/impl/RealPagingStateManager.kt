@@ -15,7 +15,6 @@ class RealPagingStateManager<Id : Comparable<Id>, K : Any, V : Identifiable<Id>,
 
     override suspend fun update(nextState: StoreX.Paging.State<Id, K, V, E>) {
         _state.value = nextState
-        println("UPDATED STATE: ${_state.value}")
     }
 
     override suspend fun update(reducer: (StoreX.Paging.State<Id, K, V, E>) -> StoreX.Paging.State<Id, K, V, E>) {

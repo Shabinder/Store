@@ -14,12 +14,13 @@ class RealQueueManager<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : A
     private val pagingStateProvider: PagingStateProvider<Id, K, V, E>,
     private val placeholderFactory: PlaceholderFactory<Id, V>,
     private val fetchingStateProvider: FetchingStateProvider<Id>,
+    private val pagingOffsetCalculator: PagingOffsetCalculator<Id, K>
 ) : QueueManager<K> {
     private val coroutineScope: CoroutineScope = CoroutineScope(dispatcher)
 
-    // TODO: This won't work if anchor passes prefetch
     private val queue: ArrayDeque<PagingSource.LoadParams<K>> = ArrayDeque()
-    // TODO: What about refresh, need to reset this
+
+    // TODO: Reset on refresh
 
     private val processedParams: MutableSet<PagingSource.LoadParams<K>> = mutableSetOf()
 
@@ -45,8 +46,6 @@ class RealQueueManager<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : A
                 )
             ) {
 
-                println("SHOULD FETCH")
-
                 // Add placeholders to paging buffer
                 mutablePagingBuffer.put(
                     nextPagingParams,
@@ -54,7 +53,6 @@ class RealQueueManager<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : A
                 )
 
                 pagingSourceController.lazyLoad(nextPagingParams)
-                println("LAZY LOADING")
 
                 processedParams.add(nextPagingParams)
             }
@@ -64,7 +62,7 @@ class RealQueueManager<Id : Comparable<Id>, K : Any, V : Identifiable<Id>, E : A
     private fun createPlaceholders(count: Int, key: K) = PagingSource.LoadResult.Data<Id, K, V, E>(
         items = List(count) { placeholderFactory() },
         key = key,
-        nextOffset = null,
+        nextOffset = pagingOffsetCalculator.calculate(key),
         itemsBefore = null,
         itemsAfter = null,
         origin = StoreX.Paging.DataSource.PLACEHOLDER,

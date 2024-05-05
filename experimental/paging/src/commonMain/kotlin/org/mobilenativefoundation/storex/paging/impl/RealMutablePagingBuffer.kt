@@ -48,6 +48,8 @@ class RealMutablePagingBuffer<Id : Comparable<Id>, K : Any, V : Identifiable<Id>
         params: PagingSource.LoadParams<K>,
         page: PagingSource.LoadResult.Data<Id, K, V, E>
     ) {
+        val alreadyInMap = keyToIndex[params.key] != null
+
         val index = computeIndex(params.key)
 
         val newItemIds = page.items.map { it.value.id }
@@ -64,13 +66,19 @@ class RealMutablePagingBuffer<Id : Comparable<Id>, K : Any, V : Identifiable<Id>
         pages[index] = newPage
         paramsToIndex[params] = index
         keyToIndex[params.key] = index
-        tail = (tail + 1) % maxSize
-        size = minOf(size + 1, maxSize)
 
-        page.items.forEach { item ->
-            idToKey[item.value.id] = params.key
+        if (!alreadyInMap) {
+            tail = (tail + 1) % maxSize
+            size = minOf(size + 1, maxSize)
+        } else {
+        }
 
-            items[item.value.id] = item
+        if (page.origin != StoreX.Paging.DataSource.PLACEHOLDER) {
+            page.items.forEach { item ->
+                idToKey[item.value.id] = params.key
+
+                items[item.value.id] = item
+            }
         }
     }
 
@@ -80,6 +88,31 @@ class RealMutablePagingBuffer<Id : Comparable<Id>, K : Any, V : Identifiable<Id>
 
     override fun head(): StoreX.Paging.Data.Page<Id, K, V>? {
         return pages[head]
+    }
+
+    override fun minDistanceBetween(a: Id, b: Id): Int {
+        val positionA = positionOf(a)
+        require(positionA > -1) { "Not found: $a" }
+
+        var positionB = positionOf(b)
+
+        if (positionB == -1) {
+            val tailPage = pages[tail - 1]
+
+            val lastItemTailPage = tailPage?.items?.last()
+
+
+            val positionLastItem = lastItemTailPage?.let {
+                positionOf(it)
+            }
+
+
+            positionLastItem?.let { positionB = it }
+        }
+
+        require(positionB > -1) { "$b not found, tail also not found" }
+
+        return positionB - positionA
     }
 
     override fun getPageContaining(id: Id): StoreX.Paging.Data.Page<Id, K, V>? {
@@ -103,29 +136,49 @@ class RealMutablePagingBuffer<Id : Comparable<Id>, K : Any, V : Identifiable<Id>
         return pages
     }
 
+    override fun getNextPage(page: StoreX.Paging.Data.Page<Id, K, V>): StoreX.Paging.Data.Page<Id, K, V>? {
+        var index = head
+        var count = 0
+        while (count < size) {
+            val currentPage = this.pages[index]
+            index = (index + 1) % maxSize
+
+            if (currentPage == page) {
+                break
+            }
+
+            count++
+        }
+        return this.pages[index]
+    }
+
     override fun getAllItems(): List<StoreX.Paging.Data.Item<Id, V>> {
         return items.values.toList()
     }
 
     override fun isEmpty(): Boolean = size == 0
-    override fun indexOf(id: Id): Int {
+    override fun positionOf(id: Id): Int {
         if (id !in items) return -1
 
         var index = head
-        var count = 0
-        while (count < size) {
+        var pageCount = 0
+        var itemCount = 0
+        while (pageCount < size) {
             val page = pages[index]
             if (page != null) {
                 val itemIndex = page.items.indexOf(id)
                 if (itemIndex != -1) {
-                    return count * maxSize + itemIndex
+                    return itemCount + itemIndex + 1
+                } else {
+                    itemCount += page.items.lastIndex + 1
                 }
             }
             index = (index + 1) % maxSize
-            count++
+            pageCount++
         }
         return -1
     }
+
 
     override fun indexOf(key: K): Int {
         return keyToIndex[key] ?: -1
