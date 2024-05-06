@@ -1,0 +1,8 @@
+mutation FavoriteStory($story_id:Int!, $user_id:Int!) {
+    insert_user_favorites_one(object:{
+        story_id:$story_id,
+        user_id:$user_id
+    }){
+        created_at
+    }
+}

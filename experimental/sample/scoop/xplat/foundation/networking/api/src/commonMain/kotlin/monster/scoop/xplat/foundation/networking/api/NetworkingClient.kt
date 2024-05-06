@@ -4,4 +4,5 @@ interface NetworkingClient {
 
     suspend fun getStories(query: GetStoriesQuery): GetStoriesQuery.Data?
     suspend fun getStory(query: GetStoryQuery): GetStoryQuery.Data?
+    suspend fun favoriteStory(mutation: FavoriteStoryMutation): FavoriteStoryMutation.Data?
 }

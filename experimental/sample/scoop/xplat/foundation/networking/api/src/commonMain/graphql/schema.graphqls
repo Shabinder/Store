@@ -51,12 +51,19 @@ type __Type { description: String!
 }
 
 type query_root { "An aggregate relationship"
-rss_feeds_aggregate("filter the rows returned"
-where: rss_feeds_bool_exp, "sort the rows by one or more columns"
-order_by: [rss_feeds_order_by!], "limit the number of rows returned"
+comments_aggregate("filter the rows returned"
+where: comments_bool_exp, "sort the rows by one or more columns"
+order_by: [comments_order_by!], "limit the number of rows returned"
 limit: Int, "skip the first n rows. Use only with order_by"
 offset: Int, "distinct select on columns"
-distinct_on: [rss_feeds_select_column!]): rss_feeds_aggregate!
+distinct_on: [comments_select_column!]): comments_aggregate!
+    "An aggregate relationship"
+    rss_feeds_aggregate("filter the rows returned"
+    where: rss_feeds_bool_exp, "sort the rows by one or more columns"
+    order_by: [rss_feeds_order_by!], "limit the number of rows returned"
+    limit: Int, "skip the first n rows. Use only with order_by"
+    offset: Int, "distinct select on columns"
+    distinct_on: [rss_feeds_select_column!]): rss_feeds_aggregate!
     "An aggregate relationship"
     stories_aggregate("filter the rows returned"
     where: stories_bool_exp, "sort the rows by one or more columns"
@@ -148,6 +155,20 @@ distinct_on: [rss_feeds_select_column!]): rss_feeds_aggregate!
     limit: Int, "skip the first n rows. Use only with order_by"
     offset: Int, "distinct select on columns"
     distinct_on: [tag_stories_select_column!]): tag_stories_aggregate!
+    "An aggregate relationship"
+    user_favorites_aggregate("filter the rows returned"
+    where: user_favorites_bool_exp, "sort the rows by one or more columns"
+    order_by: [user_favorites_order_by!], "limit the number of rows returned"
+    limit: Int, "skip the first n rows. Use only with order_by"
+    offset: Int, "distinct select on columns"
+    distinct_on: [user_favorites_select_column!]): user_favorites_aggregate!
+    "An array relationship"
+    comments("filter the rows returned"
+    where: comments_bool_exp, "sort the rows by one or more columns"
+    order_by: [comments_order_by!], "limit the number of rows returned"
+    limit: Int, "skip the first n rows. Use only with order_by"
+    offset: Int, "distinct select on columns"
+    distinct_on: [comments_select_column!]): [comments!]!
     "An array relationship"
     rss_feeds("filter the rows returned"
     where: rss_feeds_bool_exp, "sort the rows by one or more columns"
@@ -246,6 +267,13 @@ distinct_on: [rss_feeds_select_column!]): rss_feeds_aggregate!
     limit: Int, "skip the first n rows. Use only with order_by"
     offset: Int, "distinct select on columns"
     distinct_on: [tag_stories_select_column!]): [tag_stories!]!
+    "An array relationship"
+    user_favorites("filter the rows returned"
+    where: user_favorites_bool_exp, "sort the rows by one or more columns"
+    order_by: [user_favorites_order_by!], "limit the number of rows returned"
+    limit: Int, "skip the first n rows. Use only with order_by"
+    offset: Int, "distinct select on columns"
+    distinct_on: [user_favorites_select_column!]): [user_favorites!]!
     "fetch aggregated fields from the table: \"authors\""
     authors_aggregate("filter the rows returned"
     where: authors_bool_exp, "sort the rows by one or more columns"
@@ -302,6 +330,13 @@ distinct_on: [rss_feeds_select_column!]): rss_feeds_aggregate!
     limit: Int, "skip the first n rows. Use only with order_by"
     offset: Int, "distinct select on columns"
     distinct_on: [tags_select_column!]): tags_aggregate!
+    "fetch aggregated fields from the table: \"users\""
+    users_aggregate("filter the rows returned"
+    where: users_bool_exp, "sort the rows by one or more columns"
+    order_by: [users_order_by!], "limit the number of rows returned"
+    limit: Int, "skip the first n rows. Use only with order_by"
+    offset: Int, "distinct select on columns"
+    distinct_on: [users_select_column!]): users_aggregate!
     "fetch data from the table: \"authors\""
     authors("filter the rows returned"
     where: authors_bool_exp, "sort the rows by one or more columns"
@@ -311,6 +346,8 @@ distinct_on: [rss_feeds_select_column!]): rss_feeds_aggregate!
     distinct_on: [authors_select_column!]): [authors!]!
     "fetch data from the table: \"authors\" using primary key columns"
     authors_by_pk(id: Int!): authors
+    "fetch data from the table: \"comments\" using primary key columns"
+    comments_by_pk(id: Int!): comments
     "fetch data from the table: \"companies\""
     companies("filter the rows returned"
     where: companies_bool_exp, "sort the rows by one or more columns"
@@ -402,15 +439,33 @@ distinct_on: [rss_feeds_select_column!]): rss_feeds_aggregate!
     distinct_on: [tags_select_column!]): [tags!]!
     "fetch data from the table: \"tags\" using primary key columns"
     tags_by_pk(id: Int!): tags
+    "fetch data from the table: \"user_favorites\" using primary key columns"
+    user_favorites_by_pk(user_id: Int!, story_id: Int!): user_favorites
+    "fetch data from the table: \"users\""
+    users("filter the rows returned"
+    where: users_bool_exp, "sort the rows by one or more columns"
+    order_by: [users_order_by!], "limit the number of rows returned"
+    limit: Int, "skip the first n rows. Use only with order_by"
+    offset: Int, "distinct select on columns"
+    distinct_on: [users_select_column!]): [users!]!
+    "fetch data from the table: \"users\" using primary key columns"
+    users_by_pk(id: Int!): users
 }
 
 type subscription_root { "An aggregate relationship"
-rss_feeds_aggregate("filter the rows returned"
-where: rss_feeds_bool_exp, "sort the rows by one or more columns"
-order_by: [rss_feeds_order_by!], "limit the number of rows returned"
+comments_aggregate("filter the rows returned"
+where: comments_bool_exp, "sort the rows by one or more columns"
+order_by: [comments_order_by!], "limit the number of rows returned"
 limit: Int, "skip the first n rows. Use only with order_by"
 offset: Int, "distinct select on columns"
-distinct_on: [rss_feeds_select_column!]): rss_feeds_aggregate!
+distinct_on: [comments_select_column!]): comments_aggregate!
+    "An aggregate relationship"
+    rss_feeds_aggregate("filter the rows returned"
+    where: rss_feeds_bool_exp, "sort the rows by one or more columns"
+    order_by: [rss_feeds_order_by!], "limit the number of rows returned"
+    limit: Int, "skip the first n rows. Use only with order_by"
+    offset: Int, "distinct select on columns"
+    distinct_on: [rss_feeds_select_column!]): rss_feeds_aggregate!
     "An aggregate relationship"
     stories_aggregate("filter the rows returned"
     where: stories_bool_exp, "sort the rows by one or more columns"
@@ -502,6 +557,20 @@ distinct_on: [rss_feeds_select_column!]): rss_feeds_aggregate!
     limit: Int, "skip the first n rows. Use only with order_by"
     offset: Int, "distinct select on columns"
     distinct_on: [tag_stories_select_column!]): tag_stories_aggregate!
+    "An aggregate relationship"
+    user_favorites_aggregate("filter the rows returned"
+    where: user_favorites_bool_exp, "sort the rows by one or more columns"
+    order_by: [user_favorites_order_by!], "limit the number of rows returned"
+    limit: Int, "skip the first n rows. Use only with order_by"
+    offset: Int, "distinct select on columns"
+    distinct_on: [user_favorites_select_column!]): user_favorites_aggregate!
+    "An array relationship"
+    comments("filter the rows returned"
+    where: comments_bool_exp, "sort the rows by one or more columns"
+    order_by: [comments_order_by!], "limit the number of rows returned"
+    limit: Int, "skip the first n rows. Use only with order_by"
+    offset: Int, "distinct select on columns"
+    distinct_on: [comments_select_column!]): [comments!]!
     "An array relationship"
     rss_feeds("filter the rows returned"
     where: rss_feeds_bool_exp, "sort the rows by one or more columns"
@@ -600,6 +669,13 @@ distinct_on: [rss_feeds_select_column!]): rss_feeds_aggregate!
     limit: Int, "skip the first n rows. Use only with order_by"
     offset: Int, "distinct select on columns"
     distinct_on: [tag_stories_select_column!]): [tag_stories!]!
+    "An array relationship"
+    user_favorites("filter the rows returned"
+    where: user_favorites_bool_exp, "sort the rows by one or more columns"
+    order_by: [user_favorites_order_by!], "limit the number of rows returned"
+    limit: Int, "skip the first n rows. Use only with order_by"
+    offset: Int, "distinct select on columns"
+    distinct_on: [user_favorites_select_column!]): [user_favorites!]!
     "fetch aggregated fields from the table: \"authors\""
     authors_aggregate("filter the rows returned"
     where: authors_bool_exp, "sort the rows by one or more columns"
@@ -656,11 +732,23 @@ distinct_on: [rss_feeds_select_column!]): rss_feeds_aggregate!
     limit: Int, "skip the first n rows. Use only with order_by"
     offset: Int, "distinct select on columns"
     distinct_on: [tags_select_column!]): tags_aggregate!
+    "fetch aggregated fields from the table: \"users\""
+    users_aggregate("filter the rows returned"
+    where: users_bool_exp, "sort the rows by one or more columns"
+    order_by: [users_order_by!], "limit the number of rows returned"
+    limit: Int, "skip the first n rows. Use only with order_by"
+    offset: Int, "distinct select on columns"
+    distinct_on: [users_select_column!]): users_aggregate!
     "fetch data from the table in a streaming manner: \"authors\""
     authors_stream("filter the rows returned"
     where: authors_bool_exp, "cursor to stream the results returned by the query"
     cursor: [authors_stream_cursor_input]!, "maximum number of rows returned in a single batch"
     batch_size: Int!): [authors!]!
+    "fetch data from the table in a streaming manner: \"comments\""
+    comments_stream("filter the rows returned"
+    where: comments_bool_exp, "cursor to stream the results returned by the query"
+    cursor: [comments_stream_cursor_input]!, "maximum number of rows returned in a single batch"
+    batch_size: Int!): [comments!]!
     "fetch data from the table in a streaming manner: \"companies\""
     companies_stream("filter the rows returned"
     where: companies_bool_exp, "cursor to stream the results returned by the query"
@@ -766,6 +854,16 @@ distinct_on: [rss_feeds_select_column!]): rss_feeds_aggregate!
     where: tags_bool_exp, "cursor to stream the results returned by the query"
     cursor: [tags_stream_cursor_input]!, "maximum number of rows returned in a single batch"
     batch_size: Int!): [tags!]!
+    "fetch data from the table in a streaming manner: \"user_favorites\""
+    user_favorites_stream("filter the rows returned"
+    where: user_favorites_bool_exp, "cursor to stream the results returned by the query"
+    cursor: [user_favorites_stream_cursor_input]!, "maximum number of rows returned in a single batch"
+    batch_size: Int!): [user_favorites!]!
+    "fetch data from the table in a streaming manner: \"users\""
+    users_stream("filter the rows returned"
+    where: users_bool_exp, "cursor to stream the results returned by the query"
+    cursor: [users_stream_cursor_input]!, "maximum number of rows returned in a single batch"
+    batch_size: Int!): [users!]!
     "fetch data from the table: \"authors\""
     authors("filter the rows returned"
     where: authors_bool_exp, "sort the rows by one or more columns"
@@ -775,6 +873,8 @@ distinct_on: [rss_feeds_select_column!]): rss_feeds_aggregate!
     distinct_on: [authors_select_column!]): [authors!]!
     "fetch data from the table: \"authors\" using primary key columns"
     authors_by_pk(id: Int!): authors
+    "fetch data from the table: \"comments\" using primary key columns"
+    comments_by_pk(id: Int!): comments
     "fetch data from the table: \"companies\""
     companies("filter the rows returned"
     where: companies_bool_exp, "sort the rows by one or more columns"
@@ -866,10 +966,27 @@ distinct_on: [rss_feeds_select_column!]): rss_feeds_aggregate!
     distinct_on: [tags_select_column!]): [tags!]!
     "fetch data from the table: \"tags\" using primary key columns"
     tags_by_pk(id: Int!): tags
+    "fetch data from the table: \"user_favorites\" using primary key columns"
+    user_favorites_by_pk(user_id: Int!, story_id: Int!): user_favorites
+    "fetch data from the table: \"users\""
+    users("filter the rows returned"
+    where: users_bool_exp, "sort the rows by one or more columns"
+    order_by: [users_order_by!], "limit the number of rows returned"
+    limit: Int, "skip the first n rows. Use only with order_by"
+    offset: Int, "distinct select on columns"
+    distinct_on: [users_select_column!]): [users!]!
+    "fetch data from the table: \"users\" using primary key columns"
+    users_by_pk(id: Int!): users
 }
 
 "aggregate avg on columns"
 type authors_avg_fields { id: Float
+}
+
+"aggregate avg on columns"
+type comments_avg_fields { id: Float
+    story_id: Float
+    user_id: Float
 }
 
 "aggregate avg on columns"
@@ -973,6 +1090,15 @@ type tag_stories_avg_fields { story_id: Float
 type tags_avg_fields { id: Float
 }
 
+"aggregate avg on columns"
+type user_favorites_avg_fields { story_id: Float
+    user_id: Float
+}
+
+"aggregate avg on columns"
+type users_avg_fields { id: Float
+}
+
 "aggregate fields of \"authors\""
 type authors_aggregate_fields { avg: authors_avg_fields
     count(distinct: Boolean, columns: [authors_select_column!]): Int!
@@ -985,6 +1111,20 @@ type authors_aggregate_fields { avg: authors_avg_fields
     var_pop: authors_var_pop_fields
     var_samp: authors_var_samp_fields
     variance: authors_variance_fields
+}
+
+"aggregate fields of \"comments\""
+type comments_aggregate_fields { avg: comments_avg_fields
+    count(distinct: Boolean, columns: [comments_select_column!]): Int!
+    max: comments_max_fields
+    min: comments_min_fields
+    stddev: comments_stddev_fields
+    stddev_pop: comments_stddev_pop_fields
+    stddev_samp: comments_stddev_samp_fields
+    sum: comments_sum_fields
+    var_pop: comments_var_pop_fields
+    var_samp: comments_var_samp_fields
+    variance: comments_variance_fields
 }
 
 "aggregate fields of \"companies\""
@@ -1281,11 +1421,47 @@ type tags_aggregate_fields { avg: tags_avg_fields
     variance: tags_variance_fields
 }
 
+"aggregate fields of \"user_favorites\""
+type user_favorites_aggregate_fields { avg: user_favorites_avg_fields
+    count(distinct: Boolean, columns: [user_favorites_select_column!]): Int!
+    max: user_favorites_max_fields
+    min: user_favorites_min_fields
+    stddev: user_favorites_stddev_fields
+    stddev_pop: user_favorites_stddev_pop_fields
+    stddev_samp: user_favorites_stddev_samp_fields
+    sum: user_favorites_sum_fields
+    var_pop: user_favorites_var_pop_fields
+    var_samp: user_favorites_var_samp_fields
+    variance: user_favorites_variance_fields
+}
+
+"aggregate fields of \"users\""
+type users_aggregate_fields { avg: users_avg_fields
+    count(distinct: Boolean, columns: [users_select_column!]): Int!
+    max: users_max_fields
+    min: users_min_fields
+    stddev: users_stddev_fields
+    stddev_pop: users_stddev_pop_fields
+    stddev_samp: users_stddev_samp_fields
+    sum: users_sum_fields
+    var_pop: users_var_pop_fields
+    var_samp: users_var_samp_fields
+    variance: users_variance_fields
+}
+
 "aggregate max on columns"
 type authors_max_fields { bio: String
     id: Int
     name: String
     photo_url: String
+}
+
+"aggregate max on columns"
+type comments_max_fields { content: String
+    created_at: timestamp
+    id: Int
+    story_id: Int
+    user_id: Int
 }
 
 "aggregate max on columns"
@@ -1414,11 +1590,32 @@ type tags_max_fields { id: Int
     name: String
 }
 
+"aggregate max on columns"
+type user_favorites_max_fields { created_at: timestamp
+    story_id: Int
+    user_id: Int
+}
+
+"aggregate max on columns"
+type users_max_fields { display_name: String
+    email: String
+    id: Int
+    password_hash: String
+}
+
 "aggregate min on columns"
 type authors_min_fields { bio: String
     id: Int
     name: String
     photo_url: String
+}
+
+"aggregate min on columns"
+type comments_min_fields { content: String
+    created_at: timestamp
+    id: Int
+    story_id: Int
+    user_id: Int
 }
 
 "aggregate min on columns"
@@ -1547,8 +1744,27 @@ type tags_min_fields { id: Int
     name: String
 }
 
+"aggregate min on columns"
+type user_favorites_min_fields { created_at: timestamp
+    story_id: Int
+    user_id: Int
+}
+
+"aggregate min on columns"
+type users_min_fields { display_name: String
+    email: String
+    id: Int
+    password_hash: String
+}
+
 "aggregate stddev on columns"
 type authors_stddev_fields { id: Float
+}
+
+"aggregate stddev on columns"
+type comments_stddev_fields { id: Float
+    story_id: Float
+    user_id: Float
 }
 
 "aggregate stddev on columns"
@@ -1652,8 +1868,23 @@ type tag_stories_stddev_fields { story_id: Float
 type tags_stddev_fields { id: Float
 }
 
+"aggregate stddev on columns"
+type user_favorites_stddev_fields { story_id: Float
+    user_id: Float
+}
+
+"aggregate stddev on columns"
+type users_stddev_fields { id: Float
+}
+
 "aggregate stddev_pop on columns"
 type authors_stddev_pop_fields { id: Float
+}
+
+"aggregate stddev_pop on columns"
+type comments_stddev_pop_fields { id: Float
+    story_id: Float
+    user_id: Float
 }
 
 "aggregate stddev_pop on columns"
@@ -1757,8 +1988,23 @@ type tag_stories_stddev_pop_fields { story_id: Float
 type tags_stddev_pop_fields { id: Float
 }
 
+"aggregate stddev_pop on columns"
+type user_favorites_stddev_pop_fields { story_id: Float
+    user_id: Float
+}
+
+"aggregate stddev_pop on columns"
+type users_stddev_pop_fields { id: Float
+}
+
 "aggregate stddev_samp on columns"
 type authors_stddev_samp_fields { id: Float
+}
+
+"aggregate stddev_samp on columns"
+type comments_stddev_samp_fields { id: Float
+    story_id: Float
+    user_id: Float
 }
 
 "aggregate stddev_samp on columns"
@@ -1862,8 +2108,23 @@ type tag_stories_stddev_samp_fields { story_id: Float
 type tags_stddev_samp_fields { id: Float
 }
 
+"aggregate stddev_samp on columns"
+type user_favorites_stddev_samp_fields { story_id: Float
+    user_id: Float
+}
+
+"aggregate stddev_samp on columns"
+type users_stddev_samp_fields { id: Float
+}
+
 "aggregate sum on columns"
 type authors_sum_fields { id: Int
+}
+
+"aggregate sum on columns"
+type comments_sum_fields { id: Int
+    story_id: Int
+    user_id: Int
 }
 
 "aggregate sum on columns"
@@ -1967,8 +2228,23 @@ type tag_stories_sum_fields { story_id: Int
 type tags_sum_fields { id: Int
 }
 
+"aggregate sum on columns"
+type user_favorites_sum_fields { story_id: Int
+    user_id: Int
+}
+
+"aggregate sum on columns"
+type users_sum_fields { id: Int
+}
+
 "aggregate var_pop on columns"
 type authors_var_pop_fields { id: Float
+}
+
+"aggregate var_pop on columns"
+type comments_var_pop_fields { id: Float
+    story_id: Float
+    user_id: Float
 }
 
 "aggregate var_pop on columns"
@@ -2072,8 +2348,23 @@ type tag_stories_var_pop_fields { story_id: Float
 type tags_var_pop_fields { id: Float
 }
 
+"aggregate var_pop on columns"
+type user_favorites_var_pop_fields { story_id: Float
+    user_id: Float
+}
+
+"aggregate var_pop on columns"
+type users_var_pop_fields { id: Float
+}
+
 "aggregate var_samp on columns"
 type authors_var_samp_fields { id: Float
+}
+
+"aggregate var_samp on columns"
+type comments_var_samp_fields { id: Float
+    story_id: Float
+    user_id: Float
 }
 
 "aggregate var_samp on columns"
@@ -2177,8 +2468,23 @@ type tag_stories_var_samp_fields { story_id: Float
 type tags_var_samp_fields { id: Float
 }
 
+"aggregate var_samp on columns"
+type user_favorites_var_samp_fields { story_id: Float
+    user_id: Float
+}
+
+"aggregate var_samp on columns"
+type users_var_samp_fields { id: Float
+}
+
 "aggregate variance on columns"
 type authors_variance_fields { id: Float
+}
+
+"aggregate variance on columns"
+type comments_variance_fields { id: Float
+    story_id: Float
+    user_id: Float
 }
 
 "aggregate variance on columns"
@@ -2282,9 +2588,23 @@ type tag_stories_variance_fields { story_id: Float
 type tags_variance_fields { id: Float
 }
 
+"aggregate variance on columns"
+type user_favorites_variance_fields { story_id: Float
+    user_id: Float
+}
+
+"aggregate variance on columns"
+type users_variance_fields { id: Float
+}
+
 "aggregated selection of \"authors\""
 type authors_aggregate { aggregate: authors_aggregate_fields
     nodes: [authors!]!
+}
+
+"aggregated selection of \"comments\""
+type comments_aggregate { aggregate: comments_aggregate_fields
+    nodes: [comments!]!
 }
 
 "aggregated selection of \"companies\""
@@ -2392,6 +2712,16 @@ type tags_aggregate { aggregate: tags_aggregate_fields
     nodes: [tags!]!
 }
 
+"aggregated selection of \"user_favorites\""
+type user_favorites_aggregate { aggregate: user_favorites_aggregate_fields
+    nodes: [user_favorites!]!
+}
+
+"aggregated selection of \"users\""
+type users_aggregate { aggregate: users_aggregate_fields
+    nodes: [users!]!
+}
+
 "columns and relationships of \"authors\""
 type authors { bio: String
     id: Int!
@@ -2411,6 +2741,18 @@ type authors { bio: String
     limit: Int, "skip the first n rows. Use only with order_by"
     offset: Int, "distinct select on columns"
     distinct_on: [stories_select_column!]): [stories!]!
+}
+
+"columns and relationships of \"comments\""
+type comments { content: String!
+    created_at: timestamp!
+    id: Int!
+    story_id: Int!
+    user_id: Int!
+    "An object relationship"
+    story: stories!
+    "An object relationship"
+    user: users!
 }
 
 "columns and relationships of \"companies\""
@@ -2629,6 +2971,13 @@ type stories { author_id: Int
     url: String!
     vector_representation: String
     "An aggregate relationship"
+    comments_aggregate("filter the rows returned"
+    where: comments_bool_exp, "sort the rows by one or more columns"
+    order_by: [comments_order_by!], "limit the number of rows returned"
+    limit: Int, "skip the first n rows. Use only with order_by"
+    offset: Int, "distinct select on columns"
+    distinct_on: [comments_select_column!]): comments_aggregate!
+    "An aggregate relationship"
     story_companies_aggregate("filter the rows returned"
     where: story_companies_bool_exp, "sort the rows by one or more columns"
     order_by: [story_companies_order_by!], "limit the number of rows returned"
@@ -2684,6 +3033,20 @@ type stories { author_id: Int
     limit: Int, "skip the first n rows. Use only with order_by"
     offset: Int, "distinct select on columns"
     distinct_on: [tag_stories_select_column!]): tag_stories_aggregate!
+    "An aggregate relationship"
+    user_favorites_aggregate("filter the rows returned"
+    where: user_favorites_bool_exp, "sort the rows by one or more columns"
+    order_by: [user_favorites_order_by!], "limit the number of rows returned"
+    limit: Int, "skip the first n rows. Use only with order_by"
+    offset: Int, "distinct select on columns"
+    distinct_on: [user_favorites_select_column!]): user_favorites_aggregate!
+    "An array relationship"
+    comments("filter the rows returned"
+    where: comments_bool_exp, "sort the rows by one or more columns"
+    order_by: [comments_order_by!], "limit the number of rows returned"
+    limit: Int, "skip the first n rows. Use only with order_by"
+    offset: Int, "distinct select on columns"
+    distinct_on: [comments_select_column!]): [comments!]!
     "An array relationship"
     story_companies("filter the rows returned"
     where: story_companies_bool_exp, "sort the rows by one or more columns"
@@ -2740,6 +3103,13 @@ type stories { author_id: Int
     limit: Int, "skip the first n rows. Use only with order_by"
     offset: Int, "distinct select on columns"
     distinct_on: [tag_stories_select_column!]): [tag_stories!]!
+    "An array relationship"
+    user_favorites("filter the rows returned"
+    where: user_favorites_bool_exp, "sort the rows by one or more columns"
+    order_by: [user_favorites_order_by!], "limit the number of rows returned"
+    limit: Int, "skip the first n rows. Use only with order_by"
+    offset: Int, "distinct select on columns"
+    distinct_on: [user_favorites_select_column!]): [user_favorites!]!
     "An object relationship"
     author: authors
     "An object relationship"
@@ -2944,10 +3314,58 @@ type tags { id: Int!
     distinct_on: [tag_stories_select_column!]): [tag_stories!]!
 }
 
+"columns and relationships of \"user_favorites\""
+type user_favorites { created_at: timestamp!
+    story_id: Int!
+    user_id: Int!
+    "An object relationship"
+    story: stories!
+    "An object relationship"
+    user: users!
+}
+
+"columns and relationships of \"users\""
+type users { display_name: String!
+    email: String!
+    id: Int!
+    password_hash: String!
+    "An aggregate relationship"
+    comments_aggregate("filter the rows returned"
+    where: comments_bool_exp, "sort the rows by one or more columns"
+    order_by: [comments_order_by!], "limit the number of rows returned"
+    limit: Int, "skip the first n rows. Use only with order_by"
+    offset: Int, "distinct select on columns"
+    distinct_on: [comments_select_column!]): comments_aggregate!
+    "An aggregate relationship"
+    user_favorites_aggregate("filter the rows returned"
+    where: user_favorites_bool_exp, "sort the rows by one or more columns"
+    order_by: [user_favorites_order_by!], "limit the number of rows returned"
+    limit: Int, "skip the first n rows. Use only with order_by"
+    offset: Int, "distinct select on columns"
+    distinct_on: [user_favorites_select_column!]): user_favorites_aggregate!
+    "An array relationship"
+    comments("filter the rows returned"
+    where: comments_bool_exp, "sort the rows by one or more columns"
+    order_by: [comments_order_by!], "limit the number of rows returned"
+    limit: Int, "skip the first n rows. Use only with order_by"
+    offset: Int, "distinct select on columns"
+    distinct_on: [comments_select_column!]): [comments!]!
+    "An array relationship"
+    user_favorites("filter the rows returned"
+    where: user_favorites_bool_exp, "sort the rows by one or more columns"
+    order_by: [user_favorites_order_by!], "limit the number of rows returned"
+    limit: Int, "skip the first n rows. Use only with order_by"
+    offset: Int, "distinct select on columns"
+    distinct_on: [user_favorites_select_column!]): [user_favorites!]!
+}
+
 "mutation root"
 type mutation_root { "delete data from the table: \"authors\""
 delete_authors("filter the rows which have to be deleted"
 where: authors_bool_exp!): authors_mutation_response
+    "delete data from the table: \"comments\""
+    delete_comments("filter the rows which have to be deleted"
+    where: comments_bool_exp!): comments_mutation_response
     "delete data from the table: \"companies\""
     delete_companies("filter the rows which have to be deleted"
     where: companies_bool_exp!): companies_mutation_response
@@ -3011,8 +3429,16 @@ where: authors_bool_exp!): authors_mutation_response
     "delete data from the table: \"tags\""
     delete_tags("filter the rows which have to be deleted"
     where: tags_bool_exp!): tags_mutation_response
+    "delete data from the table: \"user_favorites\""
+    delete_user_favorites("filter the rows which have to be deleted"
+    where: user_favorites_bool_exp!): user_favorites_mutation_response
+    "delete data from the table: \"users\""
+    delete_users("filter the rows which have to be deleted"
+    where: users_bool_exp!): users_mutation_response
     "delete single row from the table: \"authors\""
     delete_authors_by_pk(id: Int!): authors
+    "delete single row from the table: \"comments\""
+    delete_comments_by_pk(id: Int!): comments
     "delete single row from the table: \"companies\""
     delete_companies_by_pk(id: Int!): companies
     "delete single row from the table: \"industries\""
@@ -3055,10 +3481,18 @@ where: authors_bool_exp!): authors_mutation_response
     delete_tag_stories_by_pk(tag_id: Int!, story_id: Int!): tag_stories
     "delete single row from the table: \"tags\""
     delete_tags_by_pk(id: Int!): tags
+    "delete single row from the table: \"user_favorites\""
+    delete_user_favorites_by_pk(user_id: Int!, story_id: Int!): user_favorites
+    "delete single row from the table: \"users\""
+    delete_users_by_pk(id: Int!): users
     "insert a single row into the table: \"authors\""
     insert_authors_one("upsert condition"
     on_conflict: authors_on_conflict, "the row to be inserted"
     object: authors_insert_input!): authors
+    "insert a single row into the table: \"comments\""
+    insert_comments_one("upsert condition"
+    on_conflict: comments_on_conflict, "the row to be inserted"
+    object: comments_insert_input!): comments
     "insert a single row into the table: \"companies\""
     insert_companies_one("upsert condition"
     on_conflict: companies_on_conflict, "the row to be inserted"
@@ -3143,10 +3577,22 @@ where: authors_bool_exp!): authors_mutation_response
     insert_tags_one("upsert condition"
     on_conflict: tags_on_conflict, "the row to be inserted"
     object: tags_insert_input!): tags
+    "insert a single row into the table: \"user_favorites\""
+    insert_user_favorites_one("upsert condition"
+    on_conflict: user_favorites_on_conflict, "the row to be inserted"
+    object: user_favorites_insert_input!): user_favorites
+    "insert a single row into the table: \"users\""
+    insert_users_one("upsert condition"
+    on_conflict: users_on_conflict, "the row to be inserted"
+    object: users_insert_input!): users
     "insert data into the table: \"authors\""
     insert_authors("upsert condition"
     on_conflict: authors_on_conflict, "the rows to be inserted"
     objects: [authors_insert_input!]!): authors_mutation_response
+    "insert data into the table: \"comments\""
+    insert_comments("upsert condition"
+    on_conflict: comments_on_conflict, "the rows to be inserted"
+    objects: [comments_insert_input!]!): comments_mutation_response
     "insert data into the table: \"companies\""
     insert_companies("upsert condition"
     on_conflict: companies_on_conflict, "the rows to be inserted"
@@ -3231,11 +3677,24 @@ where: authors_bool_exp!): authors_mutation_response
     insert_tags("upsert condition"
     on_conflict: tags_on_conflict, "the rows to be inserted"
     objects: [tags_insert_input!]!): tags_mutation_response
+    "insert data into the table: \"user_favorites\""
+    insert_user_favorites("upsert condition"
+    on_conflict: user_favorites_on_conflict, "the rows to be inserted"
+    objects: [user_favorites_insert_input!]!): user_favorites_mutation_response
+    "insert data into the table: \"users\""
+    insert_users("upsert condition"
+    on_conflict: users_on_conflict, "the rows to be inserted"
+    objects: [users_insert_input!]!): users_mutation_response
     "update data of the table: \"authors\""
     update_authors("sets the columns of the filtered rows to the given values"
     _set: authors_set_input, "increments the numeric columns with given value of the filtered values"
     _inc: authors_inc_input, "filter the rows which have to be updated"
     where: authors_bool_exp!): authors_mutation_response
+    "update data of the table: \"comments\""
+    update_comments("sets the columns of the filtered rows to the given values"
+    _set: comments_set_input, "increments the numeric columns with given value of the filtered values"
+    _inc: comments_inc_input, "filter the rows which have to be updated"
+    where: comments_bool_exp!): comments_mutation_response
     "update data of the table: \"companies\""
     update_companies("sets the columns of the filtered rows to the given values"
     _set: companies_set_input, "increments the numeric columns with given value of the filtered values"
@@ -3341,9 +3800,22 @@ where: authors_bool_exp!): authors_mutation_response
     _set: tags_set_input, "increments the numeric columns with given value of the filtered values"
     _inc: tags_inc_input, "filter the rows which have to be updated"
     where: tags_bool_exp!): tags_mutation_response
+    "update data of the table: \"user_favorites\""
+    update_user_favorites("sets the columns of the filtered rows to the given values"
+    _set: user_favorites_set_input, "increments the numeric columns with given value of the filtered values"
+    _inc: user_favorites_inc_input, "filter the rows which have to be updated"
+    where: user_favorites_bool_exp!): user_favorites_mutation_response
+    "update data of the table: \"users\""
+    update_users("sets the columns of the filtered rows to the given values"
+    _set: users_set_input, "increments the numeric columns with given value of the filtered values"
+    _inc: users_inc_input, "filter the rows which have to be updated"
+    where: users_bool_exp!): users_mutation_response
     "update multiples rows of table: \"authors\""
     update_authors_many("updates to execute, in order"
     updates: [authors_updates!]!): [authors_mutation_response]
+    "update multiples rows of table: \"comments\""
+    update_comments_many("updates to execute, in order"
+    updates: [comments_updates!]!): [comments_mutation_response]
     "update multiples rows of table: \"companies\""
     update_companies_many("updates to execute, in order"
     updates: [companies_updates!]!): [companies_mutation_response]
@@ -3407,10 +3879,20 @@ where: authors_bool_exp!): authors_mutation_response
     "update multiples rows of table: \"tags\""
     update_tags_many("updates to execute, in order"
     updates: [tags_updates!]!): [tags_mutation_response]
+    "update multiples rows of table: \"user_favorites\""
+    update_user_favorites_many("updates to execute, in order"
+    updates: [user_favorites_updates!]!): [user_favorites_mutation_response]
+    "update multiples rows of table: \"users\""
+    update_users_many("updates to execute, in order"
+    updates: [users_updates!]!): [users_mutation_response]
     "update single row of the table: \"authors\""
     update_authors_by_pk("sets the columns of the filtered rows to the given values"
     _set: authors_set_input, "increments the numeric columns with given value of the filtered values"
     _inc: authors_inc_input, pk_columns: authors_pk_columns_input!): authors
+    "update single row of the table: \"comments\""
+    update_comments_by_pk("sets the columns of the filtered rows to the given values"
+    _set: comments_set_input, "increments the numeric columns with given value of the filtered values"
+    _inc: comments_inc_input, pk_columns: comments_pk_columns_input!): comments
     "update single row of the table: \"companies\""
     update_companies_by_pk("sets the columns of the filtered rows to the given values"
     _set: companies_set_input, "increments the numeric columns with given value of the filtered values"
@@ -3495,11 +3977,26 @@ where: authors_bool_exp!): authors_mutation_response
     update_tags_by_pk("sets the columns of the filtered rows to the given values"
     _set: tags_set_input, "increments the numeric columns with given value of the filtered values"
     _inc: tags_inc_input, pk_columns: tags_pk_columns_input!): tags
+    "update single row of the table: \"user_favorites\""
+    update_user_favorites_by_pk("sets the columns of the filtered rows to the given values"
+    _set: user_favorites_set_input, "increments the numeric columns with given value of the filtered values"
+    _inc: user_favorites_inc_input, pk_columns: user_favorites_pk_columns_input!): user_favorites
+    "update single row of the table: \"users\""
+    update_users_by_pk("sets the columns of the filtered rows to the given values"
+    _set: users_set_input, "increments the numeric columns with given value of the filtered values"
+    _inc: users_inc_input, pk_columns: users_pk_columns_input!): users
 }
 
 "response of any mutation on the table \"authors\""
 type authors_mutation_response { "data from the rows affected by the mutation"
 returning: [authors!]!
+    "number of rows affected by the mutation"
+    affected_rows: Int!
+}
+
+"response of any mutation on the table \"comments\""
+type comments_mutation_response { "data from the rows affected by the mutation"
+returning: [comments!]!
     "number of rows affected by the mutation"
     affected_rows: Int!
 }
@@ -3651,6 +4148,20 @@ returning: [tags!]!
     affected_rows: Int!
 }
 
+"response of any mutation on the table \"user_favorites\""
+type user_favorites_mutation_response { "data from the rows affected by the mutation"
+returning: [user_favorites!]!
+    "number of rows affected by the mutation"
+    affected_rows: Int!
+}
+
+"response of any mutation on the table \"users\""
+type users_mutation_response { "data from the rows affected by the mutation"
+returning: [users!]!
+    "number of rows affected by the mutation"
+    affected_rows: Int!
+}
+
 enum __TypeKind {ENUM
     INPUT_OBJECT
     INTERFACE
@@ -3716,6 +4227,19 @@ bio
     name
     "column name"
     photo_url
+}
+
+"select columns of table \"comments\""
+enum comments_select_column {"column name"
+content
+    "column name"
+    created_at
+    "column name"
+    id
+    "column name"
+    story_id
+    "column name"
+    user_id
 }
 
 "select columns of table \"companies\""
@@ -3913,9 +4437,34 @@ id
     name
 }
 
+"select columns of table \"user_favorites\""
+enum user_favorites_select_column {"column name"
+created_at
+    "column name"
+    story_id
+    "column name"
+    user_id
+}
+
+"select columns of table \"users\""
+enum users_select_column {"column name"
+display_name
+    "column name"
+    email
+    "column name"
+    id
+    "column name"
+    password_hash
+}
+
 "unique or primary key constraints on table \"authors\""
 enum authors_constraint {"unique or primary key constraint on columns \"id\""
 authors_pkey
+}
+
+"unique or primary key constraints on table \"comments\""
+enum comments_constraint {"unique or primary key constraint on columns \"id\""
+comments_pkey
 }
 
 "unique or primary key constraints on table \"companies\""
@@ -4023,6 +4572,16 @@ enum tags_constraint {"unique or primary key constraint on columns \"id\""
 tags_pkey
 }
 
+"unique or primary key constraints on table \"user_favorites\""
+enum user_favorites_constraint {"unique or primary key constraint on columns \"user_id\", \"story_id\""
+user_favorites_pkey
+}
+
+"unique or primary key constraints on table \"users\""
+enum users_constraint {"unique or primary key constraint on columns \"id\""
+users_pkey
+}
+
 "update columns of table \"authors\""
 enum authors_update_column {"column name"
 bio
@@ -4032,6 +4591,19 @@ bio
     name
     "column name"
     photo_url
+}
+
+"update columns of table \"comments\""
+enum comments_update_column {"column name"
+content
+    "column name"
+    created_at
+    "column name"
+    id
+    "column name"
+    story_id
+    "column name"
+    user_id
 }
 
 "update columns of table \"companies\""
@@ -4229,12 +4801,49 @@ id
     name
 }
 
+"update columns of table \"user_favorites\""
+enum user_favorites_update_column {"column name"
+created_at
+    "column name"
+    story_id
+    "column name"
+    user_id
+}
+
+"update columns of table \"users\""
+enum users_update_column {"column name"
+display_name
+    "column name"
+    email
+    "column name"
+    id
+    "column name"
+    password_hash
+}
+
 input authors_updates {"filter the rows which have to be updated"
 where: authors_bool_exp!
     "increments the numeric columns with given value of the filtered values"
     _inc: authors_inc_input
     "sets the columns of the filtered rows to the given values"
     _set: authors_set_input
+}
+
+input comments_aggregate_bool_exp {count: comments_aggregate_bool_exp_count
+}
+
+input comments_aggregate_bool_exp_count {arguments: [comments_select_column!]
+    distinct: Boolean
+    filter: comments_bool_exp
+    predicate: Int_comparison_exp!
+}
+
+input comments_updates {"filter the rows which have to be updated"
+where: comments_bool_exp!
+    "increments the numeric columns with given value of the filtered values"
+    _inc: comments_inc_input
+    "sets the columns of the filtered rows to the given values"
+    _set: comments_set_input
 }
 
 input companies_updates {"filter the rows which have to be updated"
@@ -4559,6 +5168,31 @@ where: tags_bool_exp!
     _set: tags_set_input
 }
 
+input user_favorites_aggregate_bool_exp {count: user_favorites_aggregate_bool_exp_count
+}
+
+input user_favorites_aggregate_bool_exp_count {arguments: [user_favorites_select_column!]
+    distinct: Boolean
+    filter: user_favorites_bool_exp
+    predicate: Int_comparison_exp!
+}
+
+input user_favorites_updates {"filter the rows which have to be updated"
+where: user_favorites_bool_exp!
+    "increments the numeric columns with given value of the filtered values"
+    _inc: user_favorites_inc_input
+    "sets the columns of the filtered rows to the given values"
+    _set: user_favorites_set_input
+}
+
+input users_updates {"filter the rows which have to be updated"
+where: users_bool_exp!
+    "increments the numeric columns with given value of the filtered values"
+    _inc: users_inc_input
+    "sets the columns of the filtered rows to the given values"
+    _set: users_set_input
+}
+
 "Boolean expression to compare columns of type \"Boolean\". All fields are combined with logical 'AND'."
 input Boolean_comparison_exp {_eq: Boolean
     _gt: Boolean
@@ -4653,6 +5287,19 @@ input authors_bool_exp {_and: [authors_bool_exp!]
     photo_url: String_comparison_exp
     stories: stories_bool_exp
     stories_aggregate: stories_aggregate_bool_exp
+}
+
+"Boolean expression to filter rows from the table \"comments\". All fields are combined with a logical 'AND'."
+input comments_bool_exp {_and: [comments_bool_exp!]
+    _not: comments_bool_exp
+    _or: [comments_bool_exp!]
+    content: String_comparison_exp
+    created_at: timestamp_comparison_exp
+    id: Int_comparison_exp
+    story: stories_bool_exp
+    story_id: Int_comparison_exp
+    user: users_bool_exp
+    user_id: Int_comparison_exp
 }
 
 "Boolean expression to filter rows from the table \"companies\". All fields are combined with a logical 'AND'."
@@ -4750,6 +5397,8 @@ input stories_bool_exp {_and: [stories_bool_exp!]
     _or: [stories_bool_exp!]
     author: authors_bool_exp
     author_id: Int_comparison_exp
+    comments: comments_bool_exp
+    comments_aggregate: comments_aggregate_bool_exp
     content: String_comparison_exp
     description: String_comparison_exp
     embedding: float8_array_comparison_exp
@@ -4778,6 +5427,8 @@ input stories_bool_exp {_and: [stories_bool_exp!]
     tag_stories_aggregate: tag_stories_aggregate_bool_exp
     title: String_comparison_exp
     url: String_comparison_exp
+    user_favorites: user_favorites_bool_exp
+    user_favorites_aggregate: user_favorites_aggregate_bool_exp
     vector_representation: String_comparison_exp
 }
 
@@ -4923,11 +5574,44 @@ input tags_bool_exp {_and: [tags_bool_exp!]
     tag_stories_aggregate: tag_stories_aggregate_bool_exp
 }
 
+"Boolean expression to filter rows from the table \"user_favorites\". All fields are combined with a logical 'AND'."
+input user_favorites_bool_exp {_and: [user_favorites_bool_exp!]
+    _not: user_favorites_bool_exp
+    _or: [user_favorites_bool_exp!]
+    created_at: timestamp_comparison_exp
+    story: stories_bool_exp
+    story_id: Int_comparison_exp
+    user: users_bool_exp
+    user_id: Int_comparison_exp
+}
+
+"Boolean expression to filter rows from the table \"users\". All fields are combined with a logical 'AND'."
+input users_bool_exp {_and: [users_bool_exp!]
+    _not: users_bool_exp
+    _or: [users_bool_exp!]
+    comments: comments_bool_exp
+    comments_aggregate: comments_aggregate_bool_exp
+    display_name: String_comparison_exp
+    email: String_comparison_exp
+    id: Int_comparison_exp
+    password_hash: String_comparison_exp
+    user_favorites: user_favorites_bool_exp
+    user_favorites_aggregate: user_favorites_aggregate_bool_exp
+}
+
 "Initial value of the column from where the streaming should start"
 input authors_stream_cursor_value_input {bio: String
     id: Int
     name: String
     photo_url: String
+}
+
+"Initial value of the column from where the streaming should start"
+input comments_stream_cursor_value_input {content: String
+    created_at: timestamp
+    id: Int
+    story_id: Int
+    user_id: Int
 }
 
 "Initial value of the column from where the streaming should start"
@@ -5059,12 +5743,35 @@ input tags_stream_cursor_value_input {id: Int
     name: String
 }
 
+"Initial value of the column from where the streaming should start"
+input user_favorites_stream_cursor_value_input {created_at: timestamp
+    story_id: Int
+    user_id: Int
+}
+
+"Initial value of the column from where the streaming should start"
+input users_stream_cursor_value_input {display_name: String
+    email: String
+    id: Int
+    password_hash: String
+}
+
 "Ordering options when selecting data from \"authors\"."
 input authors_order_by {bio: order_by
     id: order_by
     name: order_by
     photo_url: order_by
     stories_aggregate: stories_aggregate_order_by
+}
+
+"Ordering options when selecting data from \"comments\"."
+input comments_order_by {content: order_by
+    created_at: order_by
+    id: order_by
+    story: stories_order_by
+    story_id: order_by
+    user: users_order_by
+    user_id: order_by
 }
 
 "Ordering options when selecting data from \"companies\"."
@@ -5127,6 +5834,7 @@ input sources_order_by {id: order_by
 "Ordering options when selecting data from \"stories\"."
 input stories_order_by {author: authors_order_by
     author_id: order_by
+    comments_aggregate: comments_aggregate_order_by
     content: order_by
     description: order_by
     embedding: order_by
@@ -5147,6 +5855,7 @@ input stories_order_by {author: authors_order_by
     tag_stories_aggregate: tag_stories_aggregate_order_by
     title: order_by
     url: order_by
+    user_favorites_aggregate: user_favorites_aggregate_order_by
     vector_representation: order_by
 }
 
@@ -5247,9 +5956,33 @@ input tags_order_by {id: order_by
     tag_stories_aggregate: tag_stories_aggregate_order_by
 }
 
+"Ordering options when selecting data from \"user_favorites\"."
+input user_favorites_order_by {created_at: order_by
+    story: stories_order_by
+    story_id: order_by
+    user: users_order_by
+    user_id: order_by
+}
+
+"Ordering options when selecting data from \"users\"."
+input users_order_by {comments_aggregate: comments_aggregate_order_by
+    display_name: order_by
+    email: order_by
+    id: order_by
+    password_hash: order_by
+    user_favorites_aggregate: user_favorites_aggregate_order_by
+}
+
 "Streaming cursor of the table \"authors\""
 input authors_stream_cursor_input {"Stream column input with initial value"
 initial_value: authors_stream_cursor_value_input!
+    "cursor ordering"
+    ordering: cursor_ordering
+}
+
+"Streaming cursor of the table \"comments\""
+input comments_stream_cursor_input {"Stream column input with initial value"
+initial_value: comments_stream_cursor_value_input!
     "cursor ordering"
     ordering: cursor_ordering
 }
@@ -5401,8 +6134,28 @@ initial_value: tags_stream_cursor_value_input!
     ordering: cursor_ordering
 }
 
+"Streaming cursor of the table \"user_favorites\""
+input user_favorites_stream_cursor_input {"Stream column input with initial value"
+initial_value: user_favorites_stream_cursor_value_input!
+    "cursor ordering"
+    ordering: cursor_ordering
+}
+
+"Streaming cursor of the table \"users\""
+input users_stream_cursor_input {"Stream column input with initial value"
+initial_value: users_stream_cursor_value_input!
+    "cursor ordering"
+    ordering: cursor_ordering
+}
+
 "input type for incrementing numeric columns in table \"authors\""
 input authors_inc_input {id: Int
+}
+
+"input type for incrementing numeric columns in table \"comments\""
+input comments_inc_input {id: Int
+    story_id: Int
+    user_id: Int
 }
 
 "input type for incrementing numeric columns in table \"companies\""
@@ -5506,6 +6259,21 @@ input tag_stories_inc_input {story_id: Int
 input tags_inc_input {id: Int
 }
 
+"input type for incrementing numeric columns in table \"user_favorites\""
+input user_favorites_inc_input {story_id: Int
+    user_id: Int
+}
+
+"input type for incrementing numeric columns in table \"users\""
+input users_inc_input {id: Int
+}
+
+"input type for inserting array relation for remote table \"comments\""
+input comments_arr_rel_insert_input {data: [comments_insert_input!]!
+    "upsert condition"
+    on_conflict: comments_on_conflict
+}
+
 "input type for inserting array relation for remote table \"rss_feeds\""
 input rss_feeds_arr_rel_insert_input {data: [rss_feeds_insert_input!]!
     "upsert condition"
@@ -5590,12 +6358,28 @@ input tag_stories_arr_rel_insert_input {data: [tag_stories_insert_input!]!
     on_conflict: tag_stories_on_conflict
 }
 
+"input type for inserting array relation for remote table \"user_favorites\""
+input user_favorites_arr_rel_insert_input {data: [user_favorites_insert_input!]!
+    "upsert condition"
+    on_conflict: user_favorites_on_conflict
+}
+
 "input type for inserting data into table \"authors\""
 input authors_insert_input {bio: String
     id: Int
     name: String
     photo_url: String
     stories: stories_arr_rel_insert_input
+}
+
+"input type for inserting data into table \"comments\""
+input comments_insert_input {content: String
+    created_at: timestamp
+    id: Int
+    story: stories_obj_rel_insert_input
+    story_id: Int
+    user: users_obj_rel_insert_input
+    user_id: Int
 }
 
 "input type for inserting data into table \"companies\""
@@ -5658,6 +6442,7 @@ input sources_insert_input {id: Int
 "input type for inserting data into table \"stories\""
 input stories_insert_input {author: authors_obj_rel_insert_input
     author_id: Int
+    comments: comments_arr_rel_insert_input
     content: String
     description: String
     embedding: [float8!]
@@ -5678,6 +6463,7 @@ input stories_insert_input {author: authors_obj_rel_insert_input
     tag_stories: tag_stories_arr_rel_insert_input
     title: String
     url: String
+    user_favorites: user_favorites_arr_rel_insert_input
     vector_representation: String
 }
 
@@ -5778,6 +6564,23 @@ input tags_insert_input {id: Int
     tag_stories: tag_stories_arr_rel_insert_input
 }
 
+"input type for inserting data into table \"user_favorites\""
+input user_favorites_insert_input {created_at: timestamp
+    story: stories_obj_rel_insert_input
+    story_id: Int
+    user: users_obj_rel_insert_input
+    user_id: Int
+}
+
+"input type for inserting data into table \"users\""
+input users_insert_input {comments: comments_arr_rel_insert_input
+    display_name: String
+    email: String
+    id: Int
+    password_hash: String
+    user_favorites: user_favorites_arr_rel_insert_input
+}
+
 "input type for inserting object relation for remote table \"authors\""
 input authors_obj_rel_insert_input {data: authors_insert_input!
     "upsert condition"
@@ -5838,11 +6641,25 @@ input tags_obj_rel_insert_input {data: tags_insert_input!
     on_conflict: tags_on_conflict
 }
 
+"input type for inserting object relation for remote table \"users\""
+input users_obj_rel_insert_input {data: users_insert_input!
+    "upsert condition"
+    on_conflict: users_on_conflict
+}
+
 "input type for updating data in table \"authors\""
 input authors_set_input {bio: String
     id: Int
     name: String
     photo_url: String
+}
+
+"input type for updating data in table \"comments\""
+input comments_set_input {content: String
+    created_at: timestamp
+    id: Int
+    story_id: Int
+    user_id: Int
 }
 
 "input type for updating data in table \"companies\""
@@ -5974,10 +6791,29 @@ input tags_set_input {id: Int
     name: String
 }
 
+"input type for updating data in table \"user_favorites\""
+input user_favorites_set_input {created_at: timestamp
+    story_id: Int
+    user_id: Int
+}
+
+"input type for updating data in table \"users\""
+input users_set_input {display_name: String
+    email: String
+    id: Int
+    password_hash: String
+}
+
 "on_conflict condition type for table \"authors\""
 input authors_on_conflict {constraint: authors_constraint!
     update_columns: [authors_update_column!]! = []
     where: authors_bool_exp
+}
+
+"on_conflict condition type for table \"comments\""
+input comments_on_conflict {constraint: comments_constraint!
+    update_columns: [comments_update_column!]! = []
+    where: comments_bool_exp
 }
 
 "on_conflict condition type for table \"companies\""
@@ -6104,6 +6940,32 @@ input tag_stories_on_conflict {constraint: tag_stories_constraint!
 input tags_on_conflict {constraint: tags_constraint!
     update_columns: [tags_update_column!]! = []
     where: tags_bool_exp
+}
+
+"on_conflict condition type for table \"user_favorites\""
+input user_favorites_on_conflict {constraint: user_favorites_constraint!
+    update_columns: [user_favorites_update_column!]! = []
+    where: user_favorites_bool_exp
+}
+
+"on_conflict condition type for table \"users\""
+input users_on_conflict {constraint: users_constraint!
+    update_columns: [users_update_column!]! = []
+    where: users_bool_exp
+}
+
+"order by aggregate values of table \"comments\""
+input comments_aggregate_order_by {avg: comments_avg_order_by
+    count: order_by
+    max: comments_max_order_by
+    min: comments_min_order_by
+    stddev: comments_stddev_order_by
+    stddev_pop: comments_stddev_pop_order_by
+    stddev_samp: comments_stddev_samp_order_by
+    sum: comments_sum_order_by
+    var_pop: comments_var_pop_order_by
+    var_samp: comments_var_samp_order_by
+    variance: comments_variance_order_by
 }
 
 "order by aggregate values of table \"rss_feeds\""
@@ -6302,6 +7164,26 @@ input tag_stories_aggregate_order_by {avg: tag_stories_avg_order_by
     variance: tag_stories_variance_order_by
 }
 
+"order by aggregate values of table \"user_favorites\""
+input user_favorites_aggregate_order_by {avg: user_favorites_avg_order_by
+    count: order_by
+    max: user_favorites_max_order_by
+    min: user_favorites_min_order_by
+    stddev: user_favorites_stddev_order_by
+    stddev_pop: user_favorites_stddev_pop_order_by
+    stddev_samp: user_favorites_stddev_samp_order_by
+    sum: user_favorites_sum_order_by
+    var_pop: user_favorites_var_pop_order_by
+    var_samp: user_favorites_var_samp_order_by
+    variance: user_favorites_variance_order_by
+}
+
+"order by avg() on columns of table \"comments\""
+input comments_avg_order_by {id: order_by
+    story_id: order_by
+    user_id: order_by
+}
+
 "order by avg() on columns of table \"rss_feeds\""
 input rss_feeds_avg_order_by {id: order_by
     source_id: order_by
@@ -6373,6 +7255,19 @@ input tag_rss_feeds_avg_order_by {rss_feed_id: order_by
 "order by avg() on columns of table \"tag_stories\""
 input tag_stories_avg_order_by {story_id: order_by
     tag_id: order_by
+}
+
+"order by avg() on columns of table \"user_favorites\""
+input user_favorites_avg_order_by {story_id: order_by
+    user_id: order_by
+}
+
+"order by max() on columns of table \"comments\""
+input comments_max_order_by {content: order_by
+    created_at: order_by
+    id: order_by
+    story_id: order_by
+    user_id: order_by
 }
 
 "order by max() on columns of table \"rss_feeds\""
@@ -6461,6 +7356,20 @@ input tag_stories_max_order_by {story_id: order_by
     tag_id: order_by
 }
 
+"order by max() on columns of table \"user_favorites\""
+input user_favorites_max_order_by {created_at: order_by
+    story_id: order_by
+    user_id: order_by
+}
+
+"order by min() on columns of table \"comments\""
+input comments_min_order_by {content: order_by
+    created_at: order_by
+    id: order_by
+    story_id: order_by
+    user_id: order_by
+}
+
 "order by min() on columns of table \"rss_feeds\""
 input rss_feeds_min_order_by {id: order_by
     location_semantic_id: order_by
@@ -6547,6 +7456,18 @@ input tag_stories_min_order_by {story_id: order_by
     tag_id: order_by
 }
 
+"order by min() on columns of table \"user_favorites\""
+input user_favorites_min_order_by {created_at: order_by
+    story_id: order_by
+    user_id: order_by
+}
+
+"order by stddev() on columns of table \"comments\""
+input comments_stddev_order_by {id: order_by
+    story_id: order_by
+    user_id: order_by
+}
+
 "order by stddev() on columns of table \"rss_feeds\""
 input rss_feeds_stddev_order_by {id: order_by
     source_id: order_by
@@ -6618,6 +7539,17 @@ input tag_rss_feeds_stddev_order_by {rss_feed_id: order_by
 "order by stddev() on columns of table \"tag_stories\""
 input tag_stories_stddev_order_by {story_id: order_by
     tag_id: order_by
+}
+
+"order by stddev() on columns of table \"user_favorites\""
+input user_favorites_stddev_order_by {story_id: order_by
+    user_id: order_by
+}
+
+"order by stddev_pop() on columns of table \"comments\""
+input comments_stddev_pop_order_by {id: order_by
+    story_id: order_by
+    user_id: order_by
 }
 
 "order by stddev_pop() on columns of table \"rss_feeds\""
@@ -6693,6 +7625,17 @@ input tag_stories_stddev_pop_order_by {story_id: order_by
     tag_id: order_by
 }
 
+"order by stddev_pop() on columns of table \"user_favorites\""
+input user_favorites_stddev_pop_order_by {story_id: order_by
+    user_id: order_by
+}
+
+"order by stddev_samp() on columns of table \"comments\""
+input comments_stddev_samp_order_by {id: order_by
+    story_id: order_by
+    user_id: order_by
+}
+
 "order by stddev_samp() on columns of table \"rss_feeds\""
 input rss_feeds_stddev_samp_order_by {id: order_by
     source_id: order_by
@@ -6764,6 +7707,17 @@ input tag_rss_feeds_stddev_samp_order_by {rss_feed_id: order_by
 "order by stddev_samp() on columns of table \"tag_stories\""
 input tag_stories_stddev_samp_order_by {story_id: order_by
     tag_id: order_by
+}
+
+"order by stddev_samp() on columns of table \"user_favorites\""
+input user_favorites_stddev_samp_order_by {story_id: order_by
+    user_id: order_by
+}
+
+"order by sum() on columns of table \"comments\""
+input comments_sum_order_by {id: order_by
+    story_id: order_by
+    user_id: order_by
 }
 
 "order by sum() on columns of table \"rss_feeds\""
@@ -6839,6 +7793,17 @@ input tag_stories_sum_order_by {story_id: order_by
     tag_id: order_by
 }
 
+"order by sum() on columns of table \"user_favorites\""
+input user_favorites_sum_order_by {story_id: order_by
+    user_id: order_by
+}
+
+"order by var_pop() on columns of table \"comments\""
+input comments_var_pop_order_by {id: order_by
+    story_id: order_by
+    user_id: order_by
+}
+
 "order by var_pop() on columns of table \"rss_feeds\""
 input rss_feeds_var_pop_order_by {id: order_by
     source_id: order_by
@@ -6910,6 +7875,17 @@ input tag_rss_feeds_var_pop_order_by {rss_feed_id: order_by
 "order by var_pop() on columns of table \"tag_stories\""
 input tag_stories_var_pop_order_by {story_id: order_by
     tag_id: order_by
+}
+
+"order by var_pop() on columns of table \"user_favorites\""
+input user_favorites_var_pop_order_by {story_id: order_by
+    user_id: order_by
+}
+
+"order by var_samp() on columns of table \"comments\""
+input comments_var_samp_order_by {id: order_by
+    story_id: order_by
+    user_id: order_by
 }
 
 "order by var_samp() on columns of table \"rss_feeds\""
@@ -6985,6 +7961,17 @@ input tag_stories_var_samp_order_by {story_id: order_by
     tag_id: order_by
 }
 
+"order by var_samp() on columns of table \"user_favorites\""
+input user_favorites_var_samp_order_by {story_id: order_by
+    user_id: order_by
+}
+
+"order by variance() on columns of table \"comments\""
+input comments_variance_order_by {id: order_by
+    story_id: order_by
+    user_id: order_by
+}
+
 "order by variance() on columns of table \"rss_feeds\""
 input rss_feeds_variance_order_by {id: order_by
     source_id: order_by
@@ -7058,8 +8045,17 @@ input tag_stories_variance_order_by {story_id: order_by
     tag_id: order_by
 }
 
+"order by variance() on columns of table \"user_favorites\""
+input user_favorites_variance_order_by {story_id: order_by
+    user_id: order_by
+}
+
 "primary key columns input for table: authors"
 input authors_pk_columns_input {id: Int!
+}
+
+"primary key columns input for table: comments"
+input comments_pk_columns_input {id: Int!
 }
 
 "primary key columns input for table: companies"
@@ -7155,4 +8151,13 @@ input tag_stories_pk_columns_input {story_id: Int!
 
 "primary key columns input for table: tags"
 input tags_pk_columns_input {id: Int!
+}
+
+"primary key columns input for table: user_favorites"
+input user_favorites_pk_columns_input {story_id: Int!
+    user_id: Int!
+}
+
+"primary key columns input for table: users"
+input users_pk_columns_input {id: Int!
 }
