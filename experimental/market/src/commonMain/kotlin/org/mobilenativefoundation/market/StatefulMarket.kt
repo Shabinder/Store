@@ -16,10 +16,10 @@ interface StatefulMarket<S : StatefulMarket.State> : Market<S> {
     ) : SubState
 
 
-    sealed interface ItemState<Id : Comparable<Id>, out V : Identifiable<Id>,out  E : Any> {
-        data class Initial<Id: Comparable<Id>, V: Identifiable<Id>, E : Any>(val id: Id) : ItemState<Id, V, E>
-        data class Loading<Id: Comparable<Id>, V: Identifiable<Id>, E : Any>(val id: Id) : ItemState<Id, V, E>
-        data class Error<Id: Comparable<Id>, V: Identifiable<Id>, E : Any>(val error: E) : ItemState<Id, V, E>
+    sealed interface ItemState<Id : Comparable<Id>, out V : Identifiable<Id>, out E : Any> {
+        data class Initial<Id : Comparable<Id>, V : Identifiable<Id>, E : Any>(val id: Id) : ItemState<Id, V, E>
+        data class Loading<Id : Comparable<Id>, V : Identifiable<Id>, E : Any>(val id: Id) : ItemState<Id, V, E>
+        data class Error<Id : Comparable<Id>, V : Identifiable<Id>, E : Any>(val error: E) : ItemState<Id, V, E>
         data class Data<Id : Comparable<Id>, V : Identifiable<Id>>(
             val value: V,
             val status: Status,
@@ -74,3 +74,8 @@ interface StatefulMarket<S : StatefulMarket.State> : Market<S> {
         }
     }
 }
+
+fun <Id : Comparable<Id>, V : Identifiable<Id>, E : Any> EmptySubState() = StatefulMarket.NormalizedState<Id, V, E>(
+    allIds = emptyList(),
+    byId = emptyMap()
+)

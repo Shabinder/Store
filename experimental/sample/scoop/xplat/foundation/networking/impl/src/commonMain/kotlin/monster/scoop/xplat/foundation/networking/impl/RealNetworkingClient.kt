@@ -10,8 +10,11 @@ import monster.scoop.xplat.foundation.networking.api.NetworkingClient
 class RealNetworkingClient(
     private val apolloClient: ApolloClient,
 ) : NetworkingClient {
-    override suspend fun getStories(query: GetStoriesQuery): GetStoriesQuery.Data? {
-        return apolloClient.query(query).execute().data
+    override suspend fun getStories(query: GetStoriesQuery): GetStoriesQuery.Data? = try {
+        apolloClient.query(query).execute().data
+    } catch (error: Throwable) {
+        println("Error fetching stories: ${error.printStackTrace()}")
+        throw error
     }
 
     override suspend fun getStory(query: GetStoryQuery): GetStoryQuery.Data? {

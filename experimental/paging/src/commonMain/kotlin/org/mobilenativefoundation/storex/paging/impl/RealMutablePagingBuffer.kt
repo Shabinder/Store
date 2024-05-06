@@ -89,8 +89,23 @@ class RealMutablePagingBuffer<Id : Comparable<Id>, K : Any, V : Identifiable<Id>
     }
 
     override fun minDistanceBetween(a: Id, b: Id): Int {
-        val positionA = positionOf(a)
-        require(positionA > -1) { "Not found: $a" }
+        var positionA = positionOf(a)
+
+        // We can't simply require `positionA` to be > -1, because it is not required to be in the paging buffer.
+        // For example, a first load with a default `anchorPosition` of 1 but IDs start in the 100s.
+
+        if (positionA == -1) {
+            val headPage = pages[head]
+            val firstItemHeadPage = headPage?.items?.first()
+
+            val positionFirstItem = firstItemHeadPage?.let {
+                positionOf(it)
+            }
+
+            positionFirstItem?.let { positionA = it }
+        }
+
+        require(positionA > -1) { "$a not found, head also not found" }
 
         var positionB = positionOf(b)
 

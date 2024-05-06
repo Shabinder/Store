@@ -1,6 +1,7 @@
 package monster.scoop.xplat.domain.story.impl
 
 import kotlinx.coroutines.CoroutineDispatcher
+import me.tatarka.inject.annotations.Inject
 import monster.scoop.xplat.common.market.ScoopAction
 import monster.scoop.xplat.common.market.ScoopDispatcher
 import monster.scoop.xplat.domain.story.api.*
@@ -24,14 +25,19 @@ data class PageInfo(
 )
 
 
+@Inject
 class StoriesPagerFactory(
     private val coroutineDispatcher: CoroutineDispatcher,
-    private val pagingConfig: PagingConfig,
     private val networkingClient: NetworkingClient,
     private val marketDispatcher: ScoopDispatcher
 ) {
 
-    fun create(): StoriesNetworkPager = StoriesNetworkPagerBuilder(
+    private val pagingConfig = PagingConfig(
+        pageSize = 10,
+        prefetchDistance = 50
+    )
+
+    fun create(): StoriesPager = StoriesPagerBuilder(
         coroutineDispatcher
     )
         .pagingConfig(pagingConfig)
@@ -43,12 +49,16 @@ class StoriesPagerFactory(
             onEachItemStoreResponse = ::onEachItemStoreResponse,
             onEachPagingSourceLoadResult = ::onEachPagingSourceLoadResult
         )
+        .defaultFetchingStrategy()
+        .pagingOffsetCalculator { key ->
+            key.offset + key.limit
+        }
         .build(
             placeholderFactory = placeholderFactory,
             keyFactory = keyFactory
         )
 
-    private val placeholderFactory = StoriesNetworkPlaceholderFactory {
+    private val placeholderFactory = StoriesPlaceholderFactory {
         StoreX.Paging.Data.Item(NetworkStory.placeholder(), StoreX.Paging.DataSource.PLACEHOLDER)
     }
 
@@ -59,7 +69,7 @@ class StoriesPagerFactory(
         )
     }
 
-    private val itemStore = StoriesNetworkItemStoreBuilder.from(
+    private val itemStore = StoriesItemStoreBuilder.from(
         fetcher = Fetcher.ofResult { id: Int ->
             val data = networkingClient.getStory(GetStoryQuery(id))
             val storyFields = data?.stories_by_pk?.storyFields
@@ -77,10 +87,11 @@ class StoriesPagerFactory(
     ).build()
 
 
-    private val pageStore: StoriesNetworkPageStore = StoriesNetworkPageStoreBuilder.from(
+    private val pageStore: StoriesPageStore = StoriesPageStoreBuilder.from(
         fetcher = Fetcher.ofResult { key: StoriesPagingKey ->
 
             val data = networkingClient.getStories(GetStoriesQuery(key.limit, key.offset))
+
             if (data != null) {
 
                 val totalItems = data.stories_aggregate.aggregate?.count
@@ -91,7 +102,7 @@ class StoriesPagerFactory(
                 )
 
                 val origin = StoreX.Paging.DataSource.NETWORK
-                val pagingSourceData = StoriesNetworkPagingSourceData(
+                val pagingSourceData = StoriesPagingSourceLoadResultData(
                     items = data.stories.map {
                         StoreX.Paging.Data.Item(
                             NetworkStory(it.storyFields.id, it.storyFields),
@@ -113,11 +124,19 @@ class StoriesPagerFactory(
         },
     ).build()
 
-    private fun onEachPagingSourceLoadResult(key: StoriesPagingKey, result: StoriesNetworkPagingSourceLoadResult) {
+    private fun onEachPagingSourceLoadResult(key: StoriesPagingKey, result: StoriesPagingSourceLoadResult) {
         when (result) {
-            is PagingSource.LoadResult.Data -> TODO()
-            is PagingSource.LoadResult.Error -> TODO()
-            is PagingSource.LoadResult.Loading -> TODO()
+            is PagingSource.LoadResult.Data -> {
+                // TODO
+            }
+
+            is PagingSource.LoadResult.Error -> {
+                // TODO
+            }
+
+            is PagingSource.LoadResult.Loading -> {
+                // TODO
+            }
         }
     }
 

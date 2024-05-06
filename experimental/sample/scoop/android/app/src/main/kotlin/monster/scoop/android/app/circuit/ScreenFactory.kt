@@ -1,4 +1,8 @@
 package monster.scoop.android.app.circuit
 
-interface ScreenFactory
+import monster.scoop.xplat.feat.homeTab.api.HomeTab
+
+interface ScreenFactory {
+    fun homeTab(): HomeTab
+}
 
