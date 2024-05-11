@@ -43,6 +43,7 @@ dependencies {
     implementation(libs.ktor.negotiation)
 
     implementation(libs.compose.webview.multiplatform)
+    implementation(project(":experimental:sample:scoop:xplat:foundation:designSystem"))
 
     implementation(project(":experimental:market"))
     implementation(project(":experimental:market:warehouse"))

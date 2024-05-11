@@ -44,5 +44,10 @@ gradlePlugin {
             id = "plugin.scoop.kotlin.multiplatform"
             implementationClass = "monster.scoop.tooling.plugins.KotlinMultiplatformConventionPlugin"
         }
+
+        register("kotlinComposeMultiplatformPlugin") {
+            id = "plugin.scoop.kotlin.compose.multiplatform"
+            implementationClass = "monster.scoop.tooling.plugins.KotlinComposeMultiplatformConventionPlugin"
+        }
     }
 }

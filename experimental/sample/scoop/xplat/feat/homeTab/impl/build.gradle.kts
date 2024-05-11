@@ -19,6 +19,7 @@ kotlin {
                 implementation(compose.material3)
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.kotlinInject.runtime)
+                implementation(compose.materialIconsExtended)
 
                 api(project(":experimental:market:warehouse"))
                 api(project(":experimental:sample:scoop:xplat:common:market"))
@@ -27,6 +28,8 @@ kotlin {
                 implementation(libs.coil.compose)
                 implementation(libs.coil.network)
                 implementation(libs.ktor.core)
+                implementation(libs.swipe)
+                implementation(compose.components.uiToolingPreview)
             }
         }
 

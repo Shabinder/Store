@@ -1,5 +1,7 @@
 package monster.scoop.tooling.plugins
 
+import com.android.build.gradle.LibraryExtension
+import monster.scoop.tooling.extensions.configureAndroidCompose
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.configurationcache.extensions.capitalized
@@ -13,7 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import monster.scoop.tooling.extensions.configureKotlin
 import monster.scoop.tooling.extensions.libs
 
-class KotlinMultiplatformConventionPlugin : Plugin<Project> {
+class KotlinComposeMultiplatformConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) = with(target) {
         with(pluginManager) {
             apply("org.jetbrains.kotlin.multiplatform")
@@ -56,18 +58,29 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
                             "-opt-in=kotlinx.coroutines.FlowPreview",
                             "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
                             "-opt-in=kotlinx.cinterop.BetaInteropApi",
+
                         )
                     }
                 }
             }
 
             configureKotlin()
+
         }
+
+        extensions.configure<LibraryExtension> {
+            buildFeatures {
+                compose = true
+            }
+
+            composeOptions {
+                kotlinCompilerExtensionVersion = libs.findVersion("compose-compiler").get().toString()
+            }
+        }
+
     }
 }
 
-fun Project.addKspDependencyForAllTargets(dependencyNotation: Any) =
-    addKspDependencyForAllTargets("", dependencyNotation)
 
 private fun Project.addKspDependencyForAllTargets(
     configurationNameSuffix: String,

@@ -5,6 +5,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.twotone.Home
+import androidx.compose.material.icons.twotone.Person
+import androidx.compose.material.icons.twotone.Search
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.remember
@@ -14,7 +20,7 @@ import com.slack.circuit.foundation.*
 import me.tatarka.inject.annotations.Inject
 import monster.scoop.android.app.di.CoreComponent
 import monster.scoop.android.app.di.create
-import monster.scoop.android.app.theme.ScoopTheme
+import monster.scoop.xplat.foundation.designSystem.theme.AppTheme
 
 
 @Inject
@@ -42,8 +48,17 @@ class MainActivity : ComponentActivity() {
             val navigator = rememberCircuitNavigator(backStack)
 
             CircuitCompositionLocals(circuit) {
-                ScoopTheme {
-                    Scaffold { innerPadding ->
+
+                AppTheme(true) {
+                    Scaffold(
+                        bottomBar = {
+                            BottomAppBar {
+                                Icon(Icons.TwoTone.Home, "Home")
+                                Icon(Icons.TwoTone.Search, "Search")
+                                Icon(Icons.TwoTone.Person, "Person")
+                            }
+                        }
+                    ) { innerPadding ->
                         NavigableCircuitContent(
                             navigator,
                             backStack,

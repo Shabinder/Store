@@ -5,7 +5,7 @@ import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
 import me.tatarka.inject.annotations.Inject
 import monster.scoop.xplat.feat.homeTab.api.HomeTab
-import monster.scoop.xplat.feat.homeTab.impl.HomeTabUi
+import monster.scoop.xplat.feat.homeTab.impl.ui.HomeTabUi
 import monster.scoop.xplat.foundation.di.UserScope
 
 @Inject
