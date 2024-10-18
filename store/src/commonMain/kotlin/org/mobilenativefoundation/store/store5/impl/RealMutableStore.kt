@@ -41,7 +41,8 @@ internal class RealMutableStore<Key : Any, Network : Any, Output : Any, Local : 
         flow {
             safeInitStore(request.key)
 
-            when (val eagerConflictResolutionResult = tryEagerlyResolveConflicts<Response>(request.key)) {
+            when (val eagerConflictResolutionResult =
+                tryEagerlyResolveConflicts<Response>(request.key)) {
                 is EagerConflictResolutionResult.Error.Exception -> {
                     logger.e(eagerConflictResolutionResult.error.toString())
                 }
@@ -52,6 +53,8 @@ internal class RealMutableStore<Key : Any, Network : Any, Output : Any, Local : 
 
                 is EagerConflictResolutionResult.Success.ConflictsResolved -> {
                     logger.d(eagerConflictResolutionResult.value.toString())
+                    // Discuss: https://kotlinlang.slack.com/archives/C06007Z01HU/p1729280302007469
+                    bookkeeper?.clear(request.key)
                 }
 
                 EagerConflictResolutionResult.Success.NoConflicts -> {
@@ -75,8 +78,14 @@ internal class RealMutableStore<Key : Any, Network : Any, Output : Any, Local : 
                         try {
                             delegate.write(writeRequest.key, writeRequest.value)
                             when (val updaterResult = tryUpdateServer(writeRequest)) {
-                                is UpdaterResult.Error.Exception -> StoreWriteResponse.Error.Exception(updaterResult.error)
-                                is UpdaterResult.Error.Message -> StoreWriteResponse.Error.Message(updaterResult.message)
+                                is UpdaterResult.Error.Exception -> StoreWriteResponse.Error.Exception(
+                                    updaterResult.error
+                                )
+
+                                is UpdaterResult.Error.Message -> StoreWriteResponse.Error.Message(
+                                    updaterResult.message
+                                )
+
                                 is UpdaterResult.Success.Typed<*> -> {
                                     val typedValue = updaterResult.value as? Response
                                     if (typedValue == null) {
@@ -86,7 +95,9 @@ internal class RealMutableStore<Key : Any, Network : Any, Output : Any, Local : 
                                     }
                                 }
 
-                                is UpdaterResult.Success.Untyped -> StoreWriteResponse.Success.Untyped(updaterResult.value)
+                                is UpdaterResult.Success.Untyped -> StoreWriteResponse.Success.Untyped(
+                                    updaterResult.value
+                                )
                             }
                         } catch (throwable: Throwable) {
                             StoreWriteResponse.Error.Exception(throwable)
@@ -158,7 +169,9 @@ internal class RealMutableStore<Key : Any, Network : Any, Output : Any, Local : 
                                     }
                                 }
 
-                                is UpdaterResult.Success.Untyped -> StoreWriteResponse.Success.Untyped(updaterResult.value)
+                                is UpdaterResult.Success.Untyped -> StoreWriteResponse.Success.Untyped(
+                                    updaterResult.value
+                                )
                             }
 
                         writeRequest.onCompletions?.forEach { onStoreWriteCompletion ->
@@ -201,18 +214,27 @@ internal class RealMutableStore<Key : Any, Network : Any, Output : Any, Local : 
     private suspend fun <Output : Any?> withThreadSafety(
         key: Key,
         block: suspend ThreadSafety.() -> Output,
-    ): Output =
-        storeLock.withLock {
+    ): Output {
+        // Temporary unsafe Deadlock Fix:
+        // Until this is fixed: https://github.com/MobileNativeFoundation/Store/issues/667
+        val shouldLock = !storeLock.isLocked
+        return try {
+            if (shouldLock) storeLock.lock()
             val threadSafety = requireNotNull(keyToThreadSafety[key])
             threadSafety.block()
+        } finally {
+            if (shouldLock) storeLock.unlock()
         }
+    }
+
 
     private suspend fun conflictsMightExist(key: Key): Boolean {
         val lastFailedSync = bookkeeper?.getLastFailedSync(key)
         return lastFailedSync != null || writeRequestsQueueIsEmpty(key).not()
     }
 
-    private fun writeRequestsQueueIsEmpty(key: Key): Boolean = keyToWriteRequestQueue[key].isNullOrEmpty()
+    private fun writeRequestsQueueIsEmpty(key: Key): Boolean =
+        keyToWriteRequestQueue[key].isNullOrEmpty()
 
     private suspend fun <Response : Any> addWriteRequestToQueue(writeRequest: StoreWriteRequest<Key, Output, Response>) =
         withWriteRequestQueueLock(writeRequest.key) {
@@ -230,14 +252,26 @@ internal class RealMutableStore<Key : Any, Network : Any, Output : Any, Local : 
                         val updaterResult =
                             updater.post(key, latest).also { updaterResult ->
                                 if (updaterResult is UpdaterResult.Success) {
-                                    updateWriteRequestQueue<Response>(key = key, created = now(), updaterResult = updaterResult)
+                                    updateWriteRequestQueue<Response>(
+                                        key = key,
+                                        created = now(),
+                                        updaterResult = updaterResult
+                                    )
                                 }
                             }
 
                         when (updaterResult) {
-                            is UpdaterResult.Error.Exception -> EagerConflictResolutionResult.Error.Exception(updaterResult.error)
-                            is UpdaterResult.Error.Message -> EagerConflictResolutionResult.Error.Message(updaterResult.message)
-                            is UpdaterResult.Success -> EagerConflictResolutionResult.Success.ConflictsResolved(updaterResult)
+                            is UpdaterResult.Error.Exception -> EagerConflictResolutionResult.Error.Exception(
+                                updaterResult.error
+                            )
+
+                            is UpdaterResult.Error.Message -> EagerConflictResolutionResult.Error.Message(
+                                updaterResult.message
+                            )
+
+                            is UpdaterResult.Success -> EagerConflictResolutionResult.Success.ConflictsResolved(
+                                updaterResult
+                            )
                         }
                     } catch (throwable: Throwable) {
                         EagerConflictResolutionResult.Error.Exception(throwable)
